@@ -1,62 +1,48 @@
 package cpu;
 
+import scala.math.BigInt
 import chisel3._
 import chisel3.iotesters.{Driver, PeekPokeTester}
 
 class ALUTester(c: ALU) extends PeekPokeTester(c) {
-    for (i <- 0 to 20) {
-        for (j <- 0 to 20) {
-            poke(c.io.inputA, i)
-            poke(c.io.inputB, j)
-            poke(c.io.ALUOp, 0)
-            step(1)
-            expect(c.io.output, 0)
 
-            poke(c.io.ALUOp, 1)
-            step(1)
-            expect(c.io.output, i)
+    def test(x:BigInt, y:BigInt, op:Int, o:BigInt) {
+        poke(c.io.inputA, x);
+        poke(c.io.inputB, y);
+        poke(c.io.ALUOp, op);
+        step(1)
+        expect(c.io.output, o);
+    }
 
-            poke(c.io.ALUOp, 2)
-            step(1)
-            expect(c.io.output, j)
+    val m :BigInt = 9223372036854775807L;
 
-            poke(c.io.ALUOp, 3)
-            step(1)
-            expect(c.io.output, i+j)
-
-            poke(c.io.ALUOp, 4)
-            step(1)
-            expect(c.io.output, i&j)
-
-            poke(c.io.ALUOp, 5)
-            step(1)
-            expect(c.io.output, i|j)
-
-            poke(c.io.ALUOp, 6)
-            step(1)
-            expect(c.io.output, i^j)
-
-            poke(c.io.ALUOp, 7)
-            step(1)
-            var x = 0;
-            if (i<j) {
-                x = 1;
-            }
-            expect(c.io.output, x)
-
-            poke(c.io.ALUOp, 8)
-            step(1)
-            expect(c.io.output, i<<j)
-
-            poke(c.io.ALUOp, 9)
-            step(1)
-            expect(c.io.output, i>>>j)
-
-            poke(c.io.ALUOp, 10)
-            step(1)
-            expect(c.io.output, i>>j)
+    test(1,1,0,0)
+    test(1,0,1,1)
+    test(0,1,2,1)
+    test(2,3,3,5) // 2+3=5
+    test(m,m,3,m+m) // M+M=-2
+    test(-m,m,3,0)
+    test(-m,-m,3,2)
+    test(m,1,3,m+1)
+    
+    for (i <- 0L to 1L) {
+        for (j <- 0L to 1L) {
+            test(i, j, 4, i&j)
+            test(i, j, 5, i|j)
+            test(i, j, 6, i^j)
         }
     }
+    test(2,3,7,1)
+    test(2,2,7,0)
+    test(m,-m,7,1)
+    test(1,-1,7,1)
+    test(-1,-m,7,0)
+    test(m,31,8,m+m+1-2147483647)
+    test(-1,31,8,m+m+1-2147483647)
+    test(m,160,9,2147483647)
+    test(-1,48,9,65535)
+    test(m,32,10,2147483647)
+    test(-1,64,10,m+m+1)
 }
 
 object ALUTester extends App {
