@@ -3,19 +3,20 @@ package cpu;
 import chisel3._
 import chisel3.util._
 
-/*
-0000 : output 0
-0001 : output inputA
-0010 : output inputB
-0011 : ADD
-0100 : AND
-0101 : OR
-0110 : XOR
-0111 : SLT
-1000 : SLL
-1001 : SRL
-1010 : SRA
- */
+object ALUT {
+    val ALU_ZERO = 0.U(4.W)
+    val ALU_OUTA = 1.U(4.W)
+    val ALU_OUTB = 2.U(4.W)
+    val ALU_ADD  = 3.U(4.W)
+    val ALU_AND  = 4.U(4.W)
+    val ALU_OR   = 5.U(4.W)
+    val ALU_XOR  = 6.U(4.W)
+    val ALU_SLT  = 7.U(4.W)
+    val ALU_SLL  = 8.U(4.W)
+    val ALU_SRL  = 9.U(4.W)
+    val ALU_SRA  = 10.U(4.W)
+    val ALU_SUB  = 11.U(4.W)
+}
 
 class ALU extends Module {
     val io = IO(new Bundle {
@@ -29,17 +30,18 @@ class ALU extends Module {
         io.ALUOp,
         0.U(64.W),
         Seq(
-            "b0000".U -> 0.U(64.W),
-            "b0001".U -> io.inputA,
-            "b0010".U -> io.inputB,
-            "b0011".U -> (io.inputA + io.inputB),
-            "b0100".U -> (io.inputA & io.inputB),
-            "b0101".U -> (io.inputA | io.inputB),
-            "b0110".U -> (io.inputA ^ io.inputB),
-            "b0111".U -> ((io.inputA < io.inputB).asUInt),
-            "b1000".U -> (io.inputA << shamt),
-            "b1001".U -> (io.inputA >> shamt),
-            "b1010".U -> ((io.inputA.asSInt >> shamt).asUInt)
+            ALUT.ALU_ZERO -> 0.U(64.W),
+            ALUT.ALU_OUTA -> io.inputA,
+            ALUT.ALU_OUTB -> io.inputB,
+            ALUT.ALU_ADD -> (io.inputA + io.inputB),
+            ALUT.ALU_AND -> (io.inputA & io.inputB),
+            ALUT.ALU_OR -> (io.inputA | io.inputB),
+            ALUT.ALU_XOR -> (io.inputA ^ io.inputB),
+            ALUT.ALU_SLT -> ((io.inputA < io.inputB).asUInt),
+            ALUT.ALU_SLL -> (io.inputA << shamt),
+            ALUT.ALU_SRL-> (io.inputA >> shamt),
+            ALUT.ALU_SRA -> ((io.inputA.asSInt >> shamt).asUInt),
+            ALUT.ALU_SUB -> (io.inputA - io.inputB)
         )
     )
 }
