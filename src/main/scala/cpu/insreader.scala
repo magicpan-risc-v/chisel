@@ -26,7 +26,6 @@ class InsReader extends Module {
     // 每个周期更新PC
     when (io.en) {
         pc    := next
-        //jmped := io.jump
         npc   := next + 4.U
         nread := !nread || io.jump
     }

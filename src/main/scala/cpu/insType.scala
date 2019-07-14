@@ -24,11 +24,49 @@ object INST {
     val J_TYPE = 6.U(3.W)
 }
 
+object EXT {
+    val ALU    = 0.U(3.W)
+    val BRANCH = 1.U(3.W)
+    val JUMP   = 2.U(3.W)
+    val LOS    = 3.U(3.W) // load or store
+    val AUIPC  = 4.U(3.W)
+    val LUI    = 5.U(3.W)
+    val FENCE  = 6.U(3.W)
+    val SYS    = 7.U(3.W)
+}
+
 class InsType extends Module {
     val io =  IO(new Bundle {
         val ins  = Input(UInt(32.W))
         val ins_type = Output(UInt(3.W))
+        val exe_type = Output(UInt(3.W))
     })
+
+    io.exe_type := MuxLookup(
+        io.ins(6,2),
+        EXT.ALU,
+        Seq(
+            "b01100".U -> EXT.ALU, // ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND
+            "b01110".U -> EXT.ALU, // ADDW, SUBW, SLLW, SRLW, SRAW
+
+            "b00000".U -> EXT.LOS, // LB, LH, LW, LBU, LHU, *LWU, *LD
+            "b00100".U -> EXT.ALU, // ADDI, SLTI, SLTIU, XORI, ORI, ANDI, SLLI, SRLI, SRAI, *SLLI, *SRLI, *SRAI
+            "b11001".U -> EXT.ALU, // JALR
+            "b00110".U -> EXT.ALU, // (*)ADDIW, SLLIW, SRLIW, SRAIW
+
+            "b01000".U -> EXT.LOS, // SB, SH, SW, *SD
+
+            "b11000".U -> EXT.BRANCH, // BEQ, BNE, BLT, BGE, BLTU, BGEU
+
+            "b00101".U -> EXT.AUIPC, // AUIPC
+            "b01101".U -> EXT.LUI, // LUI
+            
+            "b11011".U -> EXT.JUMP, // JAL
+            
+            "b11100".U -> EXT.SYS, // CSRR* ECALL, EBREAK
+            "b00011".U -> EXT.FENCE // FENCE[.I]
+        )
+    )
 
     io.ins_type := MuxLookup(
         io.ins(6,2),

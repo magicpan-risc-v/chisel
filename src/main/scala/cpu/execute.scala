@@ -3,29 +3,33 @@ package cpu;
 import chisel3._
 import chisel3.util._
 
+class WriteBackReg extends Bundle {
+    val wbrv     = Output(Bool()) // write back reg valid
+    val wbri     = Output(UInt(5.W)) // write back reg index
+    val wbrd     = Output(UInt(64.W)) // write back reg data
+}
+
 class Execute extends Module {
     val io =  IO(new Bundle {
-        val en = Input(Bool())
-        val pc = Input(UInt(32.W))
-        
-        val inst = Input(UInt(32.W))
-        val jmp  = Output(Bool())
-        
-        val rd   = Output(UInt(6.W))
-        val data = Output(UInt(32.W))
-        
+        val imm  = Input(UInt(64.W))
+        val ALUOp    = Input(UInt(4.W))
+        val ins_type = Input(UInt(3.W))
+        val exe_type = Input(UInt(3.W))
+
+        val dreg = Flipped(new DecoderReg)
+
+        val wreg = new WriteBackReg
     })
 
-    /*
-    可能执行多种操作：
-        ALU: inputA,inputB,op -> output
-        Branch: input1,input2,btype,imm,pc -> jmp,jdest
+    val alu = Module(new ALU)
+    val alu_inputB = Mux(uo.dreg.rs2_valid, io.imm, io.dreg.rs2_value)
 
-        Load
-        Store
-
-        FENCE
-        CSR
-    */
+    alu.io.ALUOp  <> io.ALUOp
+    alu.io.inputA <> io.dreg.rs1_value
+    alu.io.inputB <> alu_inputB
+    alu.io.output <> io.wreg.wbrd
+    
+    io.wreg.wbrv := io.dreg.rd_valid
+    io.wreg.wbri := io.dreg.rd_index
 
 }

@@ -5,21 +5,12 @@ import chisel3.util._
 
 class WriteBack extends Module {
     val io = IO(new Bundle {
-        val en = Input(Bool())
-        val w  = Input(UInt(5.W))
-        val wd = Input(UInt(64.W))
-        val ok = Output(Bool())
-
-        val reg = Flipped(new Reg)
+        val wreg = Flipped(new WriteBackReg)
+        val reg = Flipped(new RegWriter)
     })
 
-    io.reg.wen := io.en
-    io.reg.w   := io.w
-    io.reg.wd  := io.wd
+    io.reg.wen := io.wreg.wbrv
+    io.reg.w   := io.wreg.wbri
+    io.reg.wd  := io.wreg.wbrd
 
-    when (io.en) {
-        io.ok := true.B
-    } .otherwise {
-        io.ok := false.B
-    }
 }
