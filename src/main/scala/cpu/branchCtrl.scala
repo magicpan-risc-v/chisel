@@ -26,21 +26,21 @@ class BranchCtrl extends Module {
     val ne  = x.orR
     val eq  = !ne
     val st  = io.input1(63) === io.input2(62) // 是否符号相同
-    val lt  = Mux(st, x(63), inputA(63))
+    val lt  = Mux(st, x(63), io.input1(63))
     val ge  = !lt
-    val ltu = Mux(st, x(63), inputB(63))
+    val ltu = Mux(st, x(63), io.input2(63))
     val geu = !ltu
 
     io.jump := MuxLookup(
         io.branch_type,
         false.B,
         Seq(
-            B_EQ  -> eq,
-            B_NE  -> neq,
-            B_LT  -> lt,
-            B_GE  -> ge,
-            B_LTU -> ltu,
-            B_GEU -> geu
+            BRT.B_EQ  -> eq,
+            BRT.B_NE  -> ne,
+            BRT.B_LT  -> lt,
+            BRT.B_GE  -> ge,
+            BRT.B_LTU -> ltu,
+            BRT.B_GEU -> geu
         )
     )
 }

@@ -35,12 +35,12 @@ class InsType extends Module {
         INST.D_TYPE,
         Seq(
             "b01100".U -> INST.R_TYPE, // ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND
-            'b01110'.U -> INST.R_TYPE, // ADDW, SUBW, SLLW, SRLW, SRAW
+            "b01110".U -> INST.R_TYPE, // ADDW, SUBW, SLLW, SRLW, SRAW
 
             "b00000".U -> INST.I_TYPE, // LB, LH, LW, LBU, LHU, *LWU, *LD
             "b00100".U -> INST.I_TYPE, // ADDI, SLTI, SLTIU, XORI, ORI, ANDI, SLLI, SRLI, SRAI, *SLLI, *SRLI, *SRAI
             "b11001".U -> INST.I_TYPE, // JALR
-            'b00110'.U -> INST.I_TYPE, // (*)ADDIW, SLLIW, SRLIW, SRAIW
+            "b00110".U -> INST.I_TYPE, // (*)ADDIW, SLLIW, SRLIW, SRAIW
 
             "b01000".U -> INST.S_TYPE, // SB, SH, SW, *SD
 
@@ -49,7 +49,7 @@ class InsType extends Module {
             "b00101".U -> INST.U_TYPE, // AUIPC
             "b01101".U -> INST.U_TYPE, // LUI
             
-            "b11011".U -> INST.J_TYPE, // JAL
+            "b11011".U -> INST.J_TYPE // JAL
 
             /*
             CSRR* ECALL, EBREAK: 11100

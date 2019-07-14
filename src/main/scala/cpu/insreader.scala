@@ -18,9 +18,9 @@ class InsReader extends Module {
 
     val pc    = RegInit(0.U(64.W))
     val npc   = RegInit(0.U(64.W))
-    val inst  = RegInit(0x1300000013.U(64.W)) // 两条NOP
+    val inst  = RegInit(0x1300000013L.U(64.W)) // 两条NOP
 
-    val nnread = pc(3).asBool
+    val nnread = pc(3)
     val nread = !nnread // 是否需要读取指令
 
     when (io.en) {
@@ -31,15 +31,15 @@ class InsReader extends Module {
         inst := io.mem.rdata
     }
 
-    when (nnread || io.mem.ok) {
+    when (nnread || io.mem.rok) {
         npc   := pc + 4.U
         io.ok := true.B
     } .otherwise {
         io.ok := false.B
     }
 
-    io.mem.ren  := nread
-    io.mem.addr := pc
+    io.mem.ren   := nread
+    io.mem.raddr := pc
     io.pc   := pc
-    io.inst := Mux(pc(3).asBool, inst(63,32), inst(31,0))
+    io.inst := Mux(nnread, inst(63,32), inst(31,0))
 }

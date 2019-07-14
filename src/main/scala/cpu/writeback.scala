@@ -10,7 +10,7 @@ class WriteBack extends Module {
         val wd = Input(UInt(64.W))
         val ok = Output(Bool())
 
-        val reg = Filpped(new Reg)
+        val reg = Flipped(new Reg)
     })
 
     io.reg.wen := io.en
