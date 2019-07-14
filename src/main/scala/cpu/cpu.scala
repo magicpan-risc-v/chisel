@@ -38,9 +38,11 @@ class CPU extends Module {
     val memt = Module(new MemoryTest)
     memt.io.mem   <> insr.io.mem
     io.init       <> memt.io.init
-    io.wbd        <> wrbk.io.reg.wd
+    io.wbd        <> insr.io.ins//wrbk.io.reg.wd//insd.io.dreg.rs2_valid
 
     insr.io.en    <> io.en
+    exec.io.en    <> io.en
+
     insr.io.jump  := false.B
     insr.io.jdest := 0.U(64.W)
 }

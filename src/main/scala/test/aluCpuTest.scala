@@ -10,6 +10,7 @@ class ALUCPUTest(c: CPU) extends PeekPokeTester(c) {
     step(1);
 
     poke(c.io.en, true); 
+    expect(c.io.wbd, 1);
     step(1); // IF
     expect(c.io.wbd, 1);
     step(1); // ID
