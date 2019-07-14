@@ -27,27 +27,13 @@ class MemoryTest extends Module {
     
     val program_length = 3.U
     val rs = io.mem.raddr >> 2
-    val rdata = RegInit(0.U(64.W))
-    val rok = RegInit(false.B)
-    
-    when (inited && io.mem.ren) {
-        rdata := Mux(
-            rs < program_length,
-            Cat(program(rs+1.U), program(rs)),
-            0.U(64.W)
-        )
-    } .otherwise {
-        rdata := 0.U(64.W)
-    }
 
-    when (inited && io.mem.ren) {
-        rok := true.B
-    } .otherwise {
-        rok := false.B
-    }
-
-    io.mem.rdata := rdata
-    io.mem.rok   := rok
+    io.mem.rdata := Mux(
+        io.mem.ren && inited && rs < program_length,
+        Cat(program(rs+1.U), program(rs)),
+        0.U(64.W)
+    )
+    io.mem.rok   := io.mem.ren && inited
     io.mem.wok := false.B
     
 }

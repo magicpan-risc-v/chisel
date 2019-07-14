@@ -9,7 +9,7 @@ class InsReader extends Module {
         val jump  = Input(Bool())
         val jdest = Input(UInt(64.W))
 
-        val inst  = Output(UInt(32.W))
+        val ins   = Output(UInt(32.W))
         val pc    = Output(UInt(64.W))
         val ok    = Output(Bool())
 
@@ -18,28 +18,29 @@ class InsReader extends Module {
 
     val pc    = RegInit(0.U(64.W))
     val npc   = RegInit(0.U(64.W))
-    val inst  = RegInit(0x1300000013L.U(64.W)) // 两条NOP
+    val insc  = RegInit(0.U(32.W)) // 预读入的指令
 
-    val nnread = pc(3)
-    val nread = !nnread // 是否需要读取指令
+    val nread = RegInit(false.B) // 是否需要读取指令
+    val next  = Mux(io.jump, io.jdest, npc)
 
+    // 每个周期更新PC
     when (io.en) {
-        pc := Mux(io.jump, io.jdest, npc)
+        pc    := next
+        //jmped := io.jump
+        npc   := next + 4.U
+        nread := !nread || io.jump
     }
 
-    when (nread) {
-        inst := io.mem.rdata
-    }
-
-    when (nnread || io.mem.rok) {
-        npc   := pc + 4.U
-        io.ok := true.B
-    } .otherwise {
-        io.ok := false.B
+    when (io.en && nread) {
+        insc  := io.mem.rdata(63,32)
     }
 
     io.mem.ren   := nread
     io.mem.raddr := pc
+    io.mem.wen   := false.B
+    io.mem.waddr := 0.U(64.W)
+    io.mem.wdata := 0.U(64.W)
     io.pc   := pc
-    io.inst := Mux(nnread, inst(63,32), inst(31,0))
+    io.ok   := io.en
+    io.ins  := Mux(nread, io.mem.rdata(31,0), insc)
 }
