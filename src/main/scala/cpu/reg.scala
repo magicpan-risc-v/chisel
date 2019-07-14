@@ -24,3 +24,7 @@ class RegCtrl extends Module {
         regs(io.w) := io.wd
     }
 }
+
+object RegCtrl extends App {
+    chisel3.Driver.execute(args, () => new RegCtrl);
+}

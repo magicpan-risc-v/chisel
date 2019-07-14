@@ -17,3 +17,4 @@ class Memory extends Bundle {
     val wdata = Input(UInt(64.W))
     val wok   = Output(Bool())
 }
+
