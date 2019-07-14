@@ -22,7 +22,7 @@ class Execute extends Module {
     })
 
     val alu = Module(new ALU)
-    val alu_inputB = Mux(uo.dreg.rs2_valid, io.imm, io.dreg.rs2_value)
+    val alu_inputB = Mux(io.dreg.rs2_valid, io.imm, io.dreg.rs2_value)
 
     alu.io.ALUOp  <> io.ALUOp
     alu.io.inputA <> io.dreg.rs1_value

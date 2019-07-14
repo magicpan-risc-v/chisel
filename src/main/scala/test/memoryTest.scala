@@ -18,9 +18,9 @@ class MemoryTest extends Module {
     val inited = RegInit(false.B)
     
     when (!inited && io.init) {
-        program(0) := 1.U(32.W)
-        program(1) := 2.U(32.W)
-        program(2) := 3.U(32.W)
+        program(0) := 0x00108193.U(32.W)
+        program(1) := 0.U(32.W)
+        program(2) := 0.U(32.W)
         program(3) := 0.U(32.W) // 补正
         inited     := true.B
     }

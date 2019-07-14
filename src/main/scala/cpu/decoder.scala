@@ -51,8 +51,8 @@ class Decoder extends Module {
     io.dreg.rd_index  := io.ins(11,7)
     io.dreg.rs1_index := rs1_index
     io.dreg.rs2_index := rs2_index
-    regr.r1 := rs1_index
-    regr.r2 := rs2_index
-    io.dreg.rs1_value := regr.r1d
-    io.dreg.rs2_value := regr.r2d
+    io.regr.r1        := rs1_index
+    io.regr.r2        := rs2_index
+    io.dreg.rs1_value := io.regr.r1d
+    io.dreg.rs2_value := io.regr.r2d
 }

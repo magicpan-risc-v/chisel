@@ -13,7 +13,6 @@ class InsReaderTest extends Module {
 
         val ins   = Output(UInt(32.W))
         val pc    = Output(UInt(64.W))
-        val ok    = Output(Bool())
     })
 
     val insr = Module(new InsReader)
@@ -24,7 +23,6 @@ class InsReaderTest extends Module {
     insr.io.jdest <> io.jdest
     insr.io.ins   <> io.ins
     insr.io.pc    <> io.pc
-    insr.io.ok    <> io.ok
     insr.io.mem   <> memt.io.mem
     memt.io.init  <> io.init
 

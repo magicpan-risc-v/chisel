@@ -11,8 +11,6 @@ class InsReader extends Module {
 
         val ins   = Output(UInt(32.W))
         val pc    = Output(UInt(64.W))
-        val ok    = Output(Bool())
-
         val mem   = Flipped(new Memory)
     })
 
@@ -40,6 +38,5 @@ class InsReader extends Module {
     io.mem.waddr := 0.U(64.W)
     io.mem.wdata := 0.U(64.W)
     io.pc   := pc
-    io.ok   := io.en
     io.ins  := Mux(nread, io.mem.rdata(31,0), insc)
 }
