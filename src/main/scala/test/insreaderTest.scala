@@ -4,7 +4,10 @@ import chisel3._
 import chisel3.util._
 import chisel3.iotesters.{Driver, PeekPokeTester}
 
+// 已通过的测试样例
+/*
 class InsReaderTest extends Module {
+    
     val io =  IO(new Bundle {
         val en    = Input(Bool())
         val init  = Input(Bool())
@@ -37,9 +40,10 @@ class InsReaderTest extends Module {
 
     //insr.io.mem.waddr := 0.U(64.W)
     //insr.io.mem.wdata := 0.U(64.W)
+    
 
-}
-
+}*/
+/*
 class InsReaderTester(c: InsReaderTest) extends PeekPokeTester(c) {
 
     poke(c.io.init, true);
@@ -88,10 +92,11 @@ class InsReaderTester(c: InsReaderTest) extends PeekPokeTester(c) {
     //expect(c.io.obs, 1000);
     expect(c.io.ins, 0);
     expect(c.io.pc, 12);
+    
 }
 
 object InsReaderTester extends App {
     chisel3.iotesters.Driver.execute(args, () => new InsReaderTest()) (
         (c) => new InsReaderTester(c)
     )
-}
+}*/

@@ -21,6 +21,8 @@ class Decoder extends Module {
         val imm  = Output(UInt(64.W))
         val ALUOp    = Output(UInt(4.W))
         val exe_type = Output(UInt(3.W))
+        val ls_mode  = Output(UInt(4.W))
+        val br_type  = Output(UInt(3.W))
 
         val regr = Flipped(new RegReader)
         val dreg = new DecoderReg
@@ -53,4 +55,11 @@ class Decoder extends Module {
     io.regr.r2        := rs2_index
     io.dreg.rs1_value := io.regr.r1d
     io.dreg.rs2_value := io.regr.r2d
+
+    io.ls_mode        := Mux(
+        itype.io.exe_type === EXT.LOS,
+        Cat(!io.ins(5), io.ins(14,12)),
+        MEMT.NOP
+    )
+    io.br_type        := io.ins(14,12)
 }

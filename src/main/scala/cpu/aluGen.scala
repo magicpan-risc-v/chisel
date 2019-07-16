@@ -32,7 +32,7 @@ class ALUGen extends Module {
             ),
             INST.I_TYPE -> MuxLookup(
                 Cat(io.ins(4), io.ins(14,12)),
-                0.U(4.W),
+                ALUT.ALU_ADD, // L* or JALR
                 Seq(
                     "b1000".U -> ALUT.ALU_ADD,
                     "b1010".U -> ALUT.ALU_SLT,
