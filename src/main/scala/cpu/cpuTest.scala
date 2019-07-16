@@ -6,12 +6,11 @@ import chisel3.util._
 // 用于测试的CPU
 class CPUTest extends Module {
     val io =  IO(new Bundle {
-        //val mem = Flipped(new Memory)
-        
-        // for test
         val en   = Input(Bool())
         val init = Input(Bool()) 
-        val wbd  = Output(UInt(64.W))
+        val dd   = Input(UInt(32.W))
+
+        val wbd  = Output(UInt(64.W)) // 无意义输出
     })
 
     val insr = Module(new InsReader)
@@ -83,6 +82,7 @@ class CPUTest extends Module {
     val memt = Module(new MemoryTest)
     memt.io.mem   <> iomn.io.mem_out
     io.init       <> memt.io.init
+    io.dd         <> memt.io.dd
 
     // 貌似一定要在writeback连一根线，不然这些模块都会被优化掉
     io.wbd        <> wrbk.io.reg.wd//insd.io.dreg.rs2_valid
