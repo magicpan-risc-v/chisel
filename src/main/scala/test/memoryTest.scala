@@ -8,44 +8,61 @@ class MemoryTest extends Module {
     val io = IO(new Bundle {
         val mem  = new Memory
         val init = Input(Bool())
-        val dd   = Input(UInt(32.W)) // default data
+        val dd   = Input(UInt(8.W)) // default data
     })
 
-    val program = Mem(0x1000, UInt(32.W))
+    val program = Mem(0x8000, UInt(8.W))
 
     val inited = RegInit(false.B)
     val dindex = RegInit(0.U(32.W))
 
     val program_length = dindex
-    val rs = io.mem.raddr >> 2
-    val rm = (io.mem.raddr & 3.U) << 3
-    val rd = (io.mem.raddr & 2.U) << 3
-    val ws = io.mem.waddr >> 2
+    val rs = io.mem.raddr
+    val ws = io.mem.waddr
+
+    val data = Cat(
+        program(rs+7.U),
+        program(rs+6.U),
+        program(rs+5.U),
+        program(rs+4.U),
+        program(rs+3.U),
+        program(rs+2.U), 
+        program(rs+1.U),
+        program(rs)
+    )
     
     when (!inited && io.init) {
         program(dindex) := io.dd
         dindex := Mux(io.dd === 0.U, dindex, dindex + 1.U)
     }
     
-    when (inited && io.mem.mode == MEMT.SD) {
-        program(ws+1.U) := io.mem.wdata(63,32)
-        program(ws) := io.mem.wdata(31,0)
+    when (inited && io.mem.mode === MEMT.SD) {
+        for (i <- 0 until 8) {
+            program(ws+i.U) := io.mem.wdata(i*8+7, i*8)
+        }
     }
 
-    when (inited && io.mem.mode == MEMT.SW) {
-        program(ws) := io.mem.wdata(31,0)
+    when (inited && io.mem.mode === MEMT.SW) {
+        for (i <- 0 until 4) {
+            program(ws+i.U) := io.mem.wdata(i*8+7, i*8)
+        }
     }
 
-    when (inited && io.mem.mode == MEMT.SH) {
-        program(ws)(15,0) := io.mem.wdata(15,0)
+    when (inited && io.mem.mode === MEMT.SH) {
+        for (i <- 0 until 2) {
+            program(ws+i.U) := io.mem.wdata(i*8+7, i*8)
+        }
     }
 
-    when (inited && io.mem.mode == MEMT.SB) {
-        program(ws)(7,0) := io.mem.wdata(7,0)
+    when (inited && io.mem.mode === MEMT.SB) {
+        program(ws) := io.mem.wdata(7,0)
     }
 
     when (!inited && io.init && io.dd === 0.U) {
         inited := true.B
+        for (i <- 1 until 16) {
+            program(dindex+i.U) := 0.U(8.W)
+        }
     }
 
     io.mem.rdata := Mux(
@@ -54,13 +71,13 @@ class MemoryTest extends Module {
             io.mem.mode,
             0.U(64.W),
             Seq(
-                MEMT.LD  -> Cat(program(rs+1.U), program(rs)),
-                MEMT.LWU -> Cat(0.U(32.W), program(rs)),
-                MEMT.LHU -> Cat(0.U(48.W), program(rs)(rm+15,rm))
-                MEMT.LBU -> Cat(0.U(56.W), program(rs)(rm+7, rm))
-                MEMT.LW  -> Cat(Mux(program(rs)(31), 0xffffffff.U(32.W), 0.U(32.W)), program(rs))
-                MEMT.LH  -> Cat(Mux(program(rs)(rm+15), 0xffffffffffffL.U(48.W), 0.U(48.W)), program(rs)(rm+15,rm))
-                MEMT.LB  -> Cat(Mux(program(rs)(rm+7), 0xffffffffffffffL.U(56.W), 0.U(56.W)), program(rs)(rm+7,rm))
+                MEMT.LD  -> data,
+                MEMT.LWU -> Cat(0.U(32.W), data(31,0)),
+                MEMT.LHU -> Cat(0.U(48.W), data(15,0)),
+                MEMT.LBU -> Cat(0.U(56.W), data(7,0)),
+                MEMT.LW  -> Cat(Mux(data(31), 0xffffffffL.U(32.W), 0.U(32.W)), data(31,0)),
+                MEMT.LH  -> Cat(Mux(data(15), 0xffffffffffffL.U(48.W), 0.U(48.W)), data(15,0)),
+                MEMT.LB  -> Cat(Mux(data(7), 0xffffffffffffffL.U(56.W), 0.U(56.W)), data(7,0))
             )
         ),
         0.U(64.W)

@@ -8,7 +8,7 @@ class CPUTest extends Module {
     val io =  IO(new Bundle {
         val en   = Input(Bool())
         val init = Input(Bool()) 
-        val dd   = Input(UInt(32.W))
+        val dd   = Input(UInt(8.W))
 
         val wbd  = Output(UInt(64.W)) // 无意义输出
     })
