@@ -5,12 +5,12 @@ import chisel3.util._
 
 class CPU extends Module {
     val io =  IO(new Bundle {
-       // val mem = Flipped(new Memory)
+        val mem = Flipped(new Memory)
         
         // for test
         val en   = Input(Bool())
-        val init = Input(Bool()) 
-        val wbd  = Output(UInt(64.W))
+        //val init = Input(Bool()) 
+        //val wbd  = Output(UInt(64.W))
     })
 
     val insr = Module(new InsReader)
@@ -20,7 +20,7 @@ class CPU extends Module {
     val wrbk = Module(new WriteBack)
     val regc = Module(new RegCtrl)
     
-    //insr.io.mem   <> io.mem
+    insr.io.mem   <> io.mem
     //insr.io.pc
     insr.io.ins   <> insd.io.ins
     insd.io.regr  <> regc.io.r
@@ -33,16 +33,23 @@ class CPU extends Module {
     memc.io.wreg  <> wrbk.io.wreg
     wrbk.io.reg   <> regc.io.w
 
-
-    // for test
-    val memt = Module(new MemoryTest)
-    memt.io.mem   <> insr.io.mem
-    io.init       <> memt.io.init
-    io.wbd        <> insr.io.ins//wrbk.io.reg.wd//insd.io.dreg.rs2_valid
-
     insr.io.en    <> io.en
     exec.io.en    <> io.en
 
+
+    // for test
+    /*
+    val memt = Module(new MemoryTest)
+    memt.io.mem   <> insr.io.mem
+    io.init       <> memt.io.init
+    io.wbd        <> insr.io.ins//wrbk.io.reg.wd//insd.io.dreg.rs2_valid*/
+
+    
+
     insr.io.jump  := false.B
     insr.io.jdest := 0.U(64.W)
+}
+
+object CPU extends App {
+    chisel3.Driver.execute(args, () => new CPU);
 }
