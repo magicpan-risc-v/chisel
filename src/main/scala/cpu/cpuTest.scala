@@ -20,34 +20,48 @@ class CPUTest extends Module {
     val memc = Module(new MemoryCtrl)
     val wrbk = Module(new WriteBack)
     val regc = Module(new RegCtrl)
+    val iomn = Module(new IOManager)
+    //val if_id = Module(new IF_ID) // IF_ID段封装在InsReader内部
+    val id_ex = Module(new ID_EX)
     
-    //insr.io.mem   <> io.mem
-    //insr.io.pc
-    insr.io.ins   <> insd.io.ins
+    // IO
+    insr.io.mem   <> iomn.io.mem_if
+    memc.io.mem   <> iomn.io.mem_mem
+
+    // Reg
     insd.io.regr  <> regc.io.r
-    insd.io.imm   <> exec.io.imm
-    insd.io.ALUOp <> exec.io.ALUOp
-    insd.io.ins_type <> exec.io.ins_type
-    insd.io.exe_type <> exec.io.exe_type
-    insd.io.dreg  <> exec.io.dreg
-    exec.io.wreg  <> memc.io.ereg
-    memc.io.wreg  <> wrbk.io.wreg
     wrbk.io.reg   <> regc.io.w
 
+    // IF_ID
     insr.io.en    <> io.en
-    exec.io.en    <> io.en
+    insr.io.ins   <> insd.io.ins
+
+    // ID_EX
+    id_ex.io.en     <> io.en
+    id_ex.io.immi   <> insd.io.imm
+    id_ex.io.ALUOpi <> insd.io.ALUOp
+    id_ex.io.exeti  <> insd.io.exe_type
+    id_ex.io.pci    <> insr.io.pc
+    id_ex.io.dregi  <> insd.io.dreg
+    
+    id_ex.io.immo   <> exec.io.imm
+    id_ex.io.ALUOpo <> exec.io.ALUOp
+    id_ex.io.exeto  <> exec.io.exe_type
+    id_ex.io.pco    <> exec.io.pc
+    id_ex.io.drego  <> exec.io.dreg
+
+
+    exec.io.wreg  <> memc.io.ereg
+    memc.io.wreg  <> wrbk.io.wreg
 
 
     // for test
     val memt = Module(new MemoryTest)
-    memt.io.mem   <> insr.io.mem
+    memt.io.mem   <> iomn.io.mem_out
     io.init       <> memt.io.init
 
     // 貌似一定要在writeback连一根线，不然这些模块都会被优化掉
     io.wbd        <> wrbk.io.reg.wd//insd.io.dreg.rs2_valid
-
-    insr.io.jump  := false.B
-    insr.io.jdest := 0.U(64.W)
 }
 
 object CPUTest extends App {

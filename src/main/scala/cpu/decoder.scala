@@ -20,7 +20,6 @@ class Decoder extends Module {
         val ins  = Input(UInt(32.W))
         val imm  = Output(UInt(64.W))
         val ALUOp    = Output(UInt(4.W))
-        val ins_type = Output(UInt(3.W))
         val exe_type = Output(UInt(3.W))
 
         val regr = Flipped(new RegReader)
@@ -39,7 +38,6 @@ class Decoder extends Module {
     immg.io.imm       <> io.imm
     alug.io.ALUOp     <> io.ALUOp
     io.exe_type       <> itype.io.exe_type
-    io.ins_type       <> itype.io.ins_type
 
     val rs1_index = io.ins(19,15)
     val rs2_index = io.ins(24,20)
