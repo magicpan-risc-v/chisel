@@ -18,9 +18,9 @@ class MemoryTest extends Module {
     val inited = RegInit(false.B)
     
     when (!inited && io.init) {
-        program(0) := 0x00108193.U(32.W)
-        program(1) := 0.U(32.W)
-        program(2) := 0.U(32.W)
+        program(0) := 1.U(32.W) //0x00108193
+        program(1) := 2.U(32.W)
+        program(2) := 3.U(32.W)
         program(3) := 0.U(32.W) // 补正
         inited     := true.B
     }
@@ -29,13 +29,10 @@ class MemoryTest extends Module {
     val rs = io.mem.raddr >> 2
 
     io.mem.rdata := Mux(
-        io.mem.ren && inited && rs < program_length,
+        io.mem.mode === MEMT.LD && inited && rs < program_length,
         Cat(program(rs+1.U), program(rs)),
         0.U(64.W)
     )
-    io.mem.rok   := io.mem.ren && inited
-    io.mem.wok := false.B
-    
 }
 
 object MemoryTest extends App {
