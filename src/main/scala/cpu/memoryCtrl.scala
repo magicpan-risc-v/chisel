@@ -18,20 +18,6 @@ object MEMT {
     val SD  = "b0011".U(4.W)
 }
 
-class Memory extends Bundle {
-
-    val mode = Input(UInt(4.W))
-
-    // reader
-    val raddr = Input(UInt(64.W))
-    val rdata = Output(UInt(64.W))
-    
-    // writer
-    val waddr = Input(UInt(64.W))
-    val wdata = Input(UInt(64.W))
-
-}
-
 class MemoryCtrl extends Module {
     val io =  IO(new Bundle {
         val nls  = Input(Bool())

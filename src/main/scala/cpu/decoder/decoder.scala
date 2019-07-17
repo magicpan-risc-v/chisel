@@ -3,18 +3,6 @@ package cpu;
 import chisel3._
 import chisel3.util._
 
-class DecoderReg extends Bundle {
-    val rs1_valid = Output(Bool())
-    val rs2_valid = Output(Bool())
-    val rs1_index = Output(UInt(5.W))
-    val rs2_index = Output(UInt(5.W))
-    val rs1_value = Output(UInt(64.W))
-    val rs2_value = Output(UInt(64.W))
-    
-    val rd_valid  = Output(Bool())
-    val rd_index  = Output(UInt(5.W))
-}
-
 class Decoder extends Module {
     val io =  IO(new Bundle {
         val ins  = Input(UInt(32.W))
