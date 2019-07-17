@@ -12,11 +12,9 @@ object RAMTest {
 
         tester.poke(c.io.init, 1)
         for (i <- data.indices) {
-            if (data(i) != 0) {
-                tester.poke(c.io.dd, data(i))
-                tester.step(1)
-                println(data(i))
-            }
+            tester.poke(c.io.dd, data(i))
+            tester.step(1)
+            println(data(i))
         }
         tester.poke(c.io.dd, 0)
         tester.step(1)
