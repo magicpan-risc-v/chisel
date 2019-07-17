@@ -3,12 +3,6 @@ package cpu;
 import chisel3._
 import chisel3.util._
 
-class WriteBackReg extends Bundle {
-    val wbrv     = Output(Bool()) // write back reg valid
-    val wbri     = Output(UInt(5.W)) // write back reg index
-    val wbrd     = Output(UInt(64.W)) // write back reg data
-}
-
 class Execute extends Module {
     val io =  IO(new Bundle {
         val imm      = Input(UInt(64.W))
