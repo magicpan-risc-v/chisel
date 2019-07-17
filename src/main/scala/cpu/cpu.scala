@@ -3,15 +3,10 @@ package cpu;
 import chisel3._
 import chisel3.util._
 
-/*
 class CPU extends Module {
     val io =  IO(new Bundle {
+        val en  = Input(Bool())
         val mem = Flipped(new Memory)
-        
-        // for test
-        val en   = Input(Bool())
-        //val init = Input(Bool()) 
-        //val wbd  = Output(UInt(64.W))
     })
 
     val insr = Module(new InsReader)
@@ -20,38 +15,69 @@ class CPU extends Module {
     val memc = Module(new MemoryCtrl)
     val wrbk = Module(new WriteBack)
     val regc = Module(new RegCtrl)
+    val iomn = Module(new IOManager)
+    val id_ex  = Module(new ID_EX)
+    val ex_mem = Module(new EX_MEM)
+    val mem_wb = Module(new MEM_WB)
     
-    insr.io.mem   <> io.mem
-    //insr.io.pc
-    insr.io.ins   <> insd.io.ins
+    // IO
+    insr.io.mem   <> iomn.io.mem_if
+    memc.io.mem   <> iomn.io.mem_mem
+    io.mem        <> iomn.io.mem_out
+
+    // Reg
     insd.io.regr  <> regc.io.r
-    insd.io.imm   <> exec.io.imm
-    insd.io.ALUOp <> exec.io.ALUOp
-    insd.io.ins_type <> exec.io.ins_type
-    insd.io.exe_type <> exec.io.exe_type
-    insd.io.dreg  <> exec.io.dreg
-    exec.io.wreg  <> memc.io.ereg
-    memc.io.wreg  <> wrbk.io.wreg
     wrbk.io.reg   <> regc.io.w
 
+    // IF
+    insr.io.jump  <> exec.io.jump
+    insr.io.jdest <> exec.io.jdest
+    insr.io.nls   <> ex_mem.io.nlso
+
+    // IF_ID
     insr.io.en    <> io.en
-    exec.io.en    <> io.en
+    insr.io.ins   <> insd.io.ins
 
-
-    // for test
-    /*
-    val memt = Module(new MemoryTest)
-    memt.io.mem   <> insr.io.mem
-    io.init       <> memt.io.init
-    io.wbd        <> insr.io.ins//wrbk.io.reg.wd//insd.io.dreg.rs2_valid*/
-
+    // ID_EX
+    id_ex.io.en     <> io.en
+    id_ex.io.immi   <> insd.io.imm
+    id_ex.io.ALUOpi <> insd.io.ALUOp
+    id_ex.io.exeti  <> insd.io.exe_type
+    id_ex.io.pci    <> insr.io.pc
+    id_ex.io.dregi  <> insd.io.dreg
+    id_ex.io.lsmi   <> insd.io.ls_mode
+    id_ex.io.brti   <> insd.io.br_type
     
+    id_ex.io.immo   <> exec.io.imm
+    id_ex.io.ALUOpo <> exec.io.ALUOp
+    id_ex.io.exeto  <> exec.io.exe_type
+    id_ex.io.pco    <> exec.io.pc
+    id_ex.io.drego  <> exec.io.dreg
+    id_ex.io.brto   <> exec.io.br_type
 
-    insr.io.jump  := false.B
-    insr.io.jdest := 0.U(64.W)
+    // EX_MEM
+    ex_mem.io.en    <> io.en
+    ex_mem.io.lsmi  <> id_ex.io.lsmo
+    ex_mem.io.nlsi  <> exec.io.nls
+    ex_mem.io.wregi <> exec.io.wreg
+    ex_mem.io.addri <> exec.io.addr
+    ex_mem.io.datai <> exec.io.data
+
+    ex_mem.io.nlso  <> memc.io.nls
+    ex_mem.io.wrego <> memc.io.ereg
+    ex_mem.io.lsmo  <> memc.io.lsm
+    ex_mem.io.addro <> memc.io.addr
+    ex_mem.io.datao <> memc.io.data
+
+    // MEM_WB
+    mem_wb.io.en    <> io.en
+    mem_wb.io.wregi <> memc.io.wreg
+    mem_wb.io.wrego <> wrbk.io.wreg
+
+    //// 貌似一定要在writeback连一根线，不然这些模块都会被优化掉
+    //io.wbd        <> wrbk.io.reg.wd//insd.io.dreg.rs2_valid
 }
 
 object CPU extends App {
     chisel3.Driver.execute(args, () => new CPU);
 }
-*/
