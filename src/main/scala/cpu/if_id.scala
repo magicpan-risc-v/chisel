@@ -9,18 +9,28 @@ class IF_ID extends Module {
 
         val insi  = Input(UInt(32.W))
         val pci   = Input(UInt(64.W))
+        val insci = Input(UInt(32.W))
+
         val inso  = Output(UInt(32.W))
         val pco   = Output(UInt(64.W))
+        val insco = Output(UInt(32.W))
     })
 
-    val ins = RegInit(0.U(32.W))
-    val pc  = RegInit(0.U(64.W))
+    val ins  = RegInit(0.U(32.W))
+    val pc   = RegInit(0.U(64.W))
+    val insc = RegInit(0.U(32.W))
 
-    io.inso := ins
-    io.pco  := pc
+    io.inso  := ins
+    io.pco   := pc
+    io.insco := insc
 
     when (io.en) {
-        ins := io.insi
-        pc  := io.pci
+        ins  := io.insi
+        pc   := io.pci
+        insc := io.insci
+
+        printf("IF_ID  : ins  = %x\n", ins)
+        printf("IF_ID  : pc   = %d\n", pc)
+        printf("IF_ID  : insc = %x\n", insc)
     }
 }

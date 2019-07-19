@@ -33,7 +33,7 @@ class MemoryTest extends Module {
     
     when (!inited && io.init) {
         program(dindex) := io.dd
-        dindex := Mux(io.dd === 0.U, dindex, dindex + 1.U)
+        dindex := dindex + 1.U
     }
     
     when (inited && io.mem.mode === MEMT.SD) {
@@ -58,9 +58,9 @@ class MemoryTest extends Module {
         program(ws) := io.mem.wdata(7,0)
     }
 
-    when (!inited && io.init && io.dd === 0.U) {
+    when (!inited && !io.init) {
         inited := true.B
-        for (i <- 1 until 16) {
+        for (i <- 0 until 15) {
             program(dindex+i.U) := 0.U(8.W)
         }
     }

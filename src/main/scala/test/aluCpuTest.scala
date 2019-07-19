@@ -5,7 +5,13 @@ import chisel3.util._
 import chisel3.iotesters.{Driver, PeekPokeTester}
 
 class ALUCPUTest(c: CPUTest) extends PeekPokeTester(c) {
+    poke(c.io.en, false)
     RAMTest.loadFile(this, c, "tests/test1.bin")
+    poke(c.io.en, true)
+    for (i <- 1 until 10) {
+        println("cycle "+i)
+        step(1)
+    }
 }
 
 object ALUCPUTest extends App {

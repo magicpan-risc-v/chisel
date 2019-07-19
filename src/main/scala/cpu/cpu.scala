@@ -16,6 +16,7 @@ class CPU extends Module {
     val wrbk = Module(new WriteBack)
     val regc = Module(new RegCtrl)
     val iomn = Module(new IOManager)
+    val if_id  = Module(new IF_ID)
     val id_ex  = Module(new ID_EX)
     val ex_mem = Module(new EX_MEM)
     val mem_wb = Module(new MEM_WB)
@@ -35,8 +36,14 @@ class CPU extends Module {
     insr.io.nls   <> ex_mem.io.nlso
 
     // IF_ID
-    insr.io.en    <> io.en
-    insr.io.ins   <> insd.io.ins
+    if_id.io.en    <> io.en
+    if_id.io.insci <> insr.io.insn
+    if_id.io.insi  <> insr.io.ins
+    if_id.io.pci   <> insr.io.pc
+
+    if_id.io.pco   <> insr.io.lpc
+    if_id.io.inso  <> insd.io.ins
+    if_id.io.insco <> insr.io.insp
 
     // ID_EX
     id_ex.io.en     <> io.en
