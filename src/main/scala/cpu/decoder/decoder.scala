@@ -26,6 +26,7 @@ class Decoder extends Module {
     itype.io.ins_type <> immg.io.ins_type
     itype.io.ins_type <> alug.io.ins_type
     immg.io.imm       <> io.imm
+    immg.io.uns       <> itype.io.uns
     alug.io.ALUOp     <> io.ALUOp
     io.exe_type       <> itype.io.exe_type
 

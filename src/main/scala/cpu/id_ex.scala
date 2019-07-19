@@ -70,6 +70,8 @@ class ID_EX extends Module {
         lsm   := io.lsmi
         brt   := io.brti
 
-        printf("ID_EX  : exet  = %d\n", exet)
+        
+        //printf("ID_EX  : ALUOp = %d\n", ALUOp)
+        
     }
 }

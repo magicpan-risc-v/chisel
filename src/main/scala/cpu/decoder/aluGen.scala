@@ -22,7 +22,7 @@ class ALUGen extends Module {
                     "b1000".U -> ALUT.ALU_SUB, // or SUBW
                     "b0001".U -> ALUT.ALU_SLL, // or SLLW
                     "b0010".U -> ALUT.ALU_SLT,
-                    "b0011".U -> ALUT.ALU_SLT, //SLTU
+                    "b0011".U -> ALUT.ALU_SLTU,
                     "b0100".U -> ALUT.ALU_XOR,
                     "b0101".U -> ALUT.ALU_SRL, // or SRLW
                     "b1101".U -> ALUT.ALU_SRA, // or SRAW
@@ -36,7 +36,7 @@ class ALUGen extends Module {
                 Seq(
                     "b1000".U -> ALUT.ALU_ADD,
                     "b1010".U -> ALUT.ALU_SLT,
-                    "b1011".U -> ALUT.ALU_SLT,
+                    "b1011".U -> ALUT.ALU_SLTU,
                     "b1100".U -> ALUT.ALU_XOR,
                     "b1110".U -> ALUT.ALU_OR,
                     "b1111".U -> ALUT.ALU_AND,

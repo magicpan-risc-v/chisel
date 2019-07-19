@@ -45,6 +45,7 @@ class EX_MEM extends Module {
         addr  := io.addri
         data  := io.datai
 
+        /*
         printf("EX_MEM : nls   = %d\n", nls)
         printf("EX_MEM : wbri  = %d\n", wbri)
         printf("EX_MEM : wbrv  = %d\n", wbrv)
@@ -52,5 +53,6 @@ class EX_MEM extends Module {
         printf("EX_MEM : lsm   = %d\n", lsm)
         printf("EX_MEM : addr  = %d\n", addr)
         printf("EX_MEM : data  = %d\n", data)
+        */
     }
 }

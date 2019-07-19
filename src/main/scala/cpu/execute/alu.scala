@@ -16,6 +16,7 @@ object ALUT {
     val ALU_SRL  = 9.U(4.W)
     val ALU_SRA  = 10.U(4.W)
     val ALU_SUB  = 11.U(4.W)
+    val ALU_SLTU = 12.U(4.W)
 }
 
 class ALU extends Module {
@@ -37,7 +38,8 @@ class ALU extends Module {
             ALUT.ALU_AND -> (io.inputA & io.inputB),
             ALUT.ALU_OR -> (io.inputA | io.inputB),
             ALUT.ALU_XOR -> (io.inputA ^ io.inputB),
-            ALUT.ALU_SLT -> ((io.inputA < io.inputB).asUInt),
+            ALUT.ALU_SLTU -> ((io.inputA < io.inputB).asUInt),
+            ALUT.ALU_SLT -> ((io.inputA.asSInt < io.inputB.asSInt).asUInt),
             ALUT.ALU_SLL -> (io.inputA << shamt),
             ALUT.ALU_SRL-> (io.inputA >> shamt),
             ALUT.ALU_SRA -> ((io.inputA.asSInt >> shamt).asUInt),

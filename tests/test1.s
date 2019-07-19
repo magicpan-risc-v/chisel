@@ -1,2 +1,2 @@
 _start:
-	addi a3,a3,1
+	sltiu a2,a3,-1

@@ -40,7 +40,21 @@ class InsType extends Module {
         val ins  = Input(UInt(32.W))
         val ins_type = Output(UInt(3.W))
         val exe_type = Output(UInt(3.W))
+        val uns  = Output(Bool())
     })
+
+    val funct3 = io.ins(14,12)
+    val opcode = io.ins(6,2)
+
+    io.uns := MuxLookup(
+        Cat(io.ins(14,12), io.ins(6,2)),
+        false.B,
+        Seq(
+            "b11011000".U -> true.B, // BLTU
+            "b11111000".U -> true.B, // BGEU
+            "b01100100".U -> true.B  // SLTIU
+        )
+    )
 
     io.exe_type := Mux(io.ins(0), MuxLookup(
         io.ins(6,2),
