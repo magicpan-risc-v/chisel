@@ -72,6 +72,7 @@ class ID_EX extends Module {
 
         
         //printf("ID_EX  : ALUOp = %d\n", ALUOp)
-        
+        //printf("ID_EX  : imm   = %d\n", imm)
+        //printf("ID_EX  : rs1d  = %d\n", rs1d)
     }
 }

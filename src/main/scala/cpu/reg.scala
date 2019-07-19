@@ -12,6 +12,8 @@ class RegCtrl extends Module {
     when (io.w.wen) {
         regs(io.w.w) := io.w.wd
         printf("set reg[%d] = %d\n", io.w.w, io.w.wd)
+
+        //printf("reg[12] = %d\n", regs(12))
     }
 }
 
