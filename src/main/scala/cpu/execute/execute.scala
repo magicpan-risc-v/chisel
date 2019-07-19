@@ -10,6 +10,7 @@ class Execute extends Module {
         val pc       = Input(UInt(64.W))
         val exe_type = Input(UInt(3.W))
         val br_type  = Input(UInt(3.W))
+        val op32     = Input(Bool())
 
         val dreg = Flipped(new DecoderReg)
 
@@ -30,6 +31,7 @@ class Execute extends Module {
     alu.io.ALUOp  <> io.ALUOp
     alu.io.inputA <> io.dreg.rs1_value
     alu.io.inputB <> alu_inputB
+    alu.io.op32   <> io.op32
     io.wreg.wbrv  <> io.dreg.rd_valid
     io.wreg.wbri  <> io.dreg.rd_index
     io.wreg.wbrd  <> alu.io.output

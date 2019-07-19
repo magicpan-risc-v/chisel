@@ -22,28 +22,50 @@ object ALUT {
 class ALU extends Module {
     val io = IO(new Bundle {
         val ALUOp  = Input(UInt(4.W))
+        val op32   = Input(Bool())
         val inputA = Input(UInt(64.W))
         val inputB = Input(UInt(64.W))
         val output = Output(UInt(64.W))
     })
     val shamt = io.inputB(5,0)
-    io.output := MuxLookup(
+    val shamt32 = io.inputB(4,0)
+    val inputA32 = io.inputA(31,0)
+    val inputB32 = io.inputB(31,0)
+    val op32res = MuxLookup(
         io.ALUOp,
         0.U(64.W),
         Seq(
-            ALUT.ALU_ZERO -> 0.U(64.W),
-            ALUT.ALU_OUTA -> io.inputA,
-            ALUT.ALU_OUTB -> io.inputB,
-            ALUT.ALU_ADD -> (io.inputA + io.inputB),
-            ALUT.ALU_AND -> (io.inputA & io.inputB),
-            ALUT.ALU_OR -> (io.inputA | io.inputB),
-            ALUT.ALU_XOR -> (io.inputA ^ io.inputB),
-            ALUT.ALU_SLTU -> ((io.inputA < io.inputB).asUInt),
-            ALUT.ALU_SLT -> ((io.inputA.asSInt < io.inputB.asSInt).asUInt),
-            ALUT.ALU_SLL -> (io.inputA << shamt),
-            ALUT.ALU_SRL-> (io.inputA >> shamt),
-            ALUT.ALU_SRA -> ((io.inputA.asSInt >> shamt).asUInt),
-            ALUT.ALU_SUB -> (io.inputA - io.inputB)
+            ALUT.ALU_ADD -> (inputA32 + inputB32),
+            ALUT.ALU_SLL -> (inputA32 << shamt32),
+            ALUT.ALU_SRL-> (inputA32 >> shamt32),
+            ALUT.ALU_SRA -> ((inputA32.asSInt >> shamt32).asUInt),
+            ALUT.ALU_SUB -> (inputA32 - inputB32)
+        )
+    )
+    io.output := Mux(io.op32, 
+        Mux(
+            op32res(31),
+            Cat(0xffffffffL.U(32.W), op32res),
+            Cat(0.U(32.W), op32res)
+        ),
+        MuxLookup(
+            io.ALUOp,
+            0.U(64.W),
+            Seq(
+                ALUT.ALU_ZERO -> 0.U(64.W),
+                ALUT.ALU_OUTA -> io.inputA,
+                ALUT.ALU_OUTB -> io.inputB,
+                ALUT.ALU_ADD -> (io.inputA + io.inputB),
+                ALUT.ALU_AND -> (io.inputA & io.inputB),
+                ALUT.ALU_OR -> (io.inputA | io.inputB),
+                ALUT.ALU_XOR -> (io.inputA ^ io.inputB),
+                ALUT.ALU_SLTU -> ((io.inputA < io.inputB).asUInt),
+                ALUT.ALU_SLT -> ((io.inputA.asSInt < io.inputB.asSInt).asUInt),
+                ALUT.ALU_SLL -> (io.inputA << shamt),
+                ALUT.ALU_SRL-> (io.inputA >> shamt),
+                ALUT.ALU_SRA -> ((io.inputA.asSInt >> shamt).asUInt),
+                ALUT.ALU_SUB -> (io.inputA - io.inputB)
+            )
         )
     )
 }

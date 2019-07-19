@@ -13,6 +13,7 @@ class ID_EX extends Module {
         val pci    = Input(UInt(64.W))
         val lsmi   = Input(UInt(4.W))
         val brti   = Input(UInt(3.W))
+        val op32i  = Input(Bool())
         val dregi  = Flipped(new DecoderReg)
 
         val immo   = Output(UInt(64.W))
@@ -21,6 +22,7 @@ class ID_EX extends Module {
         val pco    = Output(UInt(64.W))
         val lsmo   = Output(UInt(4.W))
         val brto   = Output(UInt(3.W))
+        val op32o  = Output(Bool())
         val drego  = new DecoderReg
     })
 
@@ -38,6 +40,7 @@ class ID_EX extends Module {
     val rdi   = RegInit(0.U(5.W))
     val lsm   = RegInit(0.U(4.W))
     val brt   = RegInit(0.U(3.W))
+    val op32  = RegInit(false.B)
 
     io.immo   := imm
     io.ALUOpo := ALUOp
@@ -53,6 +56,7 @@ class ID_EX extends Module {
     io.drego.rd_index  := rdi
     io.lsmo   := lsm
     io.brto   := brt
+    io.op32o  := op32
 
     when (io.en) {
         imm   := io.immi
@@ -69,6 +73,7 @@ class ID_EX extends Module {
         rdi   := io.dregi.rd_index
         lsm   := io.lsmi
         brt   := io.brti
+        op32  := io.op32i
 
         
         //printf("ID_EX  : ALUOp = %d\n", ALUOp)
