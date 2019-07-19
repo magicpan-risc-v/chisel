@@ -69,5 +69,7 @@ class ID_EX extends Module {
         rdi   := io.dregi.rd_index
         lsm   := io.lsmi
         brt   := io.brti
+
+        printf("ID_EX  : exet  = %d\n", exet)
     }
 }

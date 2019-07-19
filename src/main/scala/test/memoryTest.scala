@@ -30,7 +30,7 @@ class MemoryTest extends Module {
         program(rs+1.U),
         program(rs)
     )
-    
+
     when (!inited && io.init) {
         program(dindex) := io.dd
         dindex := dindex + 1.U

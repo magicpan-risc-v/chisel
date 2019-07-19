@@ -17,7 +17,7 @@ class IF_ID extends Module {
     })
 
     val ins  = RegInit(0.U(32.W))
-    val pc   = RegInit(0.U(64.W))
+    val pc   = RegInit((-4L.S(64.W)).asUInt)
     val insc = RegInit(0.U(32.W))
 
     io.inso  := ins
@@ -29,8 +29,8 @@ class IF_ID extends Module {
         pc   := io.pci
         insc := io.insci
 
-        printf("IF_ID  : ins  = %x\n", ins)
+        printf("IF_ID  : ins  = %d\n", ins)
         printf("IF_ID  : pc   = %d\n", pc)
-        printf("IF_ID  : insc = %x\n", insc)
+        printf("IF_ID  : insc = %d\n", insc)
     }
 }

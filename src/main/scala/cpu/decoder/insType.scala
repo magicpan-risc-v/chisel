@@ -42,7 +42,7 @@ class InsType extends Module {
         val exe_type = Output(UInt(3.W))
     })
 
-    io.exe_type := MuxLookup(
+    io.exe_type := Mux(io.ins(0), MuxLookup(
         io.ins(6,2),
         EXT.ALU,
         Seq(
@@ -66,9 +66,9 @@ class InsType extends Module {
             "b11100".U -> EXT.SYS, // CSRR* ECALL, EBREAK
             "b00011".U -> EXT.FENCE // FENCE[.I]
         )
-    )
+    ), EXT.ALU)
 
-    io.ins_type := MuxLookup(
+    io.ins_type :=  Mux(io.ins(0), MuxLookup(
         io.ins(6,2),
         INST.D_TYPE,
         Seq(
@@ -94,5 +94,5 @@ class InsType extends Module {
             FENCE, FENCE.I: 00011
             */
         )
-    )
+    ), INST.D_TYPE)
 }

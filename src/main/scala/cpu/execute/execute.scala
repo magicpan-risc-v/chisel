@@ -25,6 +25,7 @@ class Execute extends Module {
     val los = Module(new LoadStore)
     val bra = Module(new Branch)
     val alu_inputB = Mux(io.dreg.rs2_valid, io.dreg.rs2_value, io.imm)
+    val bvalid = io.exe_type === EXT.BRANCH
 
     alu.io.ALUOp  <> io.ALUOp
     alu.io.inputA <> io.dreg.rs1_value
@@ -38,6 +39,7 @@ class Execute extends Module {
     los.io.addr   <> io.addr
     los.io.data   <> io.data
     
+    bra.io.bvalid <> bvalid
     bra.io.branch_type <> io.br_type
     bra.io.input1 <> io.dreg.rs1_value
     bra.io.input2 <> io.dreg.rs2_value

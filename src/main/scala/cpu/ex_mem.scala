@@ -24,7 +24,7 @@ class EX_MEM extends Module {
     val wbrv = RegInit(false.B)
     val wbrd = RegInit(0.U(64.W))
     val wbri = RegInit(0.U(5.W))
-    val lsm  = RegInit(0.U(4.W))
+    val lsm  = RegInit(15.U(4.W))
     val addr = RegInit(0.U(64.W))
     val data = RegInit(0.U(64.W))
 
@@ -44,5 +44,13 @@ class EX_MEM extends Module {
         lsm   := io.lsmi
         addr  := io.addri
         data  := io.datai
+
+        printf("EX_MEM : nls   = %d\n", nls)
+        printf("EX_MEM : wbri  = %d\n", wbri)
+        printf("EX_MEM : wbrv  = %d\n", wbrv)
+        printf("EX_MEM : wbrd  = %d\n", wbrd)
+        printf("EX_MEM : lsm   = %d\n", lsm)
+        printf("EX_MEM : addr  = %d\n", addr)
+        printf("EX_MEM : data  = %d\n", data)
     }
 }
