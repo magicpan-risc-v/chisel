@@ -36,7 +36,7 @@ class MemoryCtrl extends Module {
     io.mem.waddr := io.addr
     io.mem.wdata := io.data
 
-    io.wreg.wbrv := io.ereg.wbrv
+    io.wreg.wbrv := io.ereg.wbrv || (io.lsm =/= MEMT.NOP && io.lsm(3))
     io.wreg.wbri := io.ereg.wbri
     io.wreg.wbrd := Mux(io.nls, io.mem.rdata, io.ereg.wbrd)
 }

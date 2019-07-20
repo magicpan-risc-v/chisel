@@ -31,26 +31,34 @@ class CPU extends Module {
     wrbk.io.reg   <> regc.io.w
 
     // RegSelector
-    exec.io.lreg  <> memc.io.wreg
+    exec.io.lreg  <> ex_mem.io.wrego
     exec.io.llreg <> mem_wb.io.wrego
 
     // IF
-    insr.io.jump  <> exec.io.jump
-    insr.io.jdest <> exec.io.jdest
-    insr.io.nls   <> ex_mem.io.nlso
+    insr.io.jump   <> exec.io.jump
+    insr.io.jdest  <> exec.io.jdest
+    insr.io.nls    <> ex_mem.io.nlso
+    insr.io.bubble <> insd.io.bubble
 
     // IF_ID
     if_id.io.en    <> io.en
     if_id.io.insci <> insr.io.insn
     if_id.io.insi  <> insr.io.ins
     if_id.io.pci   <> insr.io.pc
+    if_id.io.lvi   <> insd.io.load_valid
+    if_id.io.lii   <> insd.io.load_index
 
     if_id.io.pco   <> insr.io.lpc
     if_id.io.inso  <> insd.io.ins
     if_id.io.insco <> insr.io.insp
+    if_id.io.lvo   <> insd.io.llv
+    if_id.io.lio   <> insd.io.lli
 
     // ID_EX
     id_ex.io.en     <> io.en
+    id_ex.io.bid    <> insd.io.bubble
+    id_ex.io.bex    <> exec.io.jump
+
     id_ex.io.immi   <> insd.io.imm
     id_ex.io.ALUOpi <> insd.io.ALUOp
     id_ex.io.exeti  <> insd.io.exe_type

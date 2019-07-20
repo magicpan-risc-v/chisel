@@ -30,6 +30,8 @@ class Execute extends Module {
     val rsl = Module(new RegSelector)
     val alu_inputB = Mux(io.dreg.rs2_valid, io.dreg.rs2_value, io.imm)
     val bvalid = io.exe_type === EXT.BRANCH
+    val nls  = io.exe_type === EXT.LOS
+    val wbrv = rsl.io.sreg.rd_valid && !nls // 是否在EX阶段取到了写回值
 
     rsl.io.dreg   <> io.dreg
     rsl.io.lreg   <> io.lreg
@@ -39,7 +41,7 @@ class Execute extends Module {
     alu.io.inputA <> rsl.io.sreg.rs1_value
     alu.io.inputB <> alu_inputB
     alu.io.op32   <> io.op32
-    io.wreg.wbrv  <> rsl.io.sreg.rd_valid
+    io.wreg.wbrv  <> wbrv //rsl.io.sreg.rd_valid
     io.wreg.wbri  <> rsl.io.sreg.rd_index
     io.wreg.wbrd  <> alu.io.output
 
@@ -57,5 +59,5 @@ class Execute extends Module {
     bra.io.jump   <> io.jump
     bra.io.jdest  <> io.jdest
 
-    io.nls := io.exe_type === EXT.LOS
+    io.nls := nls
 }
