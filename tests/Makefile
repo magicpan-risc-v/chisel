@@ -5,7 +5,7 @@ insts := $(patsubst %.s,%.bin,$(wildcard *.s))
 all: ${insts}
 
 %.bin: %.s
-	./assembler $^
+	./assembler.sh $^
 
 clean:
 	rm -f *.bin *.o *.run
