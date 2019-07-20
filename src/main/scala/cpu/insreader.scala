@@ -35,7 +35,7 @@ class InsReader extends Module {
             pco(2), io.insp(63,32), io.insp(31,0)
         ), Mux(
             io.nls,
-            0x13.U(32.W), // NOP
+            0.U(32.W), // NOP
             Mux(
                 pco(2), io.mem.rdata(63,32), io.mem.rdata(31,0)
             )
