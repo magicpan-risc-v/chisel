@@ -53,12 +53,9 @@ class CSR extends Module {
     val uip       = "h044".U
     // emmmm..
     val mtimecmp  = "h321".U
-    val mtimecmph = "h322".U
     // time
     val time      = "hC01".U
-    val timeh     = "hC81".U
     val cycle     = "hC00".U
-    val cycleh    = "hC80".U
   }
 
   class MStatus extends Bundle {
