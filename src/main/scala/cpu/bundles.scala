@@ -42,7 +42,7 @@ class Memory extends Bundle {
     val wdata = Input(UInt(64.W))
 }
 
-// Instruction Decoder
+// Instruction Decoder <> RegFile
 class DecoderReg extends Bundle {
     val rs1_valid = Output(Bool())
     val rs2_valid = Output(Bool())
@@ -55,3 +55,9 @@ class DecoderReg extends Bundle {
     val rd_index  = Output(UInt(5.W))
 }
 
+// IF / MEM <-> MMU
+class MMUOp extends Bundle {
+  val mode  = Output(UInt(4.W))
+  val addr  = Output(UInt(64.W))
+  val rdata = Input(UInt(64.W))
+}
