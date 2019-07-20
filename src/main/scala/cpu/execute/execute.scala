@@ -12,7 +12,9 @@ class Execute extends Module {
         val br_type  = Input(UInt(3.W))
         val op32     = Input(Bool())
 
-        val dreg = Flipped(new DecoderReg)
+        val dreg  = Flipped(new DecoderReg)
+        val lreg  = Flipped(new WriteBackReg)
+        val llreg = Flipped(new WriteBackReg)
 
         val nls  = Output(Bool())
         val addr = Output(UInt(64.W)) // addr for load or write
@@ -25,26 +27,31 @@ class Execute extends Module {
     val alu = Module(new ALU)
     val los = Module(new LoadStore)
     val bra = Module(new Branch)
+    val rsl = Module(new RegSelector)
     val alu_inputB = Mux(io.dreg.rs2_valid, io.dreg.rs2_value, io.imm)
     val bvalid = io.exe_type === EXT.BRANCH
 
+    rsl.io.dreg   <> io.dreg
+    rsl.io.lreg   <> io.lreg
+    rsl.io.llreg  <> io.llreg
+
     alu.io.ALUOp  <> io.ALUOp
-    alu.io.inputA <> io.dreg.rs1_value
+    alu.io.inputA <> rsl.io.sreg.rs1_value
     alu.io.inputB <> alu_inputB
     alu.io.op32   <> io.op32
-    io.wreg.wbrv  <> io.dreg.rd_valid
-    io.wreg.wbri  <> io.dreg.rd_index
+    io.wreg.wbrv  <> rsl.io.sreg.rd_valid
+    io.wreg.wbri  <> rsl.io.sreg.rd_index
     io.wreg.wbrd  <> alu.io.output
 
-    los.io.dreg   <> io.dreg
+    los.io.dreg   <> rsl.io.sreg
     los.io.aluo   <> alu.io.output
     los.io.addr   <> io.addr
     los.io.data   <> io.data
     
     bra.io.bvalid <> bvalid
     bra.io.branch_type <> io.br_type
-    bra.io.input1 <> io.dreg.rs1_value
-    bra.io.input2 <> io.dreg.rs2_value
+    bra.io.input1 <> rsl.io.sreg.rs1_value
+    bra.io.input2 <> rsl.io.sreg.rs2_value
     bra.io.pc     <> io.pc
     bra.io.imm    <> io.imm
     bra.io.jump   <> io.jump

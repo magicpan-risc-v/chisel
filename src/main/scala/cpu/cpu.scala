@@ -30,6 +30,10 @@ class CPU extends Module {
     insd.io.regr  <> regc.io.r
     wrbk.io.reg   <> regc.io.w
 
+    // RegSelector
+    exec.io.lreg  <> memc.io.wreg
+    exec.io.llreg <> mem_wb.io.wrego
+
     // IF
     insr.io.jump  <> exec.io.jump
     insr.io.jdest <> exec.io.jdest
