@@ -16,6 +16,7 @@ class CPU extends Module {
     val wrbk = Module(new WriteBack)
     val regc = Module(new RegCtrl)
     val iomn = Module(new IOManager)
+    val if_id  = Module(new IF_ID)
     val id_ex  = Module(new ID_EX)
     val ex_mem = Module(new EX_MEM)
     val mem_wb = Module(new MEM_WB)
@@ -29,24 +30,43 @@ class CPU extends Module {
     insd.io.regr  <> regc.io.r
     wrbk.io.reg   <> regc.io.w
 
+    // RegSelector
+    exec.io.lreg  <> ex_mem.io.wrego
+    exec.io.llreg <> mem_wb.io.wrego
+
     // IF
-    insr.io.jump  <> exec.io.jump
-    insr.io.jdest <> exec.io.jdest
-    insr.io.nls   <> ex_mem.io.nlso
+    insr.io.jump   <> exec.io.jump
+    insr.io.jdest  <> exec.io.jdest
+    insr.io.nls    <> ex_mem.io.nlso
+    insr.io.bubble <> insd.io.bubble
 
     // IF_ID
-    insr.io.en    <> io.en
-    insr.io.ins   <> insd.io.ins
+    if_id.io.en    <> io.en
+    if_id.io.insci <> insr.io.insn
+    if_id.io.insi  <> insr.io.ins
+    if_id.io.pci   <> insr.io.pc
+    if_id.io.lvi   <> insd.io.load_valid
+    if_id.io.lii   <> insd.io.load_index
+
+    if_id.io.pco   <> insr.io.lpc
+    if_id.io.inso  <> insd.io.ins
+    if_id.io.insco <> insr.io.insp
+    if_id.io.lvo   <> insd.io.llv
+    if_id.io.lio   <> insd.io.lli
 
     // ID_EX
     id_ex.io.en     <> io.en
+    id_ex.io.bid    <> insd.io.bubble
+    id_ex.io.bex    <> exec.io.jump
+
     id_ex.io.immi   <> insd.io.imm
     id_ex.io.ALUOpi <> insd.io.ALUOp
     id_ex.io.exeti  <> insd.io.exe_type
-    id_ex.io.pci    <> insr.io.pc
+    id_ex.io.pci    <> if_id.io.pco
     id_ex.io.dregi  <> insd.io.dreg
     id_ex.io.lsmi   <> insd.io.ls_mode
     id_ex.io.brti   <> insd.io.br_type
+    id_ex.io.op32i  <> insd.io.op32
     
     id_ex.io.immo   <> exec.io.imm
     id_ex.io.ALUOpo <> exec.io.ALUOp
@@ -54,6 +74,7 @@ class CPU extends Module {
     id_ex.io.pco    <> exec.io.pc
     id_ex.io.drego  <> exec.io.dreg
     id_ex.io.brto   <> exec.io.br_type
+    id_ex.io.op32o  <> exec.io.op32
 
     // EX_MEM
     ex_mem.io.en    <> io.en

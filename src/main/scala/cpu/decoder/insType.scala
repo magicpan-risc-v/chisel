@@ -40,10 +40,27 @@ class InsType extends Module {
         val ins  = Input(UInt(32.W))
         val ins_type = Output(UInt(3.W))
         val exe_type = Output(UInt(3.W))
+        val uns  = Output(Bool())
+        val op32 = Output(Bool())
     })
 
-    io.exe_type := MuxLookup(
-        io.ins(6,2),
+    val funct3 = io.ins(14,12)
+    val opcode = io.ins(6,2)
+
+    io.op32 := (opcode === "b01110".U || opcode === "b00110".U)
+
+    io.uns := MuxLookup(
+        Cat(funct3, opcode),
+        false.B,
+        Seq(
+            "b11011000".U -> true.B, // BLTU
+            "b11111000".U -> true.B, // BGEU
+            "b01100100".U -> true.B  // SLTIU
+        )
+    )
+
+    io.exe_type := Mux(io.ins(0), MuxLookup(
+        opcode,
         EXT.ALU,
         Seq(
             "b01100".U -> EXT.ALU, // ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND
@@ -66,10 +83,10 @@ class InsType extends Module {
             "b11100".U -> EXT.SYS, // CSRR* ECALL, EBREAK
             "b00011".U -> EXT.FENCE // FENCE[.I]
         )
-    )
+    ), EXT.ALU)
 
-    io.ins_type := MuxLookup(
-        io.ins(6,2),
+    io.ins_type :=  Mux(io.ins(0), MuxLookup(
+        opcode,
         INST.D_TYPE,
         Seq(
             "b01100".U -> INST.R_TYPE, // ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND
@@ -94,5 +111,5 @@ class InsType extends Module {
             FENCE, FENCE.I: 00011
             */
         )
-    )
+    ), INST.D_TYPE)
 }

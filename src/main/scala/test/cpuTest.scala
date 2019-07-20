@@ -9,6 +9,8 @@ class CPUTest extends Module {
         val en   = Input(Bool())
         val init = Input(Bool()) 
         val dd   = Input(UInt(8.W))
+
+        val wbd  = Output(UInt(64.W))
     })
     val real_cpu = Module(new CPU)
     
@@ -19,6 +21,7 @@ class CPUTest extends Module {
     io.init       <> memt.io.init
     io.dd         <> memt.io.dd
 
+    io.wbd        <> real_cpu.io.mem.wdata
 }
 
 object CPUTest extends App {

@@ -15,6 +15,7 @@ object BRT {
 
 class BranchCtrl extends Module {
     val io =  IO(new Bundle {
+        val bvalid = Input(Bool())
         val branch_type = Input(UInt(3.W))
         val input1 = Input(UInt(64.W))
         val input2 = Input(UInt(64.W))
@@ -31,7 +32,7 @@ class BranchCtrl extends Module {
     val ltu = Mux(st, x(63), io.input2(63))
     val geu = !ltu
 
-    io.jump := MuxLookup(
+    io.jump := io.bvalid && MuxLookup(
         io.branch_type,
         false.B,
         Seq(
@@ -47,6 +48,7 @@ class BranchCtrl extends Module {
 
 class Branch extends Module {
     val io =  IO(new Bundle {
+        val bvalid = Input(Bool()) // WHETHER the instruction is a branch
         val branch_type = Input(UInt(3.W))
         val input1 = Input(UInt(64.W))
         val input2 = Input(UInt(64.W))
@@ -63,6 +65,7 @@ class Branch extends Module {
     bctrl.io.input1      <> io.input1
     bctrl.io.input2      <> io.input2
     bctrl.io.jump        <> io.jump
+    bctrl.io.bvalid      <> io.bvalid
 
     io.jdest := io.pc + io.imm
 }
