@@ -65,7 +65,6 @@ class CSR extends Module {
     val UXL = UInt(2.W)
     val TSR = Bool()
     val zero2 = UInt(9.W)
-    val TSR = Bool()
     val TW = Bool()
     val TVM = Bool()
     val MXR = Bool()

@@ -5,9 +5,9 @@ import chisel3.util._
 
 class IOManager extends Module {
     val io =  IO(new Bundle {
-        val mem_if  = new Memory // IF段的需求
-        val mem_mem = new Memory // MEM段的需求
-        val mem_out = Flipped(new Memory) // 传递给RAM的需求
+        val mem_if  = new RAMRead // IF段的需求
+        val mem_mem = new RAMOp // MEM段的需求
+        val mem_out = Flipped(new RAMOp) // 传递给RAM的需求
     })
 
     val nmn = io.mem_mem.mode === MEMT.NOP // no MEM need
