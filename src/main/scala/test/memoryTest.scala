@@ -31,6 +31,8 @@ class MemoryTest extends Module {
         program(rs)
     )
 
+    val serial_addr = 'b00000000011111111111111111111000'.U(64.W)
+
     when (!inited && io.init) {
         program(dindex) := io.dd
         dindex := dindex + 1.U
@@ -43,7 +45,6 @@ class MemoryTest extends Module {
     }
 
     when (inited && io.mem.mode === MEMT.SW) {
-        //printf("set ram[%d:%d] = %d\n", ws+3.U, ws, io.mem.wdata(31,0))
         for (i <- 0 until 4) {
             program(ws+i.U) := io.mem.wdata(i*8+7, i*8)
         }
@@ -56,7 +57,11 @@ class MemoryTest extends Module {
     }
 
     when (inited && io.mem.mode === MEMT.SB) {
-        program(ws) := io.mem.wdata(7,0)
+        when (ws === serial_addr) {
+            printf("%c", io.mem.wdata(7,0))
+        } .otherwise {
+            program(ws) := io.mem.wdata(7,0)
+        }
     }
 
     when (!inited && !io.init) {
