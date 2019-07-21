@@ -17,7 +17,7 @@
 #ifdef DEBUG
 #define GETCHAR_BLK(c) \
     {                  \
-        (c) = 'A';     \
+        (c) = '\n';     \
     }
 #define PUTCHAR(c)                                       \
     {                                                    \
