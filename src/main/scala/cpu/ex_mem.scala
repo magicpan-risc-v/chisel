@@ -45,8 +45,8 @@ class EX_MEM extends Module {
         addr  := io.addri
         data  := io.datai
 
-        /*
-        printf("EX_MEM : nls   = %d\n", nls)
+        
+        /*printf("EX_MEM : nls   = %d\n", nls)
         printf("EX_MEM : wbri  = %d\n", wbri)
         printf("EX_MEM : wbrv  = %d\n", wbrv)
         printf("EX_MEM : wbrd  = %d\n", wbrd)

@@ -42,8 +42,9 @@ class InsReader extends Module {
         )
     )
     val insn  = Mux(nread, io.mmu.rdata, io.insp)
+    val raddr = pco & 0xfffffffffffffff8L.S(64.W).asUInt
 
-    io.mmu.raddr := Mux(nread, (pco >> 2.U) << 2.U, 0.U(64.W))
+    io.mmu.raddr := Mux(nread, raddr, 0.U(64.W))
     io.mmu.mode  := Mux(nread, MEMT.LD, MEMT.NOP)
 
     io.pc   := pco
