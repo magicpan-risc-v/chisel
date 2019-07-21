@@ -68,7 +68,6 @@ class InsType extends Module {
 
             "b00000".U -> EXT.LOS, // LB, LH, LW, LBU, LHU, *LWU, *LD
             "b00100".U -> EXT.ALU, // ADDI, SLTI, SLTIU, XORI, ORI, ANDI, SLLI, SRLI, SRAI, *SLLI, *SRLI, *SRAI
-            "b11001".U -> EXT.ALU, // JALR
             "b00110".U -> EXT.ALU, // (*)ADDIW, SLLIW, SRLIW, SRAIW
 
             "b01000".U -> EXT.LOS, // SB, SH, SW, *SD
@@ -79,6 +78,7 @@ class InsType extends Module {
             "b01101".U -> EXT.LUI, // LUI
             
             "b11011".U -> EXT.JUMP, // JAL
+            "b11001".U -> EXT.JUMP, // JALR
             
             "b11100".U -> EXT.SYS, // CSRR* ECALL, EBREAK
             "b00011".U -> EXT.FENCE // FENCE[.I]

@@ -41,7 +41,7 @@ class IF_ID extends Module {
 
         
         //printf("IF_ID  : ins  = %d\n", ins)
-        //printf("IF_ID  : pc   = %d\n", pc)
+        //printf("IF_ID  : pc   = %x\n", pc)
         //printf("IF_ID  : insc = %d;%d\n", insc(63,32),insc(31,0))
     }
 }
