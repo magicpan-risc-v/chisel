@@ -1,7 +1,6 @@
 .global _start
 _start:
-    li x1,16
-    jr x1
-    li x2,16
-    li x3,4
-    li x4,4
+    lui a5, 0x800
+    addi a5,a5,-8
+    lb x2,0(a5)
+    add x1,x1,x2
