@@ -11,7 +11,7 @@ class MemoryTest extends Module {
         val dd   = Input(UInt(8.W)) // default data
     })
 
-    val program = Mem(0x8000, UInt(8.W))
+    val program = Mem(0x800000, UInt(8.W))
 
     val inited = RegInit(false.B)
     val dindex = RegInit(0.U(32.W))
@@ -43,7 +43,7 @@ class MemoryTest extends Module {
     }
 
     when (inited && io.mem.mode === MEMT.SW) {
-        printf("set ram[%d:%d] = %d\n", ws+3.U, ws, io.mem.wdata(31,0))
+        //printf("set ram[%d:%d] = %d\n", ws+3.U, ws, io.mem.wdata(31,0))
         for (i <- 0 until 4) {
             program(ws+i.U) := io.mem.wdata(i*8+7, i*8)
         }
