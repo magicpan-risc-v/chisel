@@ -31,7 +31,7 @@ class MemoryTest extends Module {
         program(rs)
     )
 
-    val serial_addr = 'b00000000011111111111111111111000'.U(64.W)
+    val serial_addr = "b00000000011111111111111111111000".U(64.W)
 
     when (!inited && io.init) {
         program(dindex) := io.dd
