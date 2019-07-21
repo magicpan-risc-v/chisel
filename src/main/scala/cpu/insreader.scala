@@ -47,7 +47,7 @@ class InsReader extends Module {
     io.mmu.raddr := Mux(nread, raddr, 0.U(64.W))
     io.mmu.mode  := Mux(nread, MEMT.LD, MEMT.NOP)
 
-    io.pc   := pco
+    io.pc   := Mux(io.jump && pco =/= io.jdest, io.jdest - 4.U, pco)
     io.ins  := ins
     io.insn := insn
 }
