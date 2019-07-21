@@ -1,6 +1,13 @@
 .global _start
 _start:
-    lui a5, 0x800
-    addi a5,a5,-8
-    lb x2,0(a5)
-    add x1,x1,x2
+    li s0,200
+    sw zero,-20(s0)
+    j what
+    li a4,7
+    nop
+    nop
+    nop
+what:
+    lw a5,-20(s0)
+    sext.w a4,a5
+    li a5,7

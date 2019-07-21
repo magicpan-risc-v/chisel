@@ -10,7 +10,7 @@ class ALUCPUTest(c: CPUTest) extends PeekPokeTester(c) {
     //RAMTest.loadFile(this, c, "monitor/monitor.bin")
     RAMTest.loadSerial(this, c, "tests/test-serial.txt")
     poke(c.io.en, true)
-    for (i <- 1 until 20) {
+    for (i <- 1 until 30) {
         //print("cycle "+i + " / ")
         step(1)
     }

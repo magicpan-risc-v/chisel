@@ -9,18 +9,21 @@ class InsReader extends Module {
         val jdest  = Input(UInt(64.W)) // EX jdest
         val nls    = Input(Bool()) // EX_MEM need load or store
         val lpc    = Input(UInt(64.W)) // last PC
-        val insp   = Input(UInt(64.W)) // pre-loaded instruction
+        val insp   = Input(UInt(64.W)) // pre-loaded 
+        val inspd  = Input(UInt(64.W))
+
         val bubble = Input(Bool()) // from decoder, still at the same PC
 
         val ins   = Output(UInt(32.W))
         val pc    = Output(UInt(64.W))
         val insn  = Output(UInt(64.W)) // 预读取的指令
+        val insnd = Output(UInt(64.W)) // 预读取的指令所在地址
 
         val mmu   = Flipped(new IF_MMU) // Self -> MMU
     })
 
     val npc   = io.lpc + 4.U
-    val cnrc  = !npc(2) || io.jump // can not read from cache
+    val cnrc  = io.jump || io.inspd(63,3) =/= npc(63,3) // can not read from cache
     val pco   = Mux(
         io.bubble, io.lpc,
         Mux(
@@ -46,8 +49,9 @@ class InsReader extends Module {
 
     io.mmu.raddr := Mux(nread, raddr, 0.U(64.W))
     io.mmu.mode  := Mux(nread, MEMT.LD, MEMT.NOP)
-
+    
     io.pc   := Mux(io.jump && pco =/= io.jdest, io.jdest - 4.U, pco)
     io.ins  := ins
     io.insn := insn
+    io.insnd := Mux(nread, raddr, io.inspd)
 }

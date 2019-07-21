@@ -46,6 +46,7 @@ class CPU extends Module {
     // IF_ID
     if_id.io.en    <> io.en
     if_id.io.insci <> insr.io.insn
+    if_id.io.icdi  <> insr.io.insnd
     if_id.io.insi  <> insr.io.ins
     if_id.io.pci   <> insr.io.pc
     if_id.io.lvi   <> insd.io.load_valid
@@ -54,6 +55,7 @@ class CPU extends Module {
     if_id.io.pco   <> insr.io.lpc
     if_id.io.inso  <> insd.io.ins
     if_id.io.insco <> insr.io.insp
+    if_id.io.icdo  <> insr.io.inspd
     if_id.io.lvo   <> insd.io.llv
     if_id.io.lio   <> insd.io.lli
 
