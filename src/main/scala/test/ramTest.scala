@@ -19,4 +19,17 @@ object RAMTest {
         tester.poke(c.io.init, 0)
         tester.step(1)
     }
+
+    def loadSerial(tester: PeekPokeTester[CPUTest], c: CPUTest, fname: String) {
+        val data = Files.readAllBytes(Paths.get(fname)).grouped(1).map(b => ByteBuffer.wrap(Array.fill(8-b.length)(0.toByte) ++ b.reverse).getLong).toSeq
+
+        tester.poke(c.io.init_serial, 1)
+        for (i <- data.indices) {
+            tester.poke(c.io.dd, data(i))
+            tester.step(1)
+            //println(data(i))
+        }
+        tester.poke(c.io.init_serial, 0)
+        tester.step(1)
+    }
 }

@@ -6,10 +6,11 @@ import chisel3.iotesters.{Driver, PeekPokeTester}
 
 class ALUCPUTest(c: CPUTest) extends PeekPokeTester(c) {
     poke(c.io.en, false)
-    //RAMTest.loadFile(this, c, "tests/test1.bin")
-    RAMTest.loadFile(this, c, "monitor/monitor.bin")
+    RAMTest.loadFile(this, c, "tests/test1.bin")
+    //RAMTest.loadFile(this, c, "monitor/monitor.bin")
+    RAMTest.loadSerial(this, c, "tests/test-serial.txt")
     poke(c.io.en, true)
-    for (i <- 1 until 10000) {
+    for (i <- 1 until 20) {
         //print("cycle "+i + " / ")
         step(1)
     }

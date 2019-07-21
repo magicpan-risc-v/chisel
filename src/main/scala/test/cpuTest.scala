@@ -8,6 +8,7 @@ class CPUTest extends Module {
     val io =  IO(new Bundle {
         val en   = Input(Bool())
         val init = Input(Bool()) 
+        val init_serial  = Input(Bool())
         val dd   = Input(UInt(8.W))
 
         val wbd  = Output(UInt(64.W))
@@ -19,6 +20,7 @@ class CPUTest extends Module {
     memt.io.mem   <> real_cpu.io.mem
     io.en         <> real_cpu.io.en
     io.init       <> memt.io.init
+    io.init_serial <> memt.io.init_serial
     io.dd         <> memt.io.dd
 
     io.wbd        <> real_cpu.io.mem.wdata
