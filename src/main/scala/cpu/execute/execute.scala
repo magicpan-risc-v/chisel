@@ -59,7 +59,7 @@ class Execute extends Module {
     io.wreg.wbrd  <> wbrd
 
     los.io.dreg   <> rsl.io.sreg
-    los.io.aluo   <> alu.io.output
+    los.io.imm    <> io.imm
     los.io.addr   <> io.addr
     los.io.data   <> io.data
     

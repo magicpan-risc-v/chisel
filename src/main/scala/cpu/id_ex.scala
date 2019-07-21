@@ -40,7 +40,7 @@ class ID_EX extends Module {
     val rs2d  = RegInit(0.U(64.W))
     val rdv   = RegInit(false.B)
     val rdi   = RegInit(0.U(5.W))
-    val lsm   = RegInit(0.U(4.W))
+    val lsm   = RegInit(15.U(4.W))
     val brt   = RegInit(0.U(3.W))
     val op32  = RegInit(false.B)
 
@@ -59,7 +59,7 @@ class ID_EX extends Module {
     io.drego.rs2_value := rs2d
     io.drego.rd_valid  := rdv
     io.drego.rd_index  := rdi
-    io.lsmo   := Mux(bubble, MEMT.NOP, lsm)
+    io.lsmo   := lsm
     io.brto   := brt
     io.op32o  := op32
 
@@ -76,12 +76,14 @@ class ID_EX extends Module {
         rs2d  := io.dregi.rs2_value &  bm
         rdv   := io.dregi.rd_valid  && bm(0)
         rdi   := io.dregi.rd_index  &  bm(4,0)
-        lsm   := Mux(bubble, MEMT.NOP, lsm)
+        lsm   := Mux(bubble, MEMT.NOP, io.lsmi)
         brt   := io.brti   & bm(2,0)
         op32  := io.op32i && bm(0)
 
         //printf("ID_EX  : ALUOp = %d\n", ALUOp)
         //printf("ID_EX  : imm   = %d\n", imm)
         //printf("ID_EX  : rs1d  = %d\n", rs1d)
+        //printf("ID_EX  : lsm   = %d\n", lsm)
+        //printf("ID_EX  : exet  = %d\n", exet)
     }
 }

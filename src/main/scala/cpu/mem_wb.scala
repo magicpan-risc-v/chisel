@@ -23,5 +23,9 @@ class MEM_WB extends Module {
         wbri  := io.wregi.wbri
         wbrv  := io.wregi.wbrv
         wbrd  := io.wregi.wbrd
+
+        //printf("MEM_WB : wbri = %d\n", wbri)
+        //printf("MEM_WB : wbrv = %d\n", wbrv)
+        //printf("MEM_WB : wbrd = %d\n", wbrd)
     }
 }

@@ -14,6 +14,7 @@ class ALUGen extends Module {
         io.ins_type,
         0.U(4.W),
         Seq(
+            INST.S_TYPE -> ALUT.ALU_ADD,
             INST.R_TYPE -> MuxLookup(
                 Cat(io.ins(30), io.ins(14,12)),
                 0.U(4.W),

@@ -43,6 +43,7 @@ class MemoryTest extends Module {
     }
 
     when (inited && io.mem.mode === MEMT.SW) {
+        printf("set ram[%d:%d] = %d\n", ws+3.U, ws, io.mem.wdata(31,0))
         for (i <- 0 until 4) {
             program(ws+i.U) := io.mem.wdata(i*8+7, i*8)
         }
@@ -66,7 +67,7 @@ class MemoryTest extends Module {
     }
 
     io.mem.rdata := Mux(
-        io.mem.mode === MEMT.LD && inited && rs < program_length,
+        io.mem.mode(3) && inited,
         MuxLookup(
             io.mem.mode,
             0.U(64.W),

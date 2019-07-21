@@ -46,13 +46,13 @@ class EX_MEM extends Module {
         data  := io.datai
 
         
-        /*printf("EX_MEM : nls   = %d\n", nls)
-        printf("EX_MEM : wbri  = %d\n", wbri)
-        printf("EX_MEM : wbrv  = %d\n", wbrv)
-        printf("EX_MEM : wbrd  = %d\n", wbrd)
-        printf("EX_MEM : lsm   = %d\n", lsm)
-        printf("EX_MEM : addr  = %d\n", addr)
-        printf("EX_MEM : data  = %d\n", data)
-        */
+        //printf("EX_MEM : nls   = %d\n", nls)
+        //printf("EX_MEM : wbri  = %d\n", wbri)
+        //printf("EX_MEM : wbrv  = %d\n", wbrv)
+        //printf("EX_MEM : wbrd  = %d\n", wbrd)
+        //printf("EX_MEM : lsm   = %d\n", lsm)
+        //printf("EX_MEM : addr  = %d\n", addr)
+        //printf("EX_MEM : data  = %d\n", data)
+        
     }
 }
