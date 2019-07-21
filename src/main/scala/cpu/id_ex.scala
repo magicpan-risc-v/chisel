@@ -44,7 +44,7 @@ class ID_EX extends Module {
     val brt   = RegInit(0.U(3.W))
     val op32  = RegInit(false.B)
 
-    val bubble = io.bid && io.bex
+    val bubble = io.bid || io.bex
     val bm     = Mux(bubble, 0.U(64.W), 0xffffffffffffffffL.S(64.W).asUInt)
 
     io.immo   := imm

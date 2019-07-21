@@ -8,7 +8,7 @@ class ALUCPUTest(c: CPUTest) extends PeekPokeTester(c) {
     poke(c.io.en, false)
     RAMTest.loadFile(this, c, "tests/test1.bin")
     poke(c.io.en, true)
-    for (i <- 1 until 1000) {
+    for (i <- 1 until 100) {
         //print("cycle "+i + " / ")
         step(1)
     }
