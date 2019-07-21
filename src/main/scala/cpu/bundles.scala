@@ -28,21 +28,30 @@ class WriteBackReg extends Bundle {
     val wbrd     = Output(UInt(64.W)) // write back reg data
 }
 
-
-// Read/Write Memory
-class Memory extends Bundle {
+class RAMRead extends Bundle {
     val mode = Input(UInt(4.W))
 
     // reader
     val raddr = Input(UInt(64.W))
     val rdata = Output(UInt(64.W))
-    
+}
+
+// Read/Write Memory
+class RAMOp extends RAMRead {
     // writer
     val waddr = Input(UInt(64.W))
     val wdata = Input(UInt(64.W))
 }
 
-// Instruction Decoder
+class IF_MMU extends RAMRead {
+  //val pageFault = Output(Bool())
+}
+
+class MEM_MMU extends RAMOp {
+  //val pageFault = Output(Bool())
+}
+
+// Instruction Decoder <> RegFile
 class DecoderReg extends Bundle {
     val rs1_valid = Output(Bool())
     val rs2_valid = Output(Bool())
@@ -55,3 +64,7 @@ class DecoderReg extends Bundle {
     val rd_index  = Output(UInt(5.W))
 }
 
+class CoreIO extends Bundle {
+  val iff = new RAMRead()
+  val mem = new RAMOp()
+}

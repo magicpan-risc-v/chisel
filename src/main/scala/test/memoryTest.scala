@@ -6,7 +6,7 @@ import chisel3.util._
 class MemoryTest extends Module {
 
     val io = IO(new Bundle {
-        val mem  = new Memory
+        val mem  = new RAMOp
         val init = Input(Bool())
         val dd   = Input(UInt(8.W)) // default data
     })

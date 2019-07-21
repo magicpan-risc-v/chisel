@@ -16,7 +16,7 @@ class InsReader extends Module {
         val pc    = Output(UInt(64.W))
         val insn  = Output(UInt(64.W)) // 预读取的指令
 
-        val mem   = Flipped(new Memory) // MEMC-IF
+        val mmu   = Flipped(new IF_MMU) // Self -> MMU
     })
 
     val npc   = io.lpc + 4.U
@@ -37,16 +37,14 @@ class InsReader extends Module {
             io.nls,
             0.U(32.W), // NOP
             Mux(
-                pco(2), io.mem.rdata(63,32), io.mem.rdata(31,0)
+                pco(2), io.mmu.rdata(63,32), io.mmu.rdata(31,0)
             )
         )
     )
-    val insn  = Mux(nread, io.mem.rdata, io.insp)
+    val insn  = Mux(nread, io.mmu.rdata, io.insp)
 
-    io.mem.raddr := Mux(nread, (pco >> 2.U) << 2.U, 0.U(64.W))
-    io.mem.mode  := Mux(nread, MEMT.LD, MEMT.NOP)
-    io.mem.waddr := 0.U(64.W)
-    io.mem.wdata := 0.U(64.W)
+    io.mmu.raddr := Mux(nread, (pco >> 2.U) << 2.U, 0.U(64.W))
+    io.mmu.mode  := Mux(nread, MEMT.LD, MEMT.NOP)
 
     io.pc   := pco
     io.ins  := ins
