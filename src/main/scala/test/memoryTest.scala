@@ -89,19 +89,16 @@ class MemoryTest extends Module {
                 MEMT.LD  -> data,
                 MEMT.LWU -> Cat(0.U(32.W), data(31,0)),
                 MEMT.LHU -> Cat(0.U(48.W), data(15,0)),
-                MEMT.LBU -> Cat(0.U(56.W), data(7,0)),
+                MEMT.LBU -> Mux(rs === serial_addr, serial(scnt), Cat(0.U(56.W), data(7,0))),
                 MEMT.LW  -> Cat(Mux(data(31), 0xffffffffL.U(32.W), 0.U(32.W)), data(31,0)),
                 MEMT.LH  -> Cat(Mux(data(15), 0xffffffffffffL.U(48.W), 0.U(48.W)), data(15,0)),
-                MEMT.LB  -> Mux(
-                    rs === serial_addr, serial(scnt),
-                    Cat(Mux(data(7), 0xffffffffffffffL.U(56.W), 0.U(56.W)), data(7,0))
-                )
+                MEMT.LB  -> Cat(Mux(data(7), 0xffffffffffffffL.U(56.W), 0.U(56.W)), data(7,0))
             )
         ),
         0.U(64.W)
     )
 
-    when (inited && io.mem.mode === MEMT.LB && rs === serial_addr) {
+    when (inited && io.mem.mode === MEMT.LBU && rs === serial_addr) {
         printf("%c", serial(scnt))
         scnt := scnt + 1.U
     }
