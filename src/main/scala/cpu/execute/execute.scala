@@ -28,7 +28,7 @@ class Execute extends Module {
     val los = Module(new LoadStore)
     val bra = Module(new Branch)
     val rsl = Module(new RegSelector)
-    val alu_inputB = Mux(io.dreg.rs2_valid, io.dreg.rs2_value, io.imm)
+    val alu_inputB = Mux(rsl.io.sreg.rs2_valid, rsl.io.sreg.rs2_value, io.imm)
     val bvalid = io.exe_type === EXT.BRANCH
     val nls  = io.exe_type === EXT.LOS
     val wbrv = rsl.io.sreg.rd_valid && !nls // 是否在EX阶段取到了写回值

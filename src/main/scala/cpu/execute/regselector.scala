@@ -24,7 +24,7 @@ class RegSelector extends Module {
         io.lreg.wbrv && io.lreg.wbri === io.dreg.rs1_index,
         io.lreg.wbrd,
         Mux(
-            io.llreg.wbrv && io.lreg.wbri === io.dreg.rs1_index,
+            io.llreg.wbrv && io.llreg.wbri === io.dreg.rs1_index,
             io.llreg.wbrd,
             io.dreg.rs1_value
         )
@@ -34,7 +34,7 @@ class RegSelector extends Module {
         io.lreg.wbrv && io.lreg.wbri === io.dreg.rs2_index,
         io.lreg.wbrd,
         Mux(
-            io.llreg.wbrv && io.lreg.wbri === io.dreg.rs2_index,
+            io.llreg.wbrv && io.llreg.wbri === io.dreg.rs2_index,
             io.llreg.wbrd,
             io.dreg.rs2_value
         )
