@@ -23,7 +23,8 @@ class IF_ID extends Module {
     })
 
     val ins  = RegInit(0.U(32.W))
-    val pc   = RegInit((-4L.S(64.W)).asUInt)
+    //val pc   = RegInit((-4L.S(64.W)).asUInt)
+    val pc   = RegInit((4092L.S(64.W)).asUInt)
     val insc = RegInit(0.U(64.W))
     val icd  = RegInit(-1L.S(64.W).asUInt)
     val lv   = RegInit(false.B)
@@ -47,6 +48,6 @@ class IF_ID extends Module {
         
         //printf("IF_ID  : ins  = %d\n", ins)
         //printf("IF_ID  : pc   = %x\n", pc)
-        //printf("IF_ID  : insc = %d;%d\n", insc(63,32),insc(31,0))
+        //printf("IF_ID  : insc = %x;%x\n", insc(63,32),insc(31,0))
     }
 }

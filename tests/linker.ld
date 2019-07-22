@@ -2,9 +2,11 @@ OUTPUT_ARCH(riscv)
 ENTRY(_start)
 
 SECTIONS {
-    . = 0x80000000;
+    . = 0x0;
 
     .text : {
+		BYTE(0)
+		. = 4096;
         *(.text._start)
         *(.text .stub .text.* .gnu.linkonce.t.*)
     }
