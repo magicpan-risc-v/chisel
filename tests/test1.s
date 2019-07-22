@@ -1,13 +1,8 @@
 .global _start
 _start:
-    li s0,200
-    sw zero,-20(s0)
-    j what
-    li a4,7
-    nop
-    nop
-    nop
-what:
-    lw a5,-20(s0)
-    sext.w a4,a5
-    li a5,7
+    lui a5,0x800
+    addi a5,a5,-8
+    li a4,0x41
+    sb a4, 0(a5)
+    sb a4, 0(a5)
+    sb a4, 0(a5)

@@ -25,7 +25,7 @@ class IF_ID extends Module {
     val ins  = RegInit(0.U(32.W))
     val pc   = RegInit((-4L.S(64.W)).asUInt)
     val insc = RegInit(0.U(64.W))
-    val icd  = RegInit(0.U(64.W))
+    val icd  = RegInit(-1L.S(64.W).asUInt)
     val lv   = RegInit(false.B)
     val li   = RegInit(0.U(5.W))
 
