@@ -1,3 +1,1 @@
 [submodule "tests/isa"]
-	path = tests/rv_test
-	url = https://github.com/magicpan-risc-v/riscv-tests/tree/no_csr
