@@ -1,1 +1,3 @@
-[submodule "tests/isa"]
+[submodule "tests/rv_tests"]
+	path = tests/rv_tests
+	url = https://github.com/magicpan-risc-v/riscv-tests
