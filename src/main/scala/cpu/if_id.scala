@@ -46,7 +46,7 @@ class IF_ID extends Module {
         li   := io.lii
 
         
-        //printf("IF_ID  : ins  = %d\n", ins)
+        //printf("IF_ID  : ins  = %x\n", ins)
         //printf("IF_ID  : pc   = %x\n", pc)
         //printf("IF_ID  : insc = %x;%x\n", insc(63,32),insc(31,0))
     }

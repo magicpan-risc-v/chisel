@@ -81,8 +81,9 @@ class ID_EX extends Module {
         op32  := io.op32i && bm(0)
 
         //printf("ID_EX  : ALUOp = %d\n", ALUOp)
-        //printf("ID_EX  : imm   = %d\n", imm)
-        //printf("ID_EX  : rs1d  = %d\n", rs1d)
+        //printf("ID_EX  : imm   = %x\n", imm)
+        //printf("ID_EX  : op32  = %d\n", op32)
+        //printf("ID_EX  : rs1d  = %x\n", rs1d)
         //printf("ID_EX  : lsm   = %d\n", lsm)
         //printf("ID_EX  : exet  = %d\n", exet)
     }
