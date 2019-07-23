@@ -104,8 +104,9 @@ class InsType extends Module {
             "b00101".U -> INST.U_TYPE, // AUIPC
             "b01101".U -> INST.U_TYPE, // LUI
             
-            "b11011".U -> INST.J_TYPE // JAL
+            "b11011".U -> INST.J_TYPE, // JAL
 
+            "b11100".U -> INST.I_TYPE  // CSRR* ECALL, EBREAK
             /*
             CSRR* ECALL, EBREAK: 11100
             FENCE, FENCE.I: 00011

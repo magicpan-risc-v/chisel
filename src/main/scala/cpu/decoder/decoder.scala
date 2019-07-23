@@ -52,6 +52,7 @@ class Decoder extends Module {
         MEMT.NOP
     )
     val bubble    = io.llv && ((rs1_valid && io.lli === rs1_index) || (rs2_valid && io.lli === rs2_index))
+    val csr_addr  = io.ins(31,20)
 
     io.dreg.rs2_valid := rs2_valid
     io.dreg.rs1_valid := rs1_valid
