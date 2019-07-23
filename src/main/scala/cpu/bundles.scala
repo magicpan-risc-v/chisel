@@ -68,3 +68,9 @@ class CoreIO extends Bundle {
   val iff = new RAMRead()
   val mem = new RAMOp()
 }
+
+class ID_CSR extends Bundle {
+  val addr = Output(UInt(12.W)) // 要读取的CSR的编号
+  val rdata = Input(UInt(64.W)) // 读取到的CSR的内容
+  val priv  = Input(UInt(2.W)) // 当前的特权级
+}

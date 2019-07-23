@@ -21,6 +21,7 @@ class CPU extends Module {
     val id_ex  = Module(new ID_EX)
     val ex_mem = Module(new EX_MEM)
     val mem_wb = Module(new MEM_WB)
+    val csr    = Module(new CSR)
     
     // IO
     insr.io.mmu    <> mmu.io.insr
@@ -100,8 +101,8 @@ class CPU extends Module {
     mem_wb.io.wregi <> memc.io.wreg
     mem_wb.io.wrego <> wrbk.io.wreg
 
-    //// 貌似一定要在writeback连一根线，不然这些模块都会被优化掉
-    //io.wbd        <> wrbk.io.reg.wd//insd.io.dreg.rs2_valid
+    // CSR
+    insd.io.csr     <> csr.io.id
 }
 
 object CPU extends App {

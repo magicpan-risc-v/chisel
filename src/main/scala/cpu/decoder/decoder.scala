@@ -21,6 +21,8 @@ class Decoder extends Module {
 
         val regr = Flipped(new RegReader)
         val dreg = new DecoderReg
+
+        val csr = new ID_CSR
     })
 
     val itype = Module(new InsType)
@@ -67,4 +69,6 @@ class Decoder extends Module {
     io.load_valid     := ls_mode =/= MEMT.NOP && ls_mode(3)
     io.load_index     := rd_index
     io.bubble         := bubble
+
+    io.csr.addr       := 0.U  // TODO
 }
