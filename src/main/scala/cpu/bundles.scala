@@ -74,3 +74,8 @@ class ID_CSR extends Bundle {
   val rdata = Input(UInt(64.W)) // 读取到的CSR的内容
   val priv  = Input(UInt(2.W)) // 当前的特权级
 }
+
+class LastLoadInfo extends Bundle {
+  val valid = Output(Bool())
+  val index = Output(UInt(5.W))
+}

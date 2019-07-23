@@ -25,7 +25,7 @@ class Execute extends Module {
     })
 
     val alu = Module(new ALU)
-    val los = Module(new LoadStore)
+    //val los = Module(new LoadStore)
     val bra = Module(new Branch)
     val rsl = Module(new RegSelector)
 
@@ -58,10 +58,12 @@ class Execute extends Module {
     io.wreg.wbri  <> rsl.io.sreg.rd_index
     io.wreg.wbrd  <> wbrd
 
-    los.io.dreg   <> rsl.io.sreg
-    los.io.imm    <> io.imm
-    los.io.addr   <> io.addr
-    los.io.data   <> io.data
+    //los.io.dreg   <> rsl.io.sreg
+    //los.io.imm    <> io.imm
+    //los.io.addr   <> io.addr
+    //los.io.data   <> io.data
+    io.addr := rsl.io.sreg.rs1_value + io.imm
+    io.data := rsl.io.sreg.rs2_value
     
     bra.io.bvalid <> bvalid
     bra.io.branch_type <> io.br_type

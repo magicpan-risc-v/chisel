@@ -6,8 +6,9 @@ import chisel3.util._
 class Decoder extends Module {
     val io =  IO(new Bundle {
         val ins  = Input(UInt(32.W))
-        val llv  = Input(Bool())
-        val lli  = Input(UInt(5.W))
+
+        val lastload = Flipped(new LastLoadInfo)
+        val loadinfo = new LastLoadInfo
 
         val imm  = Output(UInt(64.W))
         val ALUOp    = Output(UInt(4.W))
@@ -15,8 +16,6 @@ class Decoder extends Module {
         val ls_mode  = Output(UInt(4.W))
         val br_type  = Output(UInt(3.W))
         val op32     = Output(Bool())
-        val load_valid = Output(Bool())
-        val load_index = Output(UInt(5.W))
         val bubble   = Output(Bool()) // IF: bubble
 
         val regr = Flipped(new RegReader)
@@ -51,7 +50,7 @@ class Decoder extends Module {
         Cat(!io.ins(5), io.ins(14,12)),
         MEMT.NOP
     )
-    val bubble    = io.llv && ((rs1_valid && io.lli === rs1_index) || (rs2_valid && io.lli === rs2_index))
+    val bubble    = io.lastload.valid && ((rs1_valid && io.lastload.index === rs1_index) || (rs2_valid && io.lastload.index === rs2_index))
     val csr_addr  = io.ins(31,20)
 
     io.dreg.rs2_valid := rs2_valid
@@ -67,8 +66,8 @@ class Decoder extends Module {
 
     io.ls_mode        := ls_mode
     io.br_type        := io.ins(14,12)
-    io.load_valid     := ls_mode =/= MEMT.NOP && ls_mode(3)
-    io.load_index     := rd_index
+    io.loadinfo.valid     := ls_mode =/= MEMT.NOP && ls_mode(3)
+    io.loadinfo.index     := rd_index
     io.bubble         := bubble
 
     io.csr.addr       := 0.U  // TODO
