@@ -4,3 +4,4 @@ _start:
 	csrrw x2, mie, x1
 	csrrw x3, mie, x1
 	csrrw x4, mie, x0
+	csrwi mie, 12

@@ -40,16 +40,20 @@ class InsType extends Module {
         val ins  = Input(UInt(32.W))
         val ins_type = Output(UInt(3.W))
         val exe_type = Output(UInt(3.W))
-        //val uns  = Output(Bool())
         val op32 = Output(Bool())
         val csr_cal = Output(Bool())    // 当前这条CSR指令是否需要进行计算（CSRWR不需要）
         val csr_imm = Output(Bool())    // 当前这条CSR指令是否直接使用立即数进行运算
+        val is_ecall = Output(Bool())   // 当前这条指令是否为ecall
+        val is_ebreak = Output(Bool())  // 当前这条指令是否为ebreak
     })
 
     val funct3 = io.ins(14,12)
     val opcode = io.ins(6,2)
 
     io.op32 := (opcode === "b01110".U || opcode === "b00110".U) // 操作数是否是32位
+
+    io.is_ecall := io.ins === "h00000073".U(32.W)
+    io.is_ebreak := io.ins === "h00100073".U(32.W)
 
     io.csr_cal := MuxLookup(
         Cat(funct3, opcode),
