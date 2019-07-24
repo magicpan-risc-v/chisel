@@ -108,4 +108,16 @@ class CSR extends Module {
     ADDR.cycle -> mtime
   ))
   io.id.priv := prv
+
+  val csr_ids = ADDR.getClass.getDeclaredFields.map(f => {
+    f.setAccessible(true)
+    f.get(ADDR).asInstanceOf[UInt]
+  })
+  when(io.wrOp.valid) {
+    for(i <- csr_ids) {
+      when(i === io.wrOp.csr_idx) {
+        csr(i) := io.wrOp.csr_data
+      }
+    }
+  }
 }
