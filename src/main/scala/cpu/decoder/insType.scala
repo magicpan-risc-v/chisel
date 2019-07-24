@@ -40,7 +40,7 @@ class InsType extends Module {
         val ins  = Input(UInt(32.W))
         val ins_type = Output(UInt(3.W))
         val exe_type = Output(UInt(3.W))
-        val uns  = Output(Bool())
+        //val uns  = Output(Bool())
         val op32 = Output(Bool())
         val csr_cal = Output(Bool())    // 当前这条CSR指令是否需要进行计算（CSRWR不需要）
         val csr_imm = Output(Bool())    // 当前这条CSR指令是否直接使用立即数进行运算
@@ -51,6 +51,7 @@ class InsType extends Module {
 
     io.op32 := (opcode === "b01110".U || opcode === "b00110".U) // 操作数是否是32位
 
+<<<<<<< HEAD
     io.uns := MuxLookup(
         Cat(funct3, opcode),
         false.B,
@@ -82,6 +83,9 @@ class InsType extends Module {
         )
     )
 
+=======
+    //io.uns := false.B
+>>>>>>> dev
     io.exe_type := Mux(io.ins(0), MuxLookup(
         opcode,
         EXT.ALU,

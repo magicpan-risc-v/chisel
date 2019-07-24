@@ -27,13 +27,14 @@ class ALU extends Module {
         val inputB = Input(UInt(64.W))
         val output = Output(UInt(64.W))
     })
+    
     val shamt = io.inputB(5,0)
     val shamt32 = io.inputB(4,0)
     val inputA32 = io.inputA(31,0)
     val inputB32 = io.inputB(31,0)
     val op32res = MuxLookup(
         io.ALUOp,
-        0.U(64.W),
+        0.U(32.W),
         Seq(
             ALUT.ALU_ADD -> (inputA32 + inputB32),
             ALUT.ALU_SLL -> (inputA32 << shamt32),
@@ -43,11 +44,7 @@ class ALU extends Module {
         )
     )
     io.output := Mux(io.op32, 
-        Mux(
-            op32res(31),
-            Cat(0xffffffffL.U(32.W), op32res),
-            Cat(0.U(32.W), op32res)
-        ),
+        Cat(Fill(32, op32res(31)), op32res(31,0)),
         MuxLookup(
             io.ALUOp,
             0.U(64.W),
@@ -68,6 +65,16 @@ class ALU extends Module {
             )
         )
     )
+    /*when (true.B) {
+        printf("ALU:  inputA  = %x\n", io.inputA)
+        printf("ALU:  inputB  = %x\n", io.inputB)
+        printf("ALU  :op32    = %x\n", io.op32)
+        printf("ALU  :ALUOp   = %x\n", io.ALUOp)
+        printf("ALU  :res     = %x\n", io.output)
+        printf("ALU  :inputA32  = %x\n", inputA32)
+        printf("ALU  :inputB32  = %x\n", inputB32)
+        printf("ALU  :op32res  = %x\n", op32res)
+    }*/
 }
 
 object ALU extends App {

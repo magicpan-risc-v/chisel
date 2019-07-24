@@ -37,7 +37,7 @@ class Decoder extends Module {
     itype.io.ins_type <> immg.io.ins_type
     itype.io.ins_type <> alug.io.ins_type
     immg.io.imm       <> io.imm
-    immg.io.uns       <> itype.io.uns
+    //immg.io.uns       <> itype.io.uns
     alug.io.ALUOp     <> io.ALUOp
     io.exe_type       <> itype.io.exe_type
     io.op32           <> itype.io.op32
@@ -47,7 +47,7 @@ class Decoder extends Module {
     val rd_index  = io.ins(11,7)
     val rs2_valid = (itype.io.ins_type === INST.R_TYPE || itype.io.ins_type === INST.S_TYPE || itype.io.ins_type === INST.B_TYPE)
     val rs1_valid = rs2_valid || itype.io.ins_type === INST.I_TYPE
-    val rd_valid  = (itype.io.ins_type === INST.R_TYPE || itype.io.ins_type === INST.I_TYPE || itype.io.ins_type === INST.U_TYPE || itype.io.ins_type === INST.J_TYPE)
+    val rd_valid  = (itype.io.ins_type === INST.R_TYPE || itype.io.ins_type === INST.I_TYPE || itype.io.ins_type === INST.U_TYPE || itype.io.ins_type === INST.J_TYPE) && (rd_index =/= 0.U)
     val ls_mode   = Mux(
         itype.io.exe_type === EXT.LOS,
         Cat(!io.ins(5), io.ins(14,12)),
