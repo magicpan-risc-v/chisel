@@ -68,3 +68,30 @@ class CoreIO extends Bundle {
   val iff = new RAMRead()
   val mem = new RAMOp()
 }
+
+class ID_CSR extends Bundle {
+  val addr = Output(UInt(12.W)) // 要读取的CSR的编号
+  val rdata = Input(UInt(64.W)) // 读取到的CSR的内容
+  val priv  = Input(UInt(2.W)) // 当前的特权级
+}
+
+class WrCsrReg extends Bundle {
+  val valid = Input(Bool())
+  val csr_idx = Input(UInt(12.W))
+  val csr_data = Input(UInt(64.W))
+}
+
+class CsrWriteBack extends Bundle {
+  val valid = Input(Bool())
+  val index = Input(UInt(12.W))
+  val data  = Input(UInt(64.W))
+}
+
+class LastLoadInfo extends Bundle {
+  val valid = Output(Bool())
+  val index = Output(UInt(5.W))
+}
+
+class MEM_CSR extends Bundle {
+  val wrCSROp = Output(new WrCsrReg)
+}

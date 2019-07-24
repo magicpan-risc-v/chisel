@@ -40,16 +40,42 @@ class InsType extends Module {
         val ins  = Input(UInt(32.W))
         val ins_type = Output(UInt(3.W))
         val exe_type = Output(UInt(3.W))
-        //val uns  = Output(Bool())
         val op32 = Output(Bool())
+        val csr_cal = Output(Bool())    // 当前这条CSR指令是否需要进行计算（CSRWR不需要）
+        val csr_imm = Output(Bool())    // 当前这条CSR指令是否直接使用立即数进行运算
+        val is_ecall = Output(Bool())   // 当前这条指令是否为ecall
+        val is_ebreak = Output(Bool())  // 当前这条指令是否为ebreak
     })
 
     val funct3 = io.ins(14,12)
     val opcode = io.ins(6,2)
 
-    io.op32 := (opcode === "b01110".U || opcode === "b00110".U)
+    io.op32 := (opcode === "b01110".U || opcode === "b00110".U) // 操作数是否是32位
 
-    //io.uns := false.B
+    io.is_ecall := io.ins === "h00000073".U(32.W)
+    io.is_ebreak := io.ins === "h00100073".U(32.W)
+
+    io.csr_cal := MuxLookup(
+        Cat(funct3, opcode),
+        false.B,
+        Seq(
+            "b01011100".U -> true.B,  // CSRRS
+            "b01111100".U -> true.B,  // CSRRC
+            "b01011100".U -> true.B,  // CSRRSI
+            "b11111100".U -> true.B   // CSRRCI
+        )
+    )
+
+    io.csr_imm := MuxLookup(
+        Cat(funct3, opcode),
+        false.B,
+        Seq(
+            "b10111100".U -> true.B,  // CSRRWI
+            "b11011100".U -> true.B,  // CSRRSI
+            "b11111100".U -> true.B   // CSRRCI
+        )
+    )
+
     io.exe_type := Mux(io.ins(0), MuxLookup(
         opcode,
         EXT.ALU,
@@ -95,8 +121,9 @@ class InsType extends Module {
             "b00101".U -> INST.U_TYPE, // AUIPC
             "b01101".U -> INST.U_TYPE, // LUI
             
-            "b11011".U -> INST.J_TYPE // JAL
+            "b11011".U -> INST.J_TYPE, // JAL
 
+            "b11100".U -> INST.I_TYPE  // CSRR* ECALL, EBREAK
             /*
             CSRR* ECALL, EBREAK: 11100
             FENCE, FENCE.I: 00011

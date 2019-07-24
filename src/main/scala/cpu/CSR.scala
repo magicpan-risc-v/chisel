@@ -5,9 +5,15 @@ import chisel3.util._
 
 class CSR extends Module {
   val io = IO(new Bundle {
+    val id = Flipped(new ID_CSR)
+    val wrOp = new WrCsrReg
   })
 
-  val csr = Mem(0x400, UInt(32.W))  // all csrs
+  val nextPrv = Wire(UInt(2.W))
+  val prv     = RegNext(nextPrv, init=Priv.M)
+  nextPrv := prv
+
+  val csr = Mem(0x400, UInt(64.W))  // all csrs
   object ADDR {
     // M Info
     val mvendorid = "hF11".U
@@ -83,5 +89,36 @@ class CSR extends Module {
     val old_HIE = Bool()
     val SIE = Bool()
     val UIE = Bool()
+  }
+  val mstatus = RegInit(0.U.asTypeOf(new MStatus))
+  val mtime   = RegInit(0.U(64.W))
+  mtime := mtime + 1.U
+
+  io.id.rdata := MuxLookup(io.id.addr, csr(io.id.addr), Seq(
+    ADDR.mvendorid -> 2333.U(64.W),
+    ADDR.marchid -> "h8fffffff".U(32.W),
+    ADDR.mimpid -> 2333.U(64.W),
+    ADDR.mhartid -> 0.U(64.W),
+    ADDR.misa -> 0.U(64.W),
+    ADDR.mstatus -> mstatus.asUInt,
+    ADDR.sstatus -> mstatus.asUInt,
+    ADDR.sie -> csr(ADDR.mie),
+    ADDR.sip -> csr(ADDR.mip),
+    ADDR.time -> mtime,
+    ADDR.cycle -> mtime
+  ))
+  io.id.priv := prv
+
+  val csr_ids = ADDR.getClass.getDeclaredFields.map(f => {
+    f.setAccessible(true)
+    f.get(ADDR).asInstanceOf[UInt]
+  })
+  when(io.wrOp.valid) {
+    for(i <- csr_ids) {
+      when(i === io.wrOp.csr_idx) {
+        csr(i) := io.wrOp.csr_data
+        printf("set csr[%d] = %x\n", i, io.wrOp.csr_data)
+      }
+    }
   }
 }
