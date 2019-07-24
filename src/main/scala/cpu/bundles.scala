@@ -81,6 +81,12 @@ class WrCsrReg extends Bundle {
   val csr_data = Input(UInt(64.W))
 }
 
+class CsrWriteBack extends Bundle {
+  val valid = Input(Bool())
+  val index = Input(UInt(12.W))
+  val data  = Input(UInt(64.W))
+}
+
 class LastLoadInfo extends Bundle {
   val valid = Output(Bool())
   val index = Output(UInt(5.W))

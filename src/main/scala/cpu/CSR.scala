@@ -117,6 +117,7 @@ class CSR extends Module {
     for(i <- csr_ids) {
       when(i === io.wrOp.csr_idx) {
         csr(i) := io.wrOp.csr_data
+        printf("set csr[%d] = %x\n", i, io.wrOp.csr_data)
       }
     }
   }

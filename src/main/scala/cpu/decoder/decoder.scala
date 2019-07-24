@@ -25,6 +25,10 @@ class Decoder extends Module {
         val csr_content = Flipped(new WrCsrReg)
         val csr_cal = Output(Bool())
         val csr_imm = Output(Bool())
+
+        val csr_from_ex = new WrCsrReg
+        val csr_from_mem = new WrCsrReg
+        val csr_from_wb = new WrCsrReg
     })
 
     val itype = Module(new InsType)
@@ -79,5 +83,18 @@ class Decoder extends Module {
     io.csr_cal        := itype.io.csr_cal
     io.csr_content.valid    := csr_valid
     io.csr_content.csr_idx     := io.ins(31,20)
-    io.csr_content.csr_data := io.csr.rdata
+
+    io.csr_content.csr_data := Mux(
+        io.csr.addr === io.csr_from_ex.csr_idx && io.csr_from_ex.valid,
+        io.csr_from_ex.csr_data,
+        Mux(
+            io.csr.addr === io.csr_from_mem.csr_idx && io.csr_from_mem.valid,
+            io.csr_from_mem.csr_data,
+            Mux(
+                io.csr.addr === io.csr_from_wb.csr_idx && io.csr_from_wb.valid,
+                io.csr_from_wb.csr_data,
+                io.csr.rdata
+            )
+        )
+    )
 }

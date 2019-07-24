@@ -108,6 +108,11 @@ class CPU extends Module {
     mem_wb.io.wrego <> wrbk.io.wreg
     mem_wb.io.csr_wb_o <> csr.io.wrOp
 
+    // CSR round
+    insd.io.csr_from_ex <> exec.io.wcsr
+    insd.io.csr_from_mem <> ex_mem.io.csr_wb_o
+    insd.io.csr_from_wb <> mem_wb.io.csr_wb_o
+
     // CSR
     insd.io.csr     <> csr.io.id
 }
