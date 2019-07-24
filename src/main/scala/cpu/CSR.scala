@@ -6,6 +6,7 @@ import chisel3.util._
 class CSR extends Module {
   val io = IO(new Bundle {
     val id = Flipped(new ID_CSR)
+    val wrOp = new WrCsrReg
   })
 
   val nextPrv = Wire(UInt(2.W))

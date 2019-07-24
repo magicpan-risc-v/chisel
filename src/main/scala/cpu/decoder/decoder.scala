@@ -22,6 +22,9 @@ class Decoder extends Module {
         val dreg = new DecoderReg
 
         val csr = new ID_CSR
+        val csr_content = Flipped(new WrCsrReg)
+        val csr_cal = Output(Bool())
+        val csr_imm = Output(Bool())
     })
 
     val itype = Module(new InsType)
@@ -51,7 +54,8 @@ class Decoder extends Module {
         MEMT.NOP
     )
     val bubble    = io.lastload.valid && ((rs1_valid && io.lastload.index === rs1_index) || (rs2_valid && io.lastload.index === rs2_index))
-    val csr_addr  = io.ins(31,20)
+
+    val csr_valid = itype.io.exe_type === EXT.SYS && io.ins(14,12).orR
 
     io.dreg.rs2_valid := rs2_valid
     io.dreg.rs1_valid := rs1_valid
@@ -70,5 +74,10 @@ class Decoder extends Module {
     io.loadinfo.index     := rd_index
     io.bubble         := bubble
 
-    io.csr.addr       := 0.U  // TODO
+    io.csr.addr       := io.ins(31,20)
+    io.csr_imm        := itype.io.csr_imm
+    io.csr_cal        := itype.io.csr_cal
+    io.csr_content.valid    := csr_valid
+    io.csr_content.csr_idx     := io.ins(31,20)
+    io.csr_content.csr_data := io.csr.rdata
 }

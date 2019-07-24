@@ -12,12 +12,14 @@ class EX_MEM extends Module {
         val addri = Input(UInt(64.W))
         val datai = Input(UInt(64.W))
         val wregi = Flipped(new WriteBackReg)
+        val csr_wb_i = new WrCsrReg
         
         val nlso  = Output(Bool())
         val lsmo  = Output(UInt(4.W))
         val addro = Output(UInt(64.W))
         val datao = Output(UInt(64.W))
         val wrego = new WriteBackReg
+        val csr_wb_o = Flipped(new WrCsrReg)
     })
 
     val nls  = RegInit(false.B)
@@ -27,6 +29,7 @@ class EX_MEM extends Module {
     val lsm  = RegInit(15.U(4.W))
     val addr = RegInit(0.U(64.W))
     val data = RegInit(0.U(64.W))
+    val csr_wb  = RegInit(0.U.asTypeOf(new WrCsrReg))
 
     io.nlso := nls
     io.wrego.wbrd := wbrd
@@ -35,6 +38,7 @@ class EX_MEM extends Module {
     io.lsmo := lsm
     io.addro := addr
     io.datao := data
+    io.csr_wb_o  := csr_wb
 
     when (io.en) {
         nls   := io.nlsi
@@ -44,6 +48,7 @@ class EX_MEM extends Module {
         lsm   := io.lsmi
         addr  := io.addri
         data  := io.datai
+        csr_wb  := io.csr_wb_i
 
         
         //printf("EX_MEM : nls   = %d\n", nls)

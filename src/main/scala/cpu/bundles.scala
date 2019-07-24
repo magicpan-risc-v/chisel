@@ -75,7 +75,17 @@ class ID_CSR extends Bundle {
   val priv  = Input(UInt(2.W)) // 当前的特权级
 }
 
+class WrCsrReg extends Bundle {
+  val valid = Input(Bool())
+  val csr_idx = Input(UInt(12.W))
+  val csr_data = Input(UInt(64.W))
+}
+
 class LastLoadInfo extends Bundle {
   val valid = Output(Bool())
   val index = Output(UInt(5.W))
+}
+
+class MEM_CSR extends Bundle {
+  val wrCSROp = Output(new WrCsrReg)
 }
