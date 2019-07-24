@@ -19,14 +19,7 @@ class RegCtrl extends Module {
     )
     when (io.w.wen && io.w.w =/= 0.U) {
         regs(io.w.w) := io.w.wd
-<<<<<<< HEAD
-        printf("set reg[%d] = %x\n", io.w.w, io.w.wd)
-=======
-        when (io.w.w === 3.U) {
-            printf("set reg[%d] = %x\n", io.w.w, io.w.wd)
-        }
         //printf("set reg[%d] = %x\n", io.w.w, io.w.wd)
->>>>>>> dev
 
         //printf("reg[12] = %d\n", regs(12))
     }

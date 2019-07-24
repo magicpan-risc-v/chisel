@@ -51,17 +51,6 @@ class InsType extends Module {
 
     io.op32 := (opcode === "b01110".U || opcode === "b00110".U) // 操作数是否是32位
 
-<<<<<<< HEAD
-    io.uns := MuxLookup(
-        Cat(funct3, opcode),
-        false.B,
-        Seq(
-            "b11011000".U -> true.B, // BLTU
-            "b11111000".U -> true.B, // BGEU
-            "b01100100".U -> true.B  // SLTIU
-        )
-    )
-
     io.csr_cal := MuxLookup(
         Cat(funct3, opcode),
         false.B,
@@ -83,9 +72,6 @@ class InsType extends Module {
         )
     )
 
-=======
-    //io.uns := false.B
->>>>>>> dev
     io.exe_type := Mux(io.ins(0), MuxLookup(
         opcode,
         EXT.ALU,
