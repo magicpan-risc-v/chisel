@@ -55,8 +55,6 @@ class MEM_MMU extends RAMOp {
 class DecoderReg extends Bundle {
     val rs1_valid = Output(Bool())
     val rs2_valid = Output(Bool())
-    val rs1_index = Output(UInt(5.W))
-    val rs2_index = Output(UInt(5.W))
     val rs1_value = Output(UInt(64.W))
     val rs2_value = Output(UInt(64.W))
     

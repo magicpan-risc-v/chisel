@@ -25,14 +25,14 @@ object INST {
 }
 
 object EXT {
-    val ALU    = 0.U(3.W)
-    val BRANCH = 1.U(3.W)
-    val JUMP   = 2.U(3.W)
-    val LOS    = 3.U(3.W) // load or store
-    val AUIPC  = 4.U(3.W)
-    val LUI    = 5.U(3.W)
-    val FENCE  = 6.U(3.W)
-    val SYS    = 7.U(3.W)
+    val ALU    = 0.U(4.W)
+    val BRANCH = 1.U(4.W)
+    val JUMP   = 2.U(4.W)
+    val LOS    = 3.U(4.W) // load or store
+    val AUIPC  = 4.U(4.W)
+    val LUI    = 5.U(4.W)
+    val FENCE  = 6.U(4.W)
+    val SYS    = 7.U(4.W)
 }
 
 class InsType extends Module {

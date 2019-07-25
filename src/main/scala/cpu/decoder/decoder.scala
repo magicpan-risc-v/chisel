@@ -30,6 +30,9 @@ class Decoder extends Module {
         val csr_from_mem = new WrCsrReg
         val csr_from_wb = new WrCsrReg
 
+        val exWrReg = Flipped(new WriteBackReg)
+        val memWrReg = Flipped(new WriteBackReg)
+
         //val excep = Output(new Exception)
     })
 
@@ -49,6 +52,16 @@ class Decoder extends Module {
 
     val rs1_index = io.ins(19,15)
     val rs2_index = io.ins(24,20)
+    val rs1_value = PriorityMux(Seq(
+      (io.exWrReg.wbrv && io.exWrReg.wbri === rs1_index,    io.exWrReg.wbrd),
+      (io.memWrReg.wbrv && io.memWrReg.wbri === rs1_index, io.memWrReg.wbrd),
+      (true.B,                                                  io.regr.r1d)
+    ))
+    val rs2_value = PriorityMux(Seq(
+      (io.exWrReg.wbrv && io.exWrReg.wbri === rs2_index,    io.exWrReg.wbrd),
+      (io.memWrReg.wbrv && io.memWrReg.wbri === rs2_index, io.memWrReg.wbrd),
+      (true.B,                                                  io.regr.r2d)
+    ))
     val rd_index  = io.ins(11,7)
     val rs2_valid = (itype.io.ins_type === INST.R_TYPE || itype.io.ins_type === INST.S_TYPE || itype.io.ins_type === INST.B_TYPE)
     val rs1_valid = rs2_valid || itype.io.ins_type === INST.I_TYPE
@@ -65,16 +78,15 @@ class Decoder extends Module {
 
     val csr_valid = itype.io.exe_type === EXT.SYS && io.ins(14,12).orR
 
+
     io.dreg.rs2_valid := rs2_valid
     io.dreg.rs1_valid := rs1_valid
     io.dreg.rd_valid  := rd_valid
     io.dreg.rd_index  := rd_index
-    io.dreg.rs1_index := rs1_index
-    io.dreg.rs2_index := rs2_index
     io.regr.r1        := rs1_index
     io.regr.r2        := rs2_index
-    io.dreg.rs1_value := io.regr.r1d
-    io.dreg.rs2_value := io.regr.r2d
+    io.dreg.rs1_value := rs1_value
+    io.dreg.rs2_value := rs2_value
 
     io.ls_mode        := ls_mode
     io.br_type        := io.ins(14,12)
