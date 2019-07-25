@@ -86,7 +86,6 @@ class Execute extends Module {
 
     io.nls := nls
 
-    // TOFIXME 这个地方的valid判断条件不足，data也应该根据csr指令类型判断是否写入ALU结果/操作数
     io.wcsr.valid := io.csr_op.valid && rsl.io.dreg.rs1_index.orR   // 当rs1不等于x0时，对CSR的写操作有效
     io.wcsr.csr_idx := io.csr_op.csr_idx // CSR编号
     io.wcsr.csr_data := Mux(io.csr_cal, alu.io.output, alu_inputA)

@@ -95,3 +95,10 @@ class LastLoadInfo extends Bundle {
 class MEM_CSR extends Bundle {
   val wrCSROp = Output(new WrCsrReg)
 }
+
+class Exception extends Bundle {
+  val valid = Output(Bool())    // 是否确实发生异常
+  val code  = Output(UInt(32.W))  // 异常号
+  val value = Output(UInt(32.W))  // 写入xtval中的信息
+  val pc    = Output(UInt(32.W))  // pc
+}

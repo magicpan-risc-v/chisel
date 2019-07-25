@@ -29,6 +29,8 @@ class Decoder extends Module {
         val csr_from_ex = new WrCsrReg
         val csr_from_mem = new WrCsrReg
         val csr_from_wb = new WrCsrReg
+
+        //val excep = Output(new Exception)
     })
 
     val itype = Module(new InsType)
@@ -41,7 +43,6 @@ class Decoder extends Module {
     itype.io.ins_type <> immg.io.ins_type
     itype.io.ins_type <> alug.io.ins_type
     immg.io.imm       <> io.imm
-    //immg.io.uns       <> itype.io.uns
     alug.io.ALUOp     <> io.ALUOp
     io.exe_type       <> itype.io.exe_type
     io.op32           <> itype.io.op32
@@ -87,17 +88,9 @@ class Decoder extends Module {
     io.csr_content.valid    := csr_valid
     io.csr_content.csr_idx     := io.ins(31,20)
 
-    io.csr_content.csr_data := Mux(
-        io.csr.addr === io.csr_from_ex.csr_idx && io.csr_from_ex.valid,
-        io.csr_from_ex.csr_data,
-        Mux(
-            io.csr.addr === io.csr_from_mem.csr_idx && io.csr_from_mem.valid,
-            io.csr_from_mem.csr_data,
-            Mux(
-                io.csr.addr === io.csr_from_wb.csr_idx && io.csr_from_wb.valid,
-                io.csr_from_wb.csr_data,
-                io.csr.rdata
-            )
-        )
-    )
+    io.csr_content.csr_data := PriorityMux(Seq(
+        (io.csr.addr === io.csr_from_ex.csr_idx && io.csr_from_ex.valid, io.csr_from_ex.csr_data),
+        (io.csr.addr === io.csr_from_mem.csr_idx && io.csr_from_mem.valid, io.csr_from_mem.csr_data),
+        (true.B,io.csr.rdata)
+    ))
 }
