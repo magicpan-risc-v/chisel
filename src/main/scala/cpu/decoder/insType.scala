@@ -26,13 +26,21 @@ object INST {
 
 object EXT {
     val ALU    = 0.U(4.W)
-    val BRANCH = 1.U(4.W)
-    val JUMP   = 2.U(4.W)
-    val LOS    = 3.U(4.W) // load or store
-    val AUIPC  = 4.U(4.W)
-    val LUI    = 5.U(4.W)
-    val FENCE  = 6.U(4.W)
-    val SYS    = 7.U(4.W)
+    val SYSC   = 1.U(4.W) // ecall/ebreak/xRET/WFI
+    val LOS    = 2.U(4.W) // load or store
+    val AUIPC  = 3.U(4.W)
+    val LUI    = 4.U(4.W)
+    val FENCE  = 5.U(4.W)
+    val CSR    = 6.U(4.W) // csr instrction without i
+    val CSRI   = 7.U(4.W) // csr instruction with i
+    val JAL    = 8.U(4.W)
+    val BEQ    = 9.U(4.W)
+    val BNE    = 10.U(4.W)
+    val BLT    = 11.U(4.W)
+    val BGE    = 12.U(4.W)
+    val BLTU   = 13.U(4.W)
+    val BGEU   = 14.U(4.W)
+    val JALR   = 15.U(4.W)
 }
 
 class InsType extends Module {
@@ -41,8 +49,8 @@ class InsType extends Module {
         val ins_type = Output(UInt(3.W))
         val exe_type = Output(UInt(3.W))
         val op32 = Output(Bool())
-        val csr_cal = Output(Bool())    // 当前这条CSR指令是否需要进行计算（CSRWR不需要）
-        val csr_imm = Output(Bool())    // 当前这条CSR指令是否直接使用立即数进行运算
+        //val csr_cal = Output(Bool())    // 当前这条CSR指令是否需要进行计算（CSRWR不需要）
+        //val csr_imm = Output(Bool())    // 当前这条CSR指令是否直接使用立即数进行运算
         val is_ecall = Output(Bool())   // 当前这条指令是否为ecall
         val is_ebreak = Output(Bool())  // 当前这条指令是否为ebreak
     })
@@ -55,26 +63,26 @@ class InsType extends Module {
     io.is_ecall := io.ins === "h00000073".U(32.W)
     io.is_ebreak := io.ins === "h00100073".U(32.W)
 
-    io.csr_cal := MuxLookup(
-        Cat(funct3, opcode),
-        false.B,
-        Seq(
-            "b01011100".U -> true.B,  // CSRRS
-            "b01111100".U -> true.B,  // CSRRC
-            "b01011100".U -> true.B,  // CSRRSI
-            "b11111100".U -> true.B   // CSRRCI
-        )
-    )
+    //io.csr_cal := MuxLookup(
+        //Cat(funct3, opcode),
+        //false.B,
+        //Seq(
+            //"b01011100".U -> true.B,  // CSRRS
+            //"b01111100".U -> true.B,  // CSRRC
+            //"b01011100".U -> true.B,  // CSRRSI
+            //"b11111100".U -> true.B   // CSRRCI
+        //)
+    //)
 
-    io.csr_imm := MuxLookup(
-        Cat(funct3, opcode),
-        false.B,
-        Seq(
-            "b10111100".U -> true.B,  // CSRRWI
-            "b11011100".U -> true.B,  // CSRRSI
-            "b11111100".U -> true.B   // CSRRCI
-        )
-    )
+    //io.csr_imm := MuxLookup(
+        //Cat(funct3, opcode),
+        //false.B,
+        //Seq(
+            //"b10111100".U -> true.B,  // CSRRWI
+            //"b11011100".U -> true.B,  // CSRRSI
+            //"b11111100".U -> true.B   // CSRRCI
+        //)
+    //)
 
     io.exe_type := Mux(io.ins(0), MuxLookup(
         opcode,
@@ -89,15 +97,27 @@ class InsType extends Module {
 
             "b01000".U -> EXT.LOS, // SB, SH, SW, *SD
 
-            "b11000".U -> EXT.BRANCH, // BEQ, BNE, BLT, BGE, BLTU, BGEU
+            //"b11000".U -> EXT.BRANCH, // BEQ, BNE, BLT, BGE, BLTU, BGEU
+            "b11000".U -> MuxLookup(io.ins(14,12), EXT.ALU, Seq(
+              ("b000".U, EXT.BEQ),
+              ("b001".U, EXT.BNE),
+              ("b100".U, EXT.BLT),
+              ("b101".U, EXT.BGE),
+              ("b110".U, EXT.BLTU),
+              ("b111".U, EXT.BGEU)
+            )),
 
             "b00101".U -> EXT.AUIPC, // AUIPC
-            "b01101".U -> EXT.LUI, // LUI
+            "b01101".U -> EXT.LUI,  // LUI
             
-            "b11011".U -> EXT.JUMP, // JAL
-            "b11001".U -> EXT.JUMP, // JALR
+            "b11011".U -> EXT.JAL,  // JAL
+            "b11001".U -> EXT.JALR, // JALR
             
-            "b11100".U -> EXT.SYS, // CSRR* ECALL, EBREAK
+            //"b11100".U -> EXT.SYS, // CSRR* ECALL, EBREAK
+            "b11100".U -> Mux(io.ins(14,12).orR,
+              Mux(io.ins(14), EXT.CSRI, EXT.CSR),
+              EXT.SYSC
+            ),
             "b00011".U -> EXT.FENCE // FENCE[.I]
         )
     ), EXT.ALU)

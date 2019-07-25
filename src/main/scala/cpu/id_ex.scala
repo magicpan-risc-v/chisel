@@ -16,8 +16,7 @@ class ID_EX extends Module {
         val lsmi   = Input(UInt(4.W))
         val brti   = Input(UInt(3.W))
         val op32i  = Input(Bool())
-        val csr_cal_i = Input(Bool())
-        val csr_imm_i = Input(Bool())
+        //val csr_imm_i = Input(Bool())
         val csr_wb_i = new WrCsrReg
         val dregi  = Flipped(new DecoderReg)
 
@@ -28,8 +27,7 @@ class ID_EX extends Module {
         val lsmo   = Output(UInt(4.W))
         val brto   = Output(UInt(3.W))
         val op32o  = Output(Bool())
-        val csr_cal_o = Output(Bool())
-        val csr_imm_o = Output(Bool())
+        //val csr_imm_o = Output(Bool())
         val csr_wb_o  = Flipped(new WrCsrReg)
         val drego  = new DecoderReg
     })
@@ -46,8 +44,7 @@ class ID_EX extends Module {
     val bubble = io.bid || io.bex
     val bm     = Mux(bubble, 0.U(64.W), 0xffffffffffffffffL.S(64.W).asUInt)
 
-    val csr_cal = RegInit(false.B)
-    val csr_imm = RegInit(false.B)
+    //val csr_imm = RegInit(false.B)
     val csr_wb  = RegInit(0.U.asTypeOf(new WrCsrReg))
 
     io.immo   := imm
@@ -58,8 +55,7 @@ class ID_EX extends Module {
     io.lsmo   := lsm
     io.brto   := brt
     io.op32o  := op32
-    io.csr_cal_o := csr_cal
-    io.csr_imm_o := csr_imm
+    //io.csr_imm_o := csr_imm
     io.csr_wb_o  := csr_wb
 
     when (io.en) {
@@ -71,8 +67,7 @@ class ID_EX extends Module {
         lsm   := Mux(bubble, MEMT.NOP, io.lsmi)
         brt   := io.brti   & bm(2,0)
         op32  := io.op32i && bm(0)
-        csr_cal := io.csr_cal_i
-        csr_imm := io.csr_imm_i
+        //csr_imm := io.csr_imm_i
         csr_wb  := io.csr_wb_i
 
         //printf("ID_EX  : ALUOp = %d\n", ALUOp)
