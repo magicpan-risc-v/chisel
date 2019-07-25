@@ -12,7 +12,7 @@ class Decoder extends Module {
 
         val imm  = Output(UInt(64.W))
         val ALUOp    = Output(UInt(4.W))
-        val exe_type = Output(UInt(3.W))
+        val exe_type = Output(UInt(4.W))
         val ls_mode  = Output(UInt(4.W))
         val br_type  = Output(UInt(3.W))
         val op32     = Output(Bool())
@@ -23,7 +23,6 @@ class Decoder extends Module {
 
         val csr = new ID_CSR
         val csr_content = Flipped(new WrCsrReg)
-        //val csr_imm = Output(Bool())
 
         val csr_from_ex = new WrCsrReg
         val csr_from_mem = new WrCsrReg
@@ -46,7 +45,7 @@ class Decoder extends Module {
     itype.io.ins_type <> alug.io.ins_type
     immg.io.imm       <> io.imm
     alug.io.ALUOp     <> io.ALUOp
-    io.exe_type       <> itype.io.exe_type
+    io.exe_type       := itype.io.exe_type
     io.op32           <> itype.io.op32
 
     val rs1_index = io.ins(19,15)
@@ -96,7 +95,6 @@ class Decoder extends Module {
     io.bubble         := bubble
 
     io.csr.addr       := io.ins(31,20)
-    //io.csr_imm        := itype.io.csr_imm
     io.csr_content.valid    := csr_valid
     io.csr_content.csr_idx     := io.ins(31,20)
 

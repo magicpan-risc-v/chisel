@@ -47,7 +47,7 @@ class InsType extends Module {
     val io =  IO(new Bundle {
         val ins  = Input(UInt(32.W))
         val ins_type = Output(UInt(3.W))
-        val exe_type = Output(UInt(3.W))
+        val exe_type = Output(UInt(4.W))
         val op32 = Output(Bool())
         //val csr_cal = Output(Bool())    // 当前这条CSR指令是否需要进行计算（CSRWR不需要）
         //val csr_imm = Output(Bool())    // 当前这条CSR指令是否直接使用立即数进行运算
@@ -63,27 +63,6 @@ class InsType extends Module {
     io.is_ecall := io.ins === "h00000073".U(32.W)
     io.is_ebreak := io.ins === "h00100073".U(32.W)
 
-    //io.csr_cal := MuxLookup(
-        //Cat(funct3, opcode),
-        //false.B,
-        //Seq(
-            //"b01011100".U -> true.B,  // CSRRS
-            //"b01111100".U -> true.B,  // CSRRC
-            //"b01011100".U -> true.B,  // CSRRSI
-            //"b11111100".U -> true.B   // CSRRCI
-        //)
-    //)
-
-    //io.csr_imm := MuxLookup(
-        //Cat(funct3, opcode),
-        //false.B,
-        //Seq(
-            //"b10111100".U -> true.B,  // CSRRWI
-            //"b11011100".U -> true.B,  // CSRRSI
-            //"b11111100".U -> true.B   // CSRRCI
-        //)
-    //)
-
     io.exe_type := Mux(io.ins(0), MuxLookup(
         opcode,
         EXT.ALU,
@@ -97,8 +76,8 @@ class InsType extends Module {
 
             "b01000".U -> EXT.LOS, // SB, SH, SW, *SD
 
-            //"b11000".U -> EXT.BRANCH, // BEQ, BNE, BLT, BGE, BLTU, BGEU
-            "b11000".U -> MuxLookup(io.ins(14,12), EXT.ALU, Seq(
+            // BEQ, BNE, BLT, BGE, BLTU, BGEU
+            "b11000".U -> MuxLookup(funct3, EXT.ALU, Seq(
               ("b000".U, EXT.BEQ),
               ("b001".U, EXT.BNE),
               ("b100".U, EXT.BLT),
@@ -113,8 +92,8 @@ class InsType extends Module {
             "b11011".U -> EXT.JAL,  // JAL
             "b11001".U -> EXT.JALR, // JALR
             
-            //"b11100".U -> EXT.SYS, // CSRR* ECALL, EBREAK
-            "b11100".U -> Mux(io.ins(14,12).orR,
+            // CSRR* ECALL, EBREAK
+            "b11100".U -> Mux(funct3.orR,
               Mux(io.ins(14), EXT.CSRI, EXT.CSR),
               EXT.SYSC
             ),
