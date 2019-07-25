@@ -5,18 +5,19 @@ import chisel3.util._
 
 // ins[14:12]
 object BRT {
-    val B_EQ = 0.U(3.W)
-    val B_NE = 1.U(3.W)
-    val B_LT = 4.U(3.W)
-    val B_GE = 5.U(3.W)
-    val B_LTU = 6.U(3.W)
-    val B_GEU = 7.U(3.W)
+    val JAL = 8.U(4.W)
+    val B_EQ = 9.U(4.W)
+    val B_NE = 10.U(4.W)
+    val B_LT = 11.U(4.W)
+    val B_GE = 12.U(4.W)
+    val B_LTU = 13.U(4.W)
+    val B_GEU = 14.U(4.W)
+    val JALR = 8.U(4.W)
 }
 
 class BranchCtrl extends Module {
     val io =  IO(new Bundle {
-        val bvalid = Input(Bool())
-        val branch_type = Input(UInt(3.W))
+        val exeType = Input(UInt(4.W))
         val input1 = Input(UInt(64.W))
         val input2 = Input(UInt(64.W))
 
@@ -32,24 +33,25 @@ class BranchCtrl extends Module {
     val ltu = Mux(st, x(63), io.input2(63))
     val geu = !ltu
 
-    io.jump := io.bvalid && MuxLookup(
-        io.branch_type,
+    io.jump := MuxLookup(
+        io.exeType,
         false.B,
         Seq(
+            BRT.JAL   -> true.B,
             BRT.B_EQ  -> eq,
             BRT.B_NE  -> ne,
             BRT.B_LT  -> lt,
             BRT.B_GE  -> ge,
             BRT.B_LTU -> ltu,
-            BRT.B_GEU -> geu
+            BRT.B_GEU -> geu,
+            BRT.JALR  -> true.B
         )
     )
 }
 
 class Branch extends Module {
     val io =  IO(new Bundle {
-        val bvalid = Input(Bool()) // WHETHER the instruction is a branch
-        val branch_type = Input(UInt(3.W))
+        val exeType= Input(UInt(4.W))
         val input1 = Input(UInt(64.W))
         val input2 = Input(UInt(64.W))
         val pc     = Input(UInt(64.W))
@@ -61,11 +63,11 @@ class Branch extends Module {
 
     val bctrl = Module(new BranchCtrl)
     
-    bctrl.io.branch_type <> io.branch_type
+    bctrl.io.exeType     <> io.exeType
     bctrl.io.input1      <> io.input1
     bctrl.io.input2      <> io.input2
     bctrl.io.jump        <> io.jump
-    bctrl.io.bvalid      <> io.bvalid
 
-    io.jdest := io.pc + io.imm
+    io.jdest := Mux( io.exeType === EXT.JALR, io.input1 + io.imm, io.pc + io.imm)
+
 }

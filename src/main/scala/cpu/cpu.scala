@@ -35,8 +35,8 @@ class CPU extends Module {
     wrbk.io.reg   <> regc.io.w
 
     // RegSelector
-    exec.io.lreg  <> ex_mem.io.wrego
-    exec.io.llreg <> mem_wb.io.wrego
+    insd.io.exWrReg  <> exec.io.wreg
+    insd.io.memWrReg <> memc.io.wreg
 
     // IF
     insr.io.jump   <> exec.io.jump
@@ -71,8 +71,7 @@ class CPU extends Module {
     id_ex.io.lsmi   <> insd.io.ls_mode
     id_ex.io.brti   <> insd.io.br_type
     id_ex.io.op32i  <> insd.io.op32
-    id_ex.io.csr_cal_i <> insd.io.csr_cal
-    id_ex.io.csr_imm_i <> insd.io.csr_imm
+    //id_ex.io.csr_imm_i <> insd.io.csr_imm
     id_ex.io.csr_wb_i  <> insd.io.csr_content
     
     id_ex.io.immo   <> exec.io.imm
@@ -82,8 +81,7 @@ class CPU extends Module {
     id_ex.io.drego  <> exec.io.dreg
     id_ex.io.brto   <> exec.io.br_type
     id_ex.io.op32o  <> exec.io.op32
-    id_ex.io.csr_cal_o <> exec.io.csr_cal
-    id_ex.io.csr_imm_o <> exec.io.csr_imm
+    //id_ex.io.csr_imm_o <> exec.io.csr_imm
     id_ex.io.csr_wb_o  <> exec.io.csr_op
 
     // EX_MEM
