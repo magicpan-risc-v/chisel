@@ -11,7 +11,6 @@ class Execute extends Module {
         val exe_type = Input(UInt(4.W))
         val br_type  = Input(UInt(3.W))
         val op32     = Input(Bool())
-        //val csr_imm  = Input(Bool())
 
         val dreg  = Flipped(new DecoderReg) // 解码得到的寄存器信息
 
@@ -29,18 +28,14 @@ class Execute extends Module {
     val alu = Module(new ALU)
     val bra = Module(new Branch)
 
-    //val alu_inputA = Mux(io.csr_imm, // 根据csr指令是否带立即数来判断
     val alu_inputA = Mux(io.exe_type === EXT.CSRI, // 根据csr指令是否带立即数来判断
           io.imm,
           io.dreg.rs1_value
     )
-    // 对于CSR指令，需要进行运算时将alu的第二个输入定义为读出的CSR的值
     val alu_inputB = Mux(io.exe_type === EXT.CSR || io.exe_type === EXT.CSRI, 
           io.csr_op.csr_data,
           Mux(io.dreg.rs2_valid, io.dreg.rs2_value, io.imm)
     )
-    //val bvalid = io.exe_type === EXT.BRANCH
-    //val jvalid = io.exe_type === EXT.JUMP
     val nls  = io.exe_type === EXT.LOS
     val wbrv = io.dreg.rd_valid && !nls // 是否在EX阶段取到了写回值
     val wbrd = MuxLookup(io.exe_type, alu.io.output, Seq(   // 要写回到目标寄存器rd的值
@@ -51,11 +46,6 @@ class Execute extends Module {
         EXT.CSR   -> io.csr_op.csr_data,
         EXT.CSRI  -> io.csr_op.csr_data
     ))
-    //val jump = bra.io.jump || jvalid
-    //val jdest = Mux(jvalid, 
-        //Mux(io.dreg.rs1_valid, io.dreg.rs1_value + io.imm, io.pc + io.imm),
-        //bra.io.jdest
-    //)
 
     alu.io.ALUOp  <> io.ALUOp
     alu.io.inputA <> alu_inputA
@@ -69,8 +59,6 @@ class Execute extends Module {
     io.addr := io.dreg.rs1_value + io.imm
     io.data := io.dreg.rs2_value
     
-    //bra.io.bvalid <> bvalid
-    //bra.io.branch_type <> io.br_type
     bra.io.exeType <> io.exe_type
     bra.io.input1  <> io.dreg.rs1_value
     bra.io.input2  <> io.dreg.rs2_value
@@ -78,9 +66,6 @@ class Execute extends Module {
     bra.io.imm     <> io.imm
     io.jump       <>  bra.io.jump
     io.jdest      <>  bra.io.jdest
-
-    //io.jump       <> jump
-    //io.jdest      <> jdest
 
     io.nls := nls
 

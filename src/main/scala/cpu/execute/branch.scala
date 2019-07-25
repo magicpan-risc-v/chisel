@@ -70,8 +70,4 @@ class Branch extends Module {
 
     io.jdest := Mux( io.exeType === EXT.JALR, io.input1 + io.imm, io.pc + io.imm)
 
-    //debug
-    //when(io.exeType > 7.U) {
-      //printf("jump\n")
-    //}
 }

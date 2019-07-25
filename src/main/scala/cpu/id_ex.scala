@@ -59,7 +59,7 @@ class ID_EX extends Module {
         ALUOp := io.ALUOpi & bm(3,0)
         exet  := io.exeti  & bm(3,0)
         pc    := io.pci    & bm
-        regInfo := io.dregi
+        regInfo := Mux(bm(0), io.dregi, 0.U.asTypeOf(new DecoderReg))
         lsm   := Mux(bubble, MEMT.NOP, io.lsmi)
         brt   := io.brti   & bm(2,0)
         op32  := io.op32i && bm(0)
@@ -68,8 +68,8 @@ class ID_EX extends Module {
         //printf("ID_EX  : ALUOp = %d\n", ALUOp)
         //printf("ID_EX  : imm   = %x\n", imm)
         //printf("ID_EX  : op32  = %d\n", op32)
-        printf("ID_EX  : rs1d  = %x\n", regInfo.rs1_value)
-        printf("ID_EX  : rs2d  = %x\n", regInfo.rs2_value)
+        //printf("ID_EX  : rs1d  = %x\n", regInfo.rs1_value)
+        //printf("ID_EX  : rs2d  = %x\n", regInfo.rs2_value)
         //printf("ID_EX  : lsm   = %d\n", lsm)
         //printf("ID_EX  : exet  = %d\n", io.exeti)
     }
