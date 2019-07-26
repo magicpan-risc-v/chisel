@@ -99,22 +99,21 @@ class CPU extends Module {
     ex_mem.io.lsmo  <> memc.io.lsm
     ex_mem.io.addro <> memc.io.addr
     ex_mem.io.datao <> memc.io.data
-    ex_mem.io.csr_wb_o <> mem_wb.io.csr_wb_i
+    ex_mem.io.csr_wb_o <> memc.io.csr_wb
     ex_mem.io.excep_o  <> memc.io.excep
 
     // MEM_WB
     mem_wb.io.en    <> io.en
     mem_wb.io.wregi <> memc.io.wreg
     mem_wb.io.wrego <> wrbk.io.wreg
-    mem_wb.io.csr_wb_o <> csr.io.wrOp
 
     // CSR round
     insd.io.csr_from_ex <> exec.io.wcsr
     insd.io.csr_from_mem <> ex_mem.io.csr_wb_o
-    insd.io.csr_from_wb <> mem_wb.io.csr_wb_o
 
     // CSR
     insd.io.csr     <> csr.io.id
+    memc.io.csr     <> csr.io.mem
 }
 
 object CPU extends App {

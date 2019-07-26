@@ -6,7 +6,7 @@ import chisel3.util._
 class CSR extends Module {
   val io = IO(new Bundle {
     val id = Flipped(new ID_CSR)
-    val wrOp = new WrCsrReg
+    val mem = Flipped(new MEM_CSR)
   })
 
   val nextPrv = Wire(UInt(2.W))
@@ -113,11 +113,11 @@ class CSR extends Module {
     f.setAccessible(true)
     f.get(ADDR).asInstanceOf[UInt]
   })
-  when(io.wrOp.valid) {
+  when(io.mem.wrCSROp.valid) {
     for(i <- csr_ids) {
-      when(i === io.wrOp.csr_idx) {
-        csr(i) := io.wrOp.csr_data
-        printf("set csr[%d] = %x\n", i, io.wrOp.csr_data)
+      when(i === io.mem.wrCSROp.csr_idx) {
+        csr(i) := io.mem.wrCSROp.csr_data
+        printf("set csr[%d] = %x\n", i, io.mem.wrCSROp.csr_data)
       }
     }
   }

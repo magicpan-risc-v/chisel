@@ -25,7 +25,6 @@ class Decoder extends Module {
 
         val csr_from_ex = new WrCsrReg
         val csr_from_mem = new WrCsrReg
-        val csr_from_wb = new WrCsrReg
 
         val exWrReg = Flipped(new WriteBackReg)
         val memWrReg = Flipped(new WriteBackReg)

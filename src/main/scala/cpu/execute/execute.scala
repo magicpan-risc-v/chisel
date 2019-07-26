@@ -75,6 +75,5 @@ class Execute extends Module {
     io.wcsr.csr_idx := io.csr_op.csr_idx // CSR编号
     io.wcsr.csr_data := alu.io.output
 
-    // TODO 
-    io.mem_excep := 0.U.asTypeOf(new Exception)
+    io.mem_excep := io.id_excep
 }

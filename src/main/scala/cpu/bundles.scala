@@ -92,6 +92,8 @@ class LastLoadInfo extends Bundle {
 
 class MEM_CSR extends Bundle {
   val wrCSROp = Output(new WrCsrReg)
+  val excep   = Output(new Exception)
+  // TODO inter exception code
 }
 
 class Exception extends Bundle {
