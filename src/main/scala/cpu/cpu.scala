@@ -51,12 +51,14 @@ class CPU extends Module {
     if_id.io.insi  <> insr.io.ins
     if_id.io.pci   <> insr.io.pc
     if_id.io.lastloadin <> insd.io.loadinfo
+    if_id.io.excep_i    <> insr.io.excep
 
     if_id.io.pco   <> insr.io.lpc
     if_id.io.inso  <> insd.io.ins
     if_id.io.insco <> insr.io.insp
     if_id.io.icdo  <> insr.io.inspd
     if_id.io.lastloadout <> insd.io.lastload
+    if_id.io.excep_o     <> insd.io.if_excep
 
     // ID_EX
     id_ex.io.en     <> io.en
@@ -70,8 +72,8 @@ class CPU extends Module {
     id_ex.io.dregi  <> insd.io.dreg
     id_ex.io.lsmi   <> insd.io.ls_mode
     id_ex.io.op32i  <> insd.io.op32
-    //id_ex.io.csr_imm_i <> insd.io.csr_imm
     id_ex.io.csr_wb_i  <> insd.io.csr_content
+    id_ex.io.excep_i   <> insd.io.ex_excep
     
     id_ex.io.immo   <> exec.io.imm
     id_ex.io.ALUOpo <> exec.io.ALUOp
@@ -79,8 +81,8 @@ class CPU extends Module {
     id_ex.io.pco    <> exec.io.pc
     id_ex.io.drego  <> exec.io.dreg
     id_ex.io.op32o  <> exec.io.op32
-    //id_ex.io.csr_imm_o <> exec.io.csr_imm
     id_ex.io.csr_wb_o  <> exec.io.csr_op
+    id_ex.io.excep_o   <> exec.io.id_excep
 
     // EX_MEM
     ex_mem.io.en    <> io.en
@@ -90,6 +92,7 @@ class CPU extends Module {
     ex_mem.io.addri <> exec.io.addr
     ex_mem.io.datai <> exec.io.data
     ex_mem.io.csr_wb_i <> exec.io.wcsr
+    ex_mem.io.excep_i  <> exec.io.mem_excep
 
     ex_mem.io.nlso  <> memc.io.nls
     ex_mem.io.wrego <> memc.io.ereg
@@ -97,6 +100,7 @@ class CPU extends Module {
     ex_mem.io.addro <> memc.io.addr
     ex_mem.io.datao <> memc.io.data
     ex_mem.io.csr_wb_o <> mem_wb.io.csr_wb_i
+    ex_mem.io.excep_o  <> memc.io.excep
 
     // MEM_WB
     mem_wb.io.en    <> io.en

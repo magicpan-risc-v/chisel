@@ -29,6 +29,7 @@ class MemoryCtrl extends Module {
         val wreg = new WriteBackReg
 
         val mem  = Flipped(new MEM_MMU)
+        val excep = Flipped(new Exception)
     })
 
     io.mem.mode  := Mux(io.nls, io.lsm, MEMT.NOP)

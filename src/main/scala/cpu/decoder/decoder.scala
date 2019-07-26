@@ -30,7 +30,8 @@ class Decoder extends Module {
         val exWrReg = Flipped(new WriteBackReg)
         val memWrReg = Flipped(new WriteBackReg)
 
-        //val excep = Output(new Exception)
+        val if_excep = Input(Flipped(new Exception))
+        val ex_excep = Output(new Exception)
     })
 
     val itype = Module(new InsType)
@@ -72,8 +73,13 @@ class Decoder extends Module {
     )
     val bubble    = io.lastload.valid && ((rs1_valid && io.lastload.index === rs1_index) || (rs2_valid && io.lastload.index === rs2_index))
 
-    val csr_valid = MuxLookup(itype.io.exe_type, false.B, Seq(  // TODO 这个判断不够详细
-            (EXT.CSR,  true.B),(EXT.CSRI, true.B)
+    //val csr_valid = MuxLookup(itype.io.exe_type, false.B, Seq(  // TODO 这个判断不够详细
+            //(EXT.CSR,  true.B),(EXT.CSRI, true.B)
+    //))
+    val csr_valid = PriorityMux(Seq(
+        (itype.io.exe_type === EXT.CSR && rs1_index.orR,  true.B),
+        (itype.io.exe_type === EXT.CSRI && rs1_index.orR, true.B),
+        (true.B,                                         false.B)
     ))
 
 
@@ -100,4 +106,39 @@ class Decoder extends Module {
         (io.csr.addr === io.csr_from_mem.csr_idx && io.csr_from_mem.valid, io.csr_from_mem.csr_data),
         (true.B,io.csr.rdata)
     ))
+
+    io.ex_excep := io.if_excep // 默认情况
+    when(itype.io.exe_type === EXT.SYSC) {
+        val inst_p1 = io.ins(31,25)
+        val inst_p2 = io.ins(24,20)
+        when(inst_p1 === SYS_INST_P1.SFENCE_VMA){
+          when(!io.if_excep.valid){
+            io.ex_excep.valid := true.B
+            io.ex_excep.value := rs1_value
+            io.ex_excep.code := Mux(io.csr.priv >= Priv.S,
+              Mux(rs1_index === 0.U, Cause.SFenceAll, Cause.SFenceOne),
+              Cause.IllegalInstruction)
+          }
+        }.otherwise{
+          when(!io.if_excep.valid){
+            switch(inst_p2){
+              is(SYS_INST_P2.ECALL) {
+                io.ex_excep.valid := true.B
+                io.ex_excep.code := Cause.ecallX(io.csr.priv)
+              }
+              is(SYS_INST_P2.EBREAK) {
+                io.ex_excep.valid := true.B
+                io.ex_excep.code := Cause.BreakPoint
+              }
+              is(SYS_INST_P2.xRET) {
+                val prv = io.ins(29,28)
+                io.ex_excep.valid := true.B
+                io.ex_excep.code := Mux(io.csr.priv >= prv,
+                  Cause.xRet(prv),
+                  Cause.IllegalInstruction)
+              }
+            }
+          }
+        }
+    }
 }

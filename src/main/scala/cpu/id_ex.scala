@@ -17,6 +17,7 @@ class ID_EX extends Module {
         val op32i  = Input(Bool())
         val csr_wb_i = new WrCsrReg
         val dregi  = Flipped(new DecoderReg)
+        val excep_i = Flipped(new Exception)
 
         val immo   = Output(UInt(64.W))
         val ALUOpo = Output(UInt(4.W))
@@ -26,6 +27,7 @@ class ID_EX extends Module {
         val op32o  = Output(Bool())
         val csr_wb_o  = Flipped(new WrCsrReg)
         val drego  = new DecoderReg
+        val excep_o = new Exception
     })
 
     val imm   = RegInit(0.U(64.W))
@@ -40,6 +42,7 @@ class ID_EX extends Module {
     val bm     = Mux(bubble, 0.U(64.W), 0xffffffffffffffffL.S(64.W).asUInt)
 
     val csr_wb  = RegInit(0.U.asTypeOf(new WrCsrReg))
+    val excep  = RegInit(0.U.asTypeOf(new Exception))
 
     io.immo   := imm
     io.ALUOpo := ALUOp
@@ -49,6 +52,7 @@ class ID_EX extends Module {
     io.lsmo   := lsm
     io.op32o  := op32
     io.csr_wb_o  := csr_wb
+    io.excep_o := excep
 
     when (io.en) {
         imm   := io.immi   & bm
@@ -59,6 +63,7 @@ class ID_EX extends Module {
         lsm   := Mux(bubble, MEMT.NOP, io.lsmi)
         op32  := io.op32i && bm(0)
         csr_wb  := io.csr_wb_i
+        excep := Mux(bm(0), io.excep_i, 0.U.asTypeOf(new Exception))
 
         //printf("ID_EX  : ALUOp = %d\n", ALUOp)
         //printf("ID_EX  : imm   = %x\n", imm)

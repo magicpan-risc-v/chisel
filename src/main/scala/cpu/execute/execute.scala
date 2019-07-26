@@ -22,6 +22,9 @@ class Execute extends Module {
 
         val wcsr = Flipped(new WrCsrReg)  // 写回CSR
         val csr_op = new WrCsrReg         // 来自ID阶段的CSR操作数的信息
+
+        val id_excep = Flipped(new Exception)
+        val mem_excep = new Exception
     })
 
     val alu = Module(new ALU)
@@ -71,4 +74,7 @@ class Execute extends Module {
     io.wcsr.valid := io.csr_op.valid   // 当rs1不等于x0时，对CSR的写操作有效
     io.wcsr.csr_idx := io.csr_op.csr_idx // CSR编号
     io.wcsr.csr_data := alu.io.output
+
+    // TODO 
+    io.mem_excep := 0.U.asTypeOf(new Exception)
 }
