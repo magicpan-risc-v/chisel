@@ -9,7 +9,6 @@ class Execute extends Module {
         val ALUOp    = Input(UInt(4.W))
         val pc       = Input(UInt(64.W))
         val exe_type = Input(UInt(4.W))
-        val br_type  = Input(UInt(3.W))
         val op32     = Input(Bool())
 
         val dreg  = Flipped(new DecoderReg) // 解码得到的寄存器信息

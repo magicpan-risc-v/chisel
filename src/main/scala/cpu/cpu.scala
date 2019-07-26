@@ -69,7 +69,6 @@ class CPU extends Module {
     id_ex.io.pci    <> if_id.io.pco
     id_ex.io.dregi  <> insd.io.dreg
     id_ex.io.lsmi   <> insd.io.ls_mode
-    id_ex.io.brti   <> insd.io.br_type
     id_ex.io.op32i  <> insd.io.op32
     //id_ex.io.csr_imm_i <> insd.io.csr_imm
     id_ex.io.csr_wb_i  <> insd.io.csr_content
@@ -79,7 +78,6 @@ class CPU extends Module {
     id_ex.io.exeto  <> exec.io.exe_type
     id_ex.io.pco    <> exec.io.pc
     id_ex.io.drego  <> exec.io.dreg
-    id_ex.io.brto   <> exec.io.br_type
     id_ex.io.op32o  <> exec.io.op32
     //id_ex.io.csr_imm_o <> exec.io.csr_imm
     id_ex.io.csr_wb_o  <> exec.io.csr_op

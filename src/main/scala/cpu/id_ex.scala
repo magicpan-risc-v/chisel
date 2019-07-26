@@ -14,7 +14,6 @@ class ID_EX extends Module {
         val exeti  = Input(UInt(4.W))
         val pci    = Input(UInt(64.W))
         val lsmi   = Input(UInt(4.W))
-        val brti   = Input(UInt(3.W))
         val op32i  = Input(Bool())
         val csr_wb_i = new WrCsrReg
         val dregi  = Flipped(new DecoderReg)
@@ -24,7 +23,6 @@ class ID_EX extends Module {
         val exeto  = Output(UInt(4.W))
         val pco    = Output(UInt(64.W))
         val lsmo   = Output(UInt(4.W))
-        val brto   = Output(UInt(3.W))
         val op32o  = Output(Bool())
         val csr_wb_o  = Flipped(new WrCsrReg)
         val drego  = new DecoderReg
@@ -36,7 +34,6 @@ class ID_EX extends Module {
     val pc    = RegInit(0.U(64.W))
     val regInfo = RegInit(0.U.asTypeOf(new DecoderReg))
     val lsm   = RegInit(15.U(4.W))
-    val brt   = RegInit(0.U(3.W))
     val op32  = RegInit(false.B)
 
     val bubble = io.bid || io.bex
@@ -50,7 +47,6 @@ class ID_EX extends Module {
     io.pco    := pc
     io.drego := regInfo
     io.lsmo   := lsm
-    io.brto   := brt
     io.op32o  := op32
     io.csr_wb_o  := csr_wb
 
@@ -61,7 +57,6 @@ class ID_EX extends Module {
         pc    := io.pci    & bm
         regInfo := Mux(bm(0), io.dregi, 0.U.asTypeOf(new DecoderReg))
         lsm   := Mux(bubble, MEMT.NOP, io.lsmi)
-        brt   := io.brti   & bm(2,0)
         op32  := io.op32i && bm(0)
         csr_wb  := io.csr_wb_i
 

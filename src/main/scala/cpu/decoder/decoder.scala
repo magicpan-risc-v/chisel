@@ -14,7 +14,6 @@ class Decoder extends Module {
         val ALUOp    = Output(UInt(4.W))
         val exe_type = Output(UInt(4.W))
         val ls_mode  = Output(UInt(4.W))
-        val br_type  = Output(UInt(3.W))
         val op32     = Output(Bool())
         val bubble   = Output(Bool()) // IF: bubble
 
@@ -89,7 +88,6 @@ class Decoder extends Module {
     io.dreg.rs2_value := rs2_value
 
     io.ls_mode        := ls_mode
-    io.br_type        := io.ins(14,12)
     io.loadinfo.valid     := ls_mode =/= MEMT.NOP && ls_mode(3)
     io.loadinfo.index     := rd_index
     io.bubble         := bubble
