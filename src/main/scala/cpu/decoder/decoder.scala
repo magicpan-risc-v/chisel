@@ -64,8 +64,7 @@ class Decoder extends Module {
     val rs1_valid = rs2_valid || itype.io.ins_type === INST.I_TYPE
     val rd_valid  = 
       (itype.io.ins_type === INST.R_TYPE || itype.io.ins_type === INST.I_TYPE || itype.io.ins_type === INST.U_TYPE || itype.io.ins_type === INST.J_TYPE) && 
-      (rd_index =/= 0.U) &&
-      !itype.io.is_ecall && !itype.io.is_ebreak
+      (rd_index =/= 0.U) && itype.io.exe_type =/= EXT.SYSC
     val ls_mode   = Mux(
         itype.io.exe_type === EXT.LOS,
         Cat(!io.ins(5), io.ins(14,12)),
