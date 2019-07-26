@@ -33,6 +33,7 @@ class MemoryCtrl extends Module {
         val excep = Flipped(new Exception)
         val csr_wb = new WrCsrReg
         val csr  = new MEM_CSR
+        val inter = Input(Valid(UInt(32.W)))
     })
 
     io.mem.mode  := Mux(io.nls, io.lsm, MEMT.NOP)
@@ -44,5 +45,6 @@ class MemoryCtrl extends Module {
     io.wreg.wbri := io.ereg.wbri
     io.wreg.wbrd := Mux(io.nls, io.mem.rdata, io.ereg.wbrd)
 
-    io.csr := 0.U.asTypeOf(new MEM_CSR)
+    io.csr.wrCSROp := io.csr_wb
+    io.csr.excep   := io.excep
 }

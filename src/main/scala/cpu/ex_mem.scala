@@ -14,6 +14,7 @@ class EX_MEM extends Module {
         val wregi = Flipped(new WriteBackReg)
         val csr_wb_i = new WrCsrReg
         val excep_i  = Flipped(new Exception)
+        val inter_i = Input(Valid(UInt(32.W)))
         
         val nlso  = Output(Bool())
         val lsmo  = Output(UInt(4.W))
@@ -22,6 +23,7 @@ class EX_MEM extends Module {
         val wrego = new WriteBackReg
         val csr_wb_o = Flipped(new WrCsrReg)
         val excep_o  = new Exception
+        val inter_o = Output(Valid(UInt(32.W)))
     })
 
     val nls  = RegInit(false.B)
@@ -33,6 +35,7 @@ class EX_MEM extends Module {
     val data = RegInit(0.U(64.W))
     val csr_wb  = RegInit(0.U.asTypeOf(new WrCsrReg))
     val excep   = RegInit(0.U.asTypeOf(new Exception))
+    val inter   = RegInit(0.U.asTypeOf(Valid(UInt(32.W))))
 
     io.nlso := nls
     io.wrego.wbrd := wbrd
@@ -43,6 +46,7 @@ class EX_MEM extends Module {
     io.datao := data
     io.csr_wb_o  := csr_wb
     io.excep_o   := excep
+    io.inter_o   := inter
 
     when (io.en) {
         nls   := io.nlsi
@@ -54,8 +58,11 @@ class EX_MEM extends Module {
         data  := io.datai
         csr_wb  := io.csr_wb_i
         excep   := io.excep_i
+        inter   := io.inter_i
 
-        
+      when(io.inter_i.valid) {
+        printf("get a interrupt %d\n", io.inter_i.bits)
+      }        
         //printf("EX_MEM : nls   = %d\n", nls)
         //printf("EX_MEM : wbri  = %d\n", wbri)
         //printf("EX_MEM : wbrv  = %d\n", wbrv)

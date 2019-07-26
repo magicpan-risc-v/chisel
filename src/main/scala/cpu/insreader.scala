@@ -57,5 +57,8 @@ class InsReader extends Module {
     io.insnd := Mux(nread, raddr, io.inspd)
     
     // TODO just default case, we need to do more here
-    io.excep := 0.U.asTypeOf(new Exception)
+    io.excep.pc := io.pc
+    io.excep.valid := false.B
+    io.excep.code  := 0.U
+    io.excep.value := 0.U
 }

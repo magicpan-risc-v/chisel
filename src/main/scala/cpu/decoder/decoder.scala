@@ -44,7 +44,7 @@ class Decoder extends Module {
     itype.io.ins_type <> alug.io.ins_type
     immg.io.imm       <> io.imm
     alug.io.ALUOp     <> io.ALUOp
-    io.exe_type       := itype.io.exe_type
+    io.exe_type       <> itype.io.exe_type
     io.op32           <> itype.io.op32
 
     val rs1_index = io.ins(19,15)

@@ -39,7 +39,8 @@ class CPU extends Module {
     insd.io.memWrReg <> memc.io.wreg
 
     // IF
-    insr.io.jump   <> exec.io.jump
+    insr.io.jump   := csr.io.flush | exec.io.jump
+    insr.io.jdest  := Mux(csr.io.flush, csr.io.csrNewPc,  exec.io.jdest)
     insr.io.jdest  <> exec.io.jdest
     insr.io.nls    <> ex_mem.io.nlso
     insr.io.bubble <> insd.io.bubble
@@ -93,6 +94,7 @@ class CPU extends Module {
     ex_mem.io.datai <> exec.io.data
     ex_mem.io.csr_wb_i <> exec.io.wcsr
     ex_mem.io.excep_i  <> exec.io.mem_excep
+    ex_mem.io.inter_i  <> csr.io.inter
 
     ex_mem.io.nlso  <> memc.io.nls
     ex_mem.io.wrego <> memc.io.ereg
@@ -101,6 +103,7 @@ class CPU extends Module {
     ex_mem.io.datao <> memc.io.data
     ex_mem.io.csr_wb_o <> memc.io.csr_wb
     ex_mem.io.excep_o  <> memc.io.excep
+    ex_mem.io.inter_o  <> memc.io.inter
 
     // MEM_WB
     mem_wb.io.en    <> io.en
@@ -114,6 +117,8 @@ class CPU extends Module {
     // CSR
     insd.io.csr     <> csr.io.id
     memc.io.csr     <> csr.io.mem
+    csr.io.external_inter.valid := false.B  // 忽略外部中断，不实现
+    csr.io.external_inter.bits  := 0.U
 }
 
 object CPU extends App {
