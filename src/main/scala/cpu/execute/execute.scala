@@ -72,4 +72,9 @@ class Execute extends Module {
     io.wcsr.valid := io.csr_op.valid   // 当rs1不等于x0时，对CSR的写操作有效
     io.wcsr.csr_idx := io.csr_op.csr_idx // CSR编号
     io.wcsr.csr_data := alu.io.output
+
+    when (true.B) {
+        //printf("EX-jump: %d\n", io.jump)
+        //printf("EX-jdest:%x\n", io.jdest)
+    }
 }

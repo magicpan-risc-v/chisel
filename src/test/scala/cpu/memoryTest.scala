@@ -73,7 +73,7 @@ class MemoryTest extends Module {
 
     when (inited && io.mem.mode === MEMT.SB) {
         when (ws === serial_addr) {
-            printf("%c", io.mem.wdata(7,0))//, io.mem.wdata(7,0))
+            printf("%c(%d)", io.mem.wdata(7,0), io.mem.wdata(7,0))
         } .otherwise {
             //printf("%x \n", ws)
             program(ws) := io.mem.wdata(7,0)

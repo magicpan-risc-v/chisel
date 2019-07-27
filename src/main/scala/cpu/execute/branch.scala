@@ -12,7 +12,7 @@ object BRT {
     val B_GE = 12.U(4.W)
     val B_LTU = 13.U(4.W)
     val B_GEU = 14.U(4.W)
-    val JALR = 8.U(4.W)
+    val JALR = 15.U(4.W)
 }
 
 class BranchCtrl extends Module {

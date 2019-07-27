@@ -65,8 +65,9 @@ class InsReader extends Module {
     when (true.B) {
         //printf("if_ready = %d \n", io.mmu.ready)
         //printf("nread    = %d \n", nread)
-        //printf("addr     = %x \n", io.mmu.addr)
-        //printf("rdata    = %x \n", io.mmu.rdata)
-        //printf("jnpc     = %x \n", jnpc)
+        // printf("addr     = %x \n", io.mmu.addr)
+        // printf("jump     = %x \n", io.jump)
+        // printf("jdest    = %x \n", io.jdest)
+        // printf("jnpc     = %x \n", jnpc)
     }
 }
