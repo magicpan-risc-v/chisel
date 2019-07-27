@@ -57,8 +57,16 @@ class InsReader extends Module {
     io.mmu.addr := Mux(nread, addr, 0.U(64.W))
     io.mmu.mode  := Mux(nread, MEMT.LD, MEMT.NOP)
     
-    io.pc   := Mux(io.mmu.ready, jnpc, jnpc - 4.U)
-    io.ins  := Mux(io.mmu.ready, ins,  0.U(64.W))
-    io.insn := Mux(io.mmu.ready, insn, io.insp)
+    io.pc   := Mux(!cnrc || io.mmu.ready, jnpc, jnpc - 4.U)
+    io.ins  := Mux(!cnrc || io.mmu.ready, ins,  0.U(64.W))
+    io.insn := Mux(!cnrc || io.mmu.ready, insn, io.insp)
     io.insnd := Mux(io.mmu.ready && nread, addr, io.inspd)
+
+    when (true.B) {
+        //printf("if_ready = %d \n", io.mmu.ready)
+        //printf("nread    = %d \n", nread)
+        //printf("addr     = %x \n", io.mmu.addr)
+        //printf("rdata    = %x \n", io.mmu.rdata)
+        //printf("jnpc     = %x \n", jnpc)
+    }
 }
