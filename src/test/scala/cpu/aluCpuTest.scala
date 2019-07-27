@@ -6,7 +6,7 @@ import chisel3.util._
 
 class ALUCPUTest(c: CPUTest) extends PeekPokeTester(c) {
     poke(c.io.en, false)
-    RAMTest.loadFile(this, c, "tests/rv_tests/isa/rv64ui-p-jal")
+    RAMTest.loadFile(this, c, "tests/rv_tests/isa/rv64ui-p-lbu")
     //RAMTest.loadFile(this, c, "tests/test_csrrw.bin")
     //RAMTest.loadFile(this, c, "monitor/monitor.bin")
     //RAMTest.loadFile(this, c, "tests/test1.bin")
