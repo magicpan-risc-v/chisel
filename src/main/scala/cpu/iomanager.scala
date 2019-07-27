@@ -18,4 +18,7 @@ class IOManager extends Module {
     io.mem_out.raddr := Mux(nmn, io.mem_if.raddr, io.mem_mem.raddr)
     io.mem_out.waddr := io.mem_mem.waddr
     io.mem_out.wdata := io.mem_mem.wdata
+
+    io.mem_if.ready  := nmn && io.mem_out.ready
+    io.mem_mem.ready := io.mem_out.ready
 }

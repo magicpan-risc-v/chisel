@@ -9,6 +9,8 @@ class ID_EX extends Module {
         val bid   = Input(Bool()) // from Decoder, bubble all
         val bex   = Input(Bool()) // from EX
 
+        val pass  = Input(Bool())
+
         val immi   = Input(UInt(64.W))
         val ALUOpi = Input(UInt(4.W))
         val exeti  = Input(UInt(4.W))
@@ -54,7 +56,7 @@ class ID_EX extends Module {
     io.op32o  := op32
     io.csr_wb_o  := csr_wb
 
-    when (io.en) {
+    when (io.en && io.pass) {
         imm   := io.immi   & bm
         ALUOp := io.ALUOpi & bm(3,0)
         exet  := io.exeti  & bm(3,0)

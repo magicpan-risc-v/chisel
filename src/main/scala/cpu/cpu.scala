@@ -44,6 +44,13 @@ class CPU extends Module {
     insr.io.nls    <> ex_mem.io.nlso
     insr.io.bubble <> insd.io.bubble
 
+    // pass
+    if_id.io.pass  <> memc.io.ready
+    id_ex.io.pass  <> memc.io.ready
+    ex_mem.io.pass <> memc.io.ready
+    mem_wb.io.pass <> memc.io.ready
+    regc.io.pass   <> memc.io.ready
+
     // IF_ID
     if_id.io.en    <> io.en
     if_id.io.insci <> insr.io.insn

@@ -17,7 +17,7 @@ class RegCtrl extends Module {
         io.w.wd,
         regs(io.r.r2)
     )
-    when (io.w.wen && io.w.w =/= 0.U) {
+    when (io.w.wen && io.w.w =/= 0.U && io.pass) {
         regs(io.w.w) := io.w.wd
         //printf("set reg[%d] = %x\n", io.w.w, io.w.wd)
 
