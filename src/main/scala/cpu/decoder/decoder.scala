@@ -72,9 +72,6 @@ class Decoder extends Module {
     )
     val bubble    = io.lastload.valid && ((rs1_valid && io.lastload.index === rs1_index) || (rs2_valid && io.lastload.index === rs2_index))
 
-    //val csr_valid = MuxLookup(itype.io.exe_type, false.B, Seq(  // TODO 这个判断不够详细
-            //(EXT.CSR,  true.B),(EXT.CSRI, true.B)
-    //))
     val csr_valid = PriorityMux(Seq(
         (itype.io.exe_type === EXT.CSR && rs1_index.orR,  true.B),
         (itype.io.exe_type === EXT.CSRI && rs1_index.orR, true.B),

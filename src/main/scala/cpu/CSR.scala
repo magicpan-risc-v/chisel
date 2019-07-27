@@ -225,6 +225,28 @@ class CSR extends Module {
 
     when(have_excep) {
       when(Cause.isRet(cause)) {  // xRET
+        switch(Cause.retX(cause)) {
+          is(Priv.M) {
+            mstatus.MIE := mstatus.MPIE
+            mstatus.MPIE := 1.U
+            mstatus.MPP := Priv.U
+            nextPrv := mstatus.MPP
+            io.csrNewPc := mepc
+          }
+          is(Priv.S) {
+            mstatus.SIE := mstatus.SPIE
+            mstatus.SPIE := 1.U
+            mstatus.SPP := 0.U
+            nextPrv := mstatus.SPP
+            io.csrNewPc := sepc
+          }
+          is(Priv.U) {
+            mstatus.UIE := mstatus.MPIE
+            mstatus.UPIE := 1.U
+            nextPrv := Priv.U
+            io.csrNewPc := uepc
+          }
+        }
       }.elsewhen(cause.asUInt === Cause.SFenceOne || cause.asUInt === Cause.SFenceAll) {  // SFence 语句
       }.otherwise{  // Interrupt or Exception
         val epc = io.mem.excep.pc

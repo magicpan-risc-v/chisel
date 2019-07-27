@@ -119,6 +119,10 @@ class CPU extends Module {
     memc.io.csr     <> csr.io.mem
     csr.io.external_inter.valid := false.B  // 忽略外部中断，不实现
     csr.io.external_inter.bits  := 0.U
+
+    // flush
+    if_id.io.flush  <> csr.io.flush
+    id_ex.io.flush  <> csr.io.flush
 }
 
 object CPU extends App {

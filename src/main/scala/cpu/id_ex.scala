@@ -8,6 +8,7 @@ class ID_EX extends Module {
         val en    = Input(Bool())
         val bid   = Input(Bool()) // from Decoder, bubble all
         val bex   = Input(Bool()) // from EX
+        val flush = Input(Bool())
 
         val immi   = Input(UInt(64.W))
         val ALUOpi = Input(UInt(4.W))
@@ -38,7 +39,7 @@ class ID_EX extends Module {
     val lsm   = RegInit(15.U(4.W))
     val op32  = RegInit(false.B)
 
-    val bubble = io.bid || io.bex
+    val bubble = io.bid || io.bex || io.flush
     val bm     = Mux(bubble, 0.U(64.W), 0xffffffffffffffffL.S(64.W).asUInt)
 
     val csr_wb  = RegInit(0.U.asTypeOf(new WrCsrReg))

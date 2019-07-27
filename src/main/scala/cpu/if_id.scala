@@ -6,6 +6,7 @@ import chisel3.util._
 class IF_ID extends Module {
     val io =  IO(new Bundle {
         val en    = Input(Bool())
+        val flush = Input(Bool())
 
         val insi  = Input(UInt(32.W))
         val pci   = Input(UInt(64.W))
@@ -40,6 +41,7 @@ class IF_ID extends Module {
     io.excep_o := excep
 
     when (io.en) {
+      when(!io.flush) {
         ins  := io.insi
         pc   := io.pci
         insc := io.insci
@@ -47,6 +49,15 @@ class IF_ID extends Module {
         lastload_valid   := io.lastloadin.valid
         lastload_index   := io.lastloadin.index
         excep := io.excep_i
+      }otherwise{
+        ins  := 0.U(32.W)
+        pc   := 0.U(64.W)
+        insc := 0.U(64.W)
+        icd  := 0.U(64.W)
+        lastload_valid   := false.B
+        lastload_index   := 0.U(5.W)
+        excep := 0.U.asTypeOf(new Exception)
+      }
 
         
         //printf("IF_ID  : ins  = %x\n", ins)

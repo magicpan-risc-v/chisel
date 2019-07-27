@@ -47,4 +47,8 @@ class MemoryCtrl extends Module {
 
     io.csr.wrCSROp := io.csr_wb
     io.csr.excep   := io.excep
+    when(io.inter.valid) {
+      io.csr.excep.valid := true.B
+      io.csr.excep.code  := io.inter.bits
+    }
 }
