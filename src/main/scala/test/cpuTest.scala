@@ -17,6 +17,7 @@ class CPUTest extends Module {
     
     // for test
     val memt = Module(new MemoryTest)
+
     memt.io.mem   <> real_cpu.io.mem
     io.en         <> real_cpu.io.en
     io.init       <> memt.io.init
@@ -24,6 +25,9 @@ class CPUTest extends Module {
     io.dd         <> memt.io.dd
 
     io.wbd        <> real_cpu.io.mem.wdata
+
+    real_cpu.io.serial.rdata := 0.U(64.W)
+    real_cpu.io.serial.ready := false.B
 }
 
 object CPUTest extends App {
