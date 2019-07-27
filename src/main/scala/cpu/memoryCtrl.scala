@@ -34,8 +34,7 @@ class MemoryCtrl extends Module {
     })
 
     io.mem.mode  := Mux(io.nls, io.lsm, MEMT.NOP)
-    io.mem.raddr := io.addr
-    io.mem.waddr := io.addr
+    io.mem.addr := io.addr
     io.mem.wdata := io.data
 
     io.ready     := !io.nls || io.mem.ready
