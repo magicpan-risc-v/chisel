@@ -11,7 +11,6 @@ class MemoryTest extends Module {
         val init_serial  = Input(Bool())
         val dd   = Input(UInt(8.W)) // default data
     })
-    io.mem.ready := true.B
 
     val program = Mem(0x800000, UInt(8.W))
     val serial  = Mem(0x10000, UInt(8.W))
@@ -37,6 +36,12 @@ class MemoryTest extends Module {
     )
 
     val serial_addr = "b00000000011111111111111111111000".U(64.W)
+
+    when (inited) {
+        //printf("rdata= %x\n", io.mem.rdata)
+        //printf("addr = %x\n", io.mem.addr)
+        ///printf("mode = %d\n", io.mem.mode)
+    }
 
     when (!inited && io.init) {
         program(dindex) := io.dd
@@ -82,7 +87,7 @@ class MemoryTest extends Module {
         }
     }
 
-    io.mem.rdata := Mux(
+    val rdata_temp = Mux(
         io.mem.mode(3) && inited,
         MuxLookup(
             io.mem.mode,
@@ -104,6 +109,15 @@ class MemoryTest extends Module {
         printf("%c", serial(scnt))
         scnt := scnt + 1.U
     }
+    val working = io.mem.mode =/= MEMT.NOP
+    val rdata = RegInit(0.U(64.W))
+
+    when (working) { 
+        rdata := rdata_temp
+    }
+
+    io.mem.ready := true.B
+    io.mem.rdata  := rdata
 }
 
 object MemoryTest extends App {

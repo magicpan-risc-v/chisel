@@ -1,11 +1,16 @@
 .global _start
 _start:
-    lui	a5, 0x800
-    addi a5,a5,-8
-    li a4, 65
-    sb a4, 0(a5)
-    sb a4, 0(a5)
-    sb a4, 0(a5)
-    beqz zero, next
-next:
-    li gp, 2
+    li	gp,3
+    li	ra,1
+    li	sp,0
+    bne	ra,sp,l1
+    bne	zero,gp,fail
+l2:
+    bne	zero,gp,pass
+l1:
+    bne	ra,sp,l2
+    bne	zero,gp,fail
+fail:
+    li a5,1
+pass:
+    li a5,2
