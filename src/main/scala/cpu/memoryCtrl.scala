@@ -16,6 +16,14 @@ object MEMT {
     val SH  = "b0001".U(4.W)
     val SW  = "b0010".U(4.W)
     val SD  = "b0011".U(4.W)
+
+    def isRead(x: UInt): Bool  = x(3) && ! x.andR
+    def isWrite(x: UInt): Bool = ! x(3)
+    def is64(x: UInt): Bool    = x(2,0) === "b011".U
+    def is32(x: UInt): Bool    = x(1,0) === "b10".U
+    def is16(x: UInt): Bool    = x(1,0) === "b01".U
+    def is8(x: UInt): Bool     = x(1,0) === "b00".U
+
 }
 
 class MemoryCtrl extends Module {

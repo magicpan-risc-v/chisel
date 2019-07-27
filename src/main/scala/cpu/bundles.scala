@@ -32,15 +32,18 @@ class RAMRead extends Bundle {
     val mode = Input(UInt(4.W))
 
     // reader
-    val raddr = Input(UInt(64.W))
+    val addr = Input(UInt(64.W))
     val rdata = Output(UInt(64.W))
 }
 
 // Read/Write Memory
 class RAMOp extends RAMRead {
     // writer
-    val waddr = Input(UInt(64.W))
+    //val waddr = Input(UInt(64.W))
     val wdata = Input(UInt(64.W))
+    val ok = Input(Bool())
+
+    def ready = mode === MEMT.NOP || ok
 }
 
 class IF_MMU extends RAMRead {

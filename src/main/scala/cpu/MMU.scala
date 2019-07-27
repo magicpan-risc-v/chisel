@@ -7,7 +7,7 @@ class MMU extends Module {
   val io = IO(new Bundle{
     val insr = new IF_MMU // InstReader -> MMU
     val mem = new MEM_MMU  // MEM  -> MMU
-    val if_iom = Flipped(new RAMRead)  // MMU -> IOManager
+    val if_iom = Flipped(new RAMOp)  // MMU -> IOManager
     val mem_iom = Flipped(new RAMOp)  // MMU -> IOManager
   })
 
