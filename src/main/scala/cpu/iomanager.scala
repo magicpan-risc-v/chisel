@@ -71,7 +71,7 @@ class IOManager extends Module {
     handleOutput(memWait, mem)
 
     ifWait := Mux(ifWait =/= waitNone && !if_.ready, ifWait, waitNone)
-    memWait := Mux(memWait =/= waitNone && !mem.ready, ifWait, waitNone)
+    memWait := Mux(memWait =/= waitNone && !mem.ready, memWait, waitNone)
 
     // 整合时序逻辑，优先访存，然后取指令
     
