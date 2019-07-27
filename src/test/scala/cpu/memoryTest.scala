@@ -9,7 +9,7 @@ class MemoryTest extends Module {
         val mem  = new RAMOp
         val init = Input(Bool())
         val init_serial  = Input(Bool())
-        val dd   = Input(UInt(8.W)) // default data
+        val dd   = Input(UInt(32.W)) // default data
     })
 
     val program = Mem(0x800000, UInt(8.W))
@@ -44,12 +44,15 @@ class MemoryTest extends Module {
     }
 
     when (!inited && io.init) {
-        program(dindex) := io.dd
-        dindex := dindex + 1.U
+        program(dindex+3.U) := io.dd(31,24)
+        program(dindex+2.U) := io.dd(23,16)
+        program(dindex+1.U) := io.dd(15,8)
+        program(dindex) := io.dd(7,0)
+        dindex := dindex + 4.U
     }
 
     when (io.init_serial) {
-        serial(sindex) := io.dd
+        serial(sindex) := io.dd(7,0)
         sindex := sindex + 1.U
     }
     

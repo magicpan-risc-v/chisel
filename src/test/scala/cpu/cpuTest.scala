@@ -9,7 +9,7 @@ class CPUTest extends Module {
         val en   = Input(Bool())
         val init = Input(Bool()) 
         val init_serial  = Input(Bool())
-        val dd   = Input(UInt(8.W))
+        val dd   = Input(UInt(32.W))
 
         val wbd  = Output(UInt(64.W))
     })
