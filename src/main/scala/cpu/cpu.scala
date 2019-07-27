@@ -7,6 +7,7 @@ class CPU extends Module {
     val io =  IO(new Bundle {
         val en  = Input(Bool())
         val mem = Flipped(new RAMOp)
+        val serial = Flipped(new RAMOp)
     })
 
     val insr = Module(new InsReader)
@@ -29,6 +30,7 @@ class CPU extends Module {
     memc.io.mem    <> mmu.io.mem
     mmu.io.mem_iom <> iomn.io.mem_mem
     io.mem         <> iomn.io.mem_out
+    io.serial      <> iomn.io.serial_out
 
     // Reg
     insd.io.regr  <> regc.io.r
