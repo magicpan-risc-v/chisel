@@ -25,6 +25,8 @@ class MemoryCtrl extends Module {
         val addr = Input(UInt(64.W))
         val data = Input(UInt(64.W))
 
+        val ready = Output(Bool())
+
         val ereg = Flipped(new WriteBackReg)
         val wreg = new WriteBackReg
 
@@ -35,6 +37,8 @@ class MemoryCtrl extends Module {
     io.mem.raddr := io.addr
     io.mem.waddr := io.addr
     io.mem.wdata := io.data
+
+    io.ready     := !io.nls || io.mem.ready
 
     io.wreg.wbrv := io.ereg.wbrv || (io.lsm =/= MEMT.NOP && io.lsm(3))
     io.wreg.wbri := io.ereg.wbri

@@ -20,6 +20,9 @@ class MMU extends Module {
   io.mem.rdata      := io.mem_iom.rdata
   io.mem_iom.waddr  := io.mem.waddr
   io.mem_iom.wdata  := io.mem.wdata
+
+  io.insr.ready  := io.if_iom.ready
+  io.mem.ready  := io.mem_iom.ready
   //io.insr.pageFault := false.B
   //io.mem.pageFault  := false.B
 }

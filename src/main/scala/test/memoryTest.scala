@@ -103,6 +103,8 @@ class MemoryTest extends Module {
         printf("%c", serial(scnt))
         scnt := scnt + 1.U
     }
+
+    io.mem.ready := true.B
 }
 
 object MemoryTest extends App {

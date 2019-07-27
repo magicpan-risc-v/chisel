@@ -6,6 +6,7 @@ import chisel3.util._
 class IF_ID extends Module {
     val io =  IO(new Bundle {
         val en    = Input(Bool())
+        val pass  = Input(Bool())
 
         val insi  = Input(UInt(32.W))
         val pci   = Input(UInt(64.W))
@@ -35,7 +36,7 @@ class IF_ID extends Module {
     io.lastloadout.valid   := lastload_valid
     io.lastloadout.index   := lastload_index
 
-    when (io.en) {
+    when (io.en && io.pass) {
         ins  := io.insi
         pc   := io.pci
         insc := io.insci
