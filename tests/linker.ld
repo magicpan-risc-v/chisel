@@ -6,7 +6,7 @@ SECTIONS {
 
     .text : {
 		BYTE(0)
-		. = 8;
+		. = 4096;
         *(.text._start)
         *(.text .stub .text.* .gnu.linkonce.t.*)
     }
