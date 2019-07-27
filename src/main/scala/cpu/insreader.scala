@@ -24,12 +24,18 @@ class InsReader extends Module {
 
     val npc   = io.lpc + 4.U
     val cnrc  = io.jump || io.inspd(63,3) =/= npc(63,3) // can not read from cache
-    val pco   = Mux(
+    /*val pco   = Mux(
         io.bubble, io.lpc,
         Mux(
             cnrc, Mux(
                 io.nls, io.lpc, Mux(io.jump, io.jdest, npc)
             ), npc
+        )
+    )*/
+    val pco   = Mux(
+        io.bubble, io.lpc,
+        Mux(
+            cnrc, Mux(io.jump, io.jdest, npc), npc
         )
     )
     val nread = !(io.bubble || io.nls) && cnrc
@@ -45,13 +51,14 @@ class InsReader extends Module {
         )
     )
     val insn  = Mux(nread, io.mmu.rdata, io.insp)
-    val raddr = pco & 0xfffffffffffffff8L.S(64.W).asUInt
+    val addr = pco & 0xfffffffffffffff8L.S(64.W).asUInt
+    val jnpc  = Mux(io.jump, io.jdest, pco)
 
-    io.mmu.raddr := Mux(nread, raddr, 0.U(64.W))
+    io.mmu.addr := Mux(nread, addr, 0.U(64.W))
     io.mmu.mode  := Mux(nread, MEMT.LD, MEMT.NOP)
     
-    io.pc   := Mux(io.jump && pco =/= io.jdest, io.jdest - 4.U, pco)
-    io.ins  := ins
-    io.insn := insn
-    io.insnd := Mux(nread, raddr, io.inspd)
+    io.pc   := Mux(io.mmu.ready, jnpc, jnpc - 4.U)
+    io.ins  := Mux(io.mmu.ready, ins,  0.U(64.W))
+    io.insn := Mux(io.mmu.ready, insn, io.insp)
+    io.insnd := Mux(io.mmu.ready && nread, addr, io.inspd)
 }

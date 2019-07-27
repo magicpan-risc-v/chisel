@@ -20,6 +20,8 @@ class RegWriter extends Bundle {
 class Reg extends Bundle {
     val r = new RegReader
     val w = new RegWriter
+
+    val pass = Input(Bool())
 }
 
 class WriteBackReg extends Bundle {
@@ -30,6 +32,7 @@ class WriteBackReg extends Bundle {
 
 class RAMRead extends Bundle {
     val mode = Input(UInt(4.W))
+    val ready = Output(Bool())
 
     // reader
     val addr = Input(UInt(64.W))
@@ -41,9 +44,6 @@ class RAMOp extends RAMRead {
     // writer
     //val waddr = Input(UInt(64.W))
     val wdata = Input(UInt(64.W))
-    val ok = Input(Bool())
-
-    def ready = mode === MEMT.NOP || ok
 }
 
 class IF_MMU extends RAMRead {

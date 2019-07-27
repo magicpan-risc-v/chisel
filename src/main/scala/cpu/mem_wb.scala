@@ -6,6 +6,7 @@ import chisel3.util._
 class MEM_WB extends Module {
     val io =  IO(new Bundle {
         val en    = Input(Bool())
+        val pass  = Input(Bool())
 
         val wregi = Flipped(new WriteBackReg)
         val csr_wb_i = new WrCsrReg
@@ -23,7 +24,7 @@ class MEM_WB extends Module {
     io.wrego.wbri := wbri
     io.csr_wb_o  := csr_wb
 
-    when (io.en) {
+    when (io.en && io.pass) {
         wbri  := io.wregi.wbri
         wbrv  := io.wregi.wbrv
         wbrd  := io.wregi.wbrd
