@@ -10,6 +10,8 @@ class ID_EX extends Module {
         val bex   = Input(Bool()) // from EX
         val flush = Input(Bool())
 
+        val pass  = Input(Bool())
+
         val immi   = Input(UInt(64.W))
         val ALUOpi = Input(UInt(4.W))
         val exeti  = Input(UInt(4.W))
@@ -55,7 +57,7 @@ class ID_EX extends Module {
     io.csr_wb_o  := csr_wb
     io.excep_o := excep
 
-    when (io.en) {
+    when (io.en && io.pass) {
         imm   := io.immi   & bm
         ALUOp := io.ALUOpi & bm(3,0)
         exet  := io.exeti  & bm(3,0)

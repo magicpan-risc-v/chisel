@@ -7,6 +7,7 @@ class CPU extends Module {
     val io =  IO(new Bundle {
         val en  = Input(Bool())
         val mem = Flipped(new RAMOp)
+        val serial = Flipped(new RAMOp)
     })
 
     val insr = Module(new InsReader)
@@ -29,6 +30,7 @@ class CPU extends Module {
     memc.io.mem    <> mmu.io.mem
     mmu.io.mem_iom <> iomn.io.mem_mem
     io.mem         <> iomn.io.mem_out
+    io.serial      <> iomn.io.serial_out
 
     // Reg
     insd.io.regr  <> regc.io.r
@@ -44,6 +46,13 @@ class CPU extends Module {
     insr.io.jdest  <> exec.io.jdest
     insr.io.nls    <> ex_mem.io.nlso
     insr.io.bubble <> insd.io.bubble
+
+    // pass
+    if_id.io.pass  <> memc.io.ready
+    id_ex.io.pass  <> memc.io.ready
+    ex_mem.io.pass <> memc.io.ready
+    mem_wb.io.pass <> memc.io.ready
+    regc.io.pass   <> memc.io.ready
 
     // IF_ID
     if_id.io.en    <> io.en
@@ -121,7 +130,7 @@ class CPU extends Module {
     csr.io.external_inter.bits  := 0.U
 
     // flush
-    if_id.io.flush  <> csr.io.flush
+    if_id.io.pass   := !csr.io.flush
     id_ex.io.flush  <> csr.io.flush
 }
 

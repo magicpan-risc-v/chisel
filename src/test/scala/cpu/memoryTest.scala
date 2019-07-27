@@ -11,6 +11,7 @@ class MemoryTest extends Module {
         val init_serial  = Input(Bool())
         val dd   = Input(UInt(8.W)) // default data
     })
+    io.mem.ready := true.B
 
     val program = Mem(0x800000, UInt(8.W))
     val serial  = Mem(0x10000, UInt(8.W))
@@ -21,8 +22,8 @@ class MemoryTest extends Module {
     val scnt   = RegInit(0.U(32.W))
 
     val program_length = dindex
-    val rs = io.mem.raddr
-    val ws = io.mem.waddr
+    val rs = io.mem.addr
+    val ws = io.mem.addr
 
     val data = Cat(
         program(rs+7.U),

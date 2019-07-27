@@ -6,6 +6,7 @@ import chisel3.util._
 class EX_MEM extends Module {
     val io =  IO(new Bundle {
         val en    = Input(Bool())
+        val pass  = Input(Bool())
 
         val nlsi  = Input(Bool())
         val lsmi  = Input(UInt(4.W))
@@ -48,7 +49,7 @@ class EX_MEM extends Module {
     io.excep_o   := excep
     io.inter_o   := inter
 
-    when (io.en) {
+    when (io.en && io.pass) {
         nls   := io.nlsi
         wbri  := io.wregi.wbri
         wbrv  := io.wregi.wbrv
