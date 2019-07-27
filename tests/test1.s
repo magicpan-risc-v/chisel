@@ -1,2 +1,8 @@
+.global _start
 _start:
-	addi a3,a3,1
+    li	t1, 12
+    jalr	t0,t1
+    j	fail
+    li a5,20
+fail:
+    li a5,10

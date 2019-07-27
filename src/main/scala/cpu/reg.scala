@@ -3,32 +3,25 @@ package cpu;
 import chisel3._
 import chisel3.util._
 
-class RegReader extends Bundle {
-    val r1 = Input(UInt(5.W))
-    val r2 = Input(UInt(5.W))
-    val r1d = Output(UInt(64.W))
-    val r2d = Output(UInt(64.W))
-}
-
-class RegWriter extends Bundle {
-    val wen = Input(Bool()) // 使能端
-    val w = Input(UInt(5.W))
-    val wd = Input(UInt(64.W))
-}
-
-class Reg extends Bundle {
-    val r = new RegReader
-    val w = new RegWriter
-}
-
 class RegCtrl extends Module {
     val io = IO(new Reg)
 
     val regs = Mem(32, UInt(64.W))
-    io.r.r1d := regs(io.r.r1)
-    io.r.r2d := regs(io.r.r2)
-    when (io.w.wen) {
+    io.r.r1d := Mux(
+        io.w.wen && io.r.r1 === io.w.w,
+        io.w.wd,
+        regs(io.r.r1)
+    )
+    io.r.r2d := Mux(
+        io.w.wen && io.r.r2 === io.w.w,
+        io.w.wd,
+        regs(io.r.r2)
+    )
+    when (io.w.wen && io.w.w =/= 0.U && io.pass) {
         regs(io.w.w) := io.w.wd
+        //printf("set reg[%d] = %x\n", io.w.w, io.w.wd)
+
+        //printf("reg[12] = %d\n", regs(12))
     }
 }
 

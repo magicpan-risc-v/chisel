@@ -1,0 +1,124 @@
+package cpu;
+
+import chisel3._
+import chisel3.util._
+
+class CSR extends Module {
+  val io = IO(new Bundle {
+    val id = Flipped(new ID_CSR)
+    val wrOp = new WrCsrReg
+  })
+
+  val nextPrv = Wire(UInt(2.W))
+  val prv     = RegNext(nextPrv, init=Priv.M)
+  nextPrv := prv
+
+  val csr = Mem(0x400, UInt(64.W))  // all csrs
+  object ADDR {
+    // M Info
+    val mvendorid = "hF11".U
+    val marchid   = "hF12".U
+    val mimpid    = "hF13".U
+    val mhartid   = "hF14".U
+    //M Trap Setup
+    val mstatus   = "h300".U
+    val misa      = "h301".U
+    val medeleg   = "h302".U
+    val mideleg   = "h303".U
+    val mie       = "h304".U
+    val mtvec     = "h305".U
+    val mcounteren= "h306".U
+    //M Trap Hangding
+    val mscratch  = "h340".U
+    val mepc      = "h341".U
+    val mcause    = "h342".U
+    val mtval     = "h343".U
+    val mip       = "h344".U
+    //S Trap Setup
+    val sstatus   = "h100".U
+    val sedeleg   = "h102".U
+    val sideleg   = "h103".U
+    val sie       = "h104".U
+    val stvec     = "h105".U
+    val scounteren= "h106".U
+    //S Trap Hangding
+    val sscratch  = "h140".U
+    val sepc      = "h141".U
+    val scause    = "h142".U
+    val stval     = "h143".U
+    val sip       = "h144".U
+    // S Protection and Translation
+    val satp      = "h180".U
+    // U Trap Setup
+    val utvec     = "h005".U
+    // U Trap Hangding
+    val uscratch  = "h040".U
+    val uepc      = "h041".U
+    val ucause    = "h042".U
+    val utval     = "h043".U
+    val uip       = "h044".U
+    // emmmm..
+    val mtimecmp  = "h321".U
+    // time
+    val time      = "hC01".U
+    val cycle     = "hC00".U
+  }
+
+  class MStatus extends Bundle {
+    val SD = Bool()
+    val zero1 = UInt(27.W)
+    val SXL = UInt(2.W)
+    val UXL = UInt(2.W)
+    val TSR = Bool()
+    val zero2 = UInt(9.W)
+    val TW = Bool()
+    val TVM = Bool()
+    val MXR = Bool()
+    val SUM = Bool()
+    val MPriv = Bool()
+    val XS = UInt(2.W)
+    val FS = UInt(2.W)
+    val MPP = UInt(2.W)
+    val old_HPP = UInt(2.W)
+    val SPP = UInt(1.W)
+    val MPIE = Bool()
+    val old_HPIE = Bool()
+    val SPIE = Bool()
+    val UPIE = Bool()
+    val MIE = Bool()
+    val old_HIE = Bool()
+    val SIE = Bool()
+    val UIE = Bool()
+  }
+  val mstatus = RegInit(0.U.asTypeOf(new MStatus))
+  val mtime   = RegInit(0.U(64.W))
+  mtime := mtime + 1.U
+
+  io.id.rdata := MuxLookup(io.id.addr, csr(io.id.addr), Seq(
+    ADDR.mvendorid -> 2333.U(64.W),
+    ADDR.marchid -> "h8fffffff".U(32.W),
+    ADDR.mimpid -> 2333.U(64.W),
+    ADDR.mhartid -> 0.U(64.W),
+    ADDR.misa -> 0.U(64.W),
+    ADDR.mstatus -> mstatus.asUInt,
+    ADDR.sstatus -> mstatus.asUInt,
+    ADDR.sie -> csr(ADDR.mie),
+    ADDR.sip -> csr(ADDR.mip),
+    ADDR.time -> mtime,
+    ADDR.cycle -> mtime
+  ))
+  io.id.priv := prv
+
+  val csr_ids = ADDR.getClass.getDeclaredFields.map(f => {
+    f.setAccessible(true)
+    f.get(ADDR).asInstanceOf[UInt]
+  })
+  when(io.wrOp.valid) {
+    for(i <- csr_ids) {
+      when(i === io.wrOp.csr_idx) {
+        csr(i) := io.wrOp.csr_data
+        printf("set csr[%d] = %x\n", i, io.wrOp.csr_data)
+      }
+    }
+  }
+}

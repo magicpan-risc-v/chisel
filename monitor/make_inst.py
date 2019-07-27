@@ -1,0 +1,10 @@
+with open('inst.bin', 'wb') as f:
+    # data = bytearray()
+    # data.append(b"R")
+    # data.append(b"\n")
+    # data.append('J')
+    # data.append(' ')
+    # data.append('0')
+    # data.append('\n')
+    # f.write(data)
+    f.write(b"R\nJ 0\n")
