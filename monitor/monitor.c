@@ -17,7 +17,7 @@
 #ifdef DEBUG
 #define GETCHAR_BLK(c) \
     {                  \
-        (c) = '\n';     \
+     (c) = *((char*)ADR_SERIAL_DAT);     \
     }
 #define PUTCHAR(c)                                       \
     {                                                    \
