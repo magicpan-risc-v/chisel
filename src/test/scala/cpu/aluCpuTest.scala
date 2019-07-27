@@ -25,7 +25,8 @@ object ALUCPUTest extends App {
 }
 
 class GCDTester extends ChiselFlatSpec {
-    val args = Array[String]("verilator")
+    //val args = Array[String]("verilator")
+    val args = Array[String]()
     iotesters.Driver.execute(args, () => new CPUTest) {
       c => new ALUCPUTest(c)
     } should be (true)

@@ -24,6 +24,9 @@ class CPUTest extends Module {
     io.dd         <> memt.io.dd
 
     io.wbd        <> real_cpu.io.mem.wdata
+
+    real_cpu.io.serial.rdata := 0.U(64.W)
+    real_cpu.io.serial.ready := false.B
 }
 
 object CPUTest extends App {
