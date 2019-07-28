@@ -39,9 +39,9 @@ class MemoryTest extends Module {
     val tohost = "h00001000".U(64.W)
 
     when (inited) {
-        //printf("rdata= %x\n", io.mem.rdata)
-        //printf("addr = %x\n", io.mem.addr)
-        ///printf("mode = %d\n", io.mem.mode)
+        printf("rdata= %x\n", io.mem.rdata)
+        printf("addr = %x\n", io.mem.addr)
+        printf("mode = %d\n", io.mem.mode)
     }
 
     when (!inited && io.init) {
@@ -80,7 +80,8 @@ class MemoryTest extends Module {
 
     when (inited && io.mem.mode === MEMT.SB) {
         when (ws === serial_addr) {
-            printf("%c(%d)", io.mem.wdata(7,0), io.mem.wdata(7,0))
+            //printf("%c(%d)", io.mem.wdata(7,0), io.mem.wdata(7,0))
+            printf("%c", io.mem.wdata(7,0))
         } .otherwise {
             //printf("%x \n", ws)
             program(ws) := io.mem.wdata(7,0)

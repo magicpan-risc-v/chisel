@@ -14,7 +14,7 @@ class CSR extends Module {
     val external_inter = Input(Valid(UInt(32.W)))  // 外部中断信号
     val inter = Output(Valid(UInt(32.W)))
 
-    val mmu = new CSR_MMU
+    //val mmu = new CSR_MMU
   })
 
   val nextPrv = Wire(UInt(2.W))

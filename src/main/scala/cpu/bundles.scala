@@ -106,10 +106,10 @@ class Exception extends Bundle {
   val pc    = Output(UInt(32.W))  // pc
 }
 
-class CSR_MMU extends Bundle {
-  val satp  = Output(UInt(32.W))  // 虚拟内存模式，Bare or Sv39 or Sv48
-  val flush = Output(new FlushOp) // 清空部件
-  val priv  = Output(UInt(2.W)) // 当前所处的特权模式
-  val mxr   = Output(Bool())    // 可执行部分是否可读
-  val sum   = Output(Bool())    // 监管者模式下是否可以处理用户态代码
-}
+//class CSR_MMU extends Bundle {
+  //val satp  = Output(UInt(32.W))  // 虚拟内存模式，Bare or Sv39 or Sv48
+  //val flush = Output(new FlushOp) // 清空部件
+  //val priv  = Output(UInt(2.W)) // 当前所处的特权模式
+  //val mxr   = Output(Bool())    // 可执行部分是否可读
+  //val sum   = Output(Bool())    // 监管者模式下是否可以处理用户态代码
+//}

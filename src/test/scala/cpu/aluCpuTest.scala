@@ -12,7 +12,7 @@ class ALUCPUTest(c: CPUTest, fname: String) extends PeekPokeTester(c) {
     RAMTest.loadFile(this, c, fname)
     RAMTest.loadSerial(this, c, "tests/test-serial.txt")
     poke(c.io.en, true)
-    for (i <- 1 until 2000) {
+    for (i <- 1 until 100000) {
         //print("cycle "+i + " / ")
         step(1)
     }
@@ -36,5 +36,6 @@ class SingleTester extends ChiselFlatSpec {
     //val args = Array[String]()
     iotesters.Driver.execute(args, () => new CPUTest) {
       c => new ALUCPUTest(c, s"tests/rv_offical/rv64ui-p-xor")
+      //c => new ALUCPUTest(c, s"monitor/monitor.bin")
     } should be (true)
 }
