@@ -19,8 +19,8 @@ class ALUCPUTest(c: CPUTest, fname: String) extends PeekPokeTester(c) {
 }
 
 class RiscvTester extends ChiselFlatSpec {
-    val args = Array[String]("-fiwv", "-tbn", "verilator")
-    //val args = Array[String]()
+    //val args = Array[String]("-fiwv", "-tbn", "verilator")
+    val args = Array[String]()
     val names = new File("tests/riscv").listFiles().map(f => f.getName)
     for(name <- names) {
       name should "pass test" in {
@@ -32,8 +32,8 @@ class RiscvTester extends ChiselFlatSpec {
 }
 
 class SingleTester extends ChiselFlatSpec {
-    val args = Array[String]("-fiwv", "-tbn", "verilator")
-    //val args = Array[String]()
+    //val args = Array[String]("-fiwv", "-tbn", "verilator")
+    val args = Array[String]()
     iotesters.Driver.execute(args, () => new CPUTest) {
       c => new ALUCPUTest(c, s"tests/rv_offical/rv64ui-p-xor")
       //c => new ALUCPUTest(c, s"monitor/monitor.bin")

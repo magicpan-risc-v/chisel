@@ -43,22 +43,22 @@ Disassembly of section .text.init:
   6c:	00000297          	auipc	t0,0x0
   70:	01028293          	addi	t0,t0,16 # 7c <reset_vector+0x18>
   74:	30529073          	csrw	mtvec,t0
-  78:	18005073          	csrwi	satp,0
+  78:	18005073          	csrwi	satp,0 # .....
   7c:	00000297          	auipc	t0,0x0
   80:	02428293          	addi	t0,t0,36 # a0 <reset_vector+0x3c>
   84:	30529073          	csrw	mtvec,t0
   88:	0010029b          	addiw	t0,zero,1
   8c:	03529293          	slli	t0,t0,0x35
   90:	fff28293          	addi	t0,t0,-1
-  94:	3b029073          	csrw	pmpaddr0,t0
+  94:	3b029073          	csrw	pmpaddr0,t0 # ...
   98:	01f00293          	li	t0,31
-  9c:	3a029073          	csrw	pmpcfg0,t0
+  9c:	3a029073          	csrw	pmpcfg0,t0 # ...
   a0:	00000297          	auipc	t0,0x0
   a4:	01828293          	addi	t0,t0,24 # b8 <reset_vector+0x54>
   a8:	30529073          	csrw	mtvec,t0
-  ac:	30205073          	csrwi	medeleg,0
-  b0:	30305073          	csrwi	mideleg,0
-  b4:	30405073          	csrwi	mie,0
+  ac:	30205073          	csrwi	medeleg,0 # ...
+  b0:	30305073          	csrwi	mideleg,0 # ...
+  b4:	30405073          	csrwi	mie,0     # ...
   b8:	00000193          	li	gp,0
   bc:	00000297          	auipc	t0,0x0		# 此处两句将trap_vector的地址值赋值给t0(x5)
   c0:	f6028293          	addi	t0,t0,-160 # 1c <trap_vector>
