@@ -10,6 +10,7 @@ class CPUTest extends Module {
         val init = Input(Bool()) 
         val init_serial  = Input(Bool())
         val dd   = Input(UInt(32.W))
+        val dd_serial = Input(UInt(8.W))
 
         val wbd  = Output(UInt(64.W))
     })
@@ -17,16 +18,18 @@ class CPUTest extends Module {
     
     // for test
     val memt = Module(new MemoryTest)
+    val sert = Module(new SerialTest)
     memt.io.mem   <> real_cpu.io.mem
+    sert.io.mem   <> real_cpu.io.serial
+
     io.en         <> real_cpu.io.en
     io.init       <> memt.io.init
-    io.init_serial <> memt.io.init_serial
+    io.init_serial <> sert.io.init
     io.dd         <> memt.io.dd
+    io.dd_serial  <> sert.io.dd
 
     io.wbd        <> real_cpu.io.mem.wdata
 
-    real_cpu.io.serial.rdata := 0.U(64.W)
-    real_cpu.io.serial.ready := false.B
 }
 
 object CPUTest extends App {

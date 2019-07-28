@@ -25,7 +25,7 @@ object RAMTest {
 
         tester.poke(c.io.init_serial, 1)
         for (i <- data.indices) {
-            tester.poke(c.io.dd, data(i))
+            tester.poke(c.io.dd_serial, data(i))
             tester.step(1)
             //println(data(i))
         }
