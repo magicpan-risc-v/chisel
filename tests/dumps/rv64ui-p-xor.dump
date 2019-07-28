@@ -39,7 +39,7 @@ Disassembly of section .text.init:
 
 0000000000000064 <reset_vector>:
   64:	f1402573          	csrr	a0,mhartid
-  68:	00051063          	bnez	a0,68 <reset_vector+0x4>
+  68:	00051063          	bnez	a0,68 <reset_vector+0x4>	// 这里不应该跳转,mhartid为0
   6c:	00000297          	auipc	t0,0x0
   70:	01028293          	addi	t0,t0,16 # 7c <reset_vector+0x18>
   74:	30529073          	csrw	mtvec,t0
@@ -60,11 +60,11 @@ Disassembly of section .text.init:
   b0:	30305073          	csrwi	mideleg,0
   b4:	30405073          	csrwi	mie,0
   b8:	00000193          	li	gp,0
-  bc:	00000297          	auipc	t0,0x0
+  bc:	00000297          	auipc	t0,0x0		# 此处两句将trap_vector的地址值赋值给t0(x5)
   c0:	f6028293          	addi	t0,t0,-160 # 1c <trap_vector>
-  c4:	30529073          	csrw	mtvec,t0
+  c4:	30529073          	csrw	mtvec,t0	# 将trap_vector的地址设置为中断处理入口地址
   c8:	00100513          	li	a0,1
-  cc:	01f51513          	slli	a0,a0,0x1f
+  cc:	01f51513          	slli	a0,a0,0x1f	# 1 << 31; CHECK_XLEN
   d0:	00055863          	bgez	a0,e0 <reset_vector+0x7c>
   d4:	0ff0000f          	fence
   d8:	00100193          	li	gp,1
