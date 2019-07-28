@@ -74,7 +74,7 @@ class Decoder extends Module {
 
     val csr_valid = PriorityMux(Seq(
         (itype.io.exe_type === EXT.CSR && rs1_index.orR,  true.B),
-        (itype.io.exe_type === EXT.CSRI && rs1_index.orR, true.B),
+        (itype.io.exe_type === EXT.CSRI                 , true.B),
         (true.B,                                         false.B)
     ))
 

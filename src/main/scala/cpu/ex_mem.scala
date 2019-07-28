@@ -72,5 +72,8 @@ class EX_MEM extends Module {
         //printf("EX_MEM : addr  = %d\n", addr)
         //printf("EX_MEM : data  = %d\n", data)
         
+      // printf("EX_MEM : csr_wb_idx  = %d\n", csr_wb.csr_idx)
+      // printf("EX_MEM : csr_wb_data = %x\n", csr_wb.csr_data)
+      // printf("EX_MEM : csr_wb_v    = %d\n", csr_wb.valid)
     }
 }
