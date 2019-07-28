@@ -14,7 +14,6 @@ class Decoder extends Module {
         val ALUOp    = Output(UInt(4.W))
         val exe_type = Output(UInt(4.W))
         val ls_mode  = Output(UInt(4.W))
-        val br_type  = Output(UInt(3.W))
         val op32     = Output(Bool())
         val bubble   = Output(Bool()) // IF: bubble
 
@@ -26,12 +25,12 @@ class Decoder extends Module {
 
         val csr_from_ex = new WrCsrReg
         val csr_from_mem = new WrCsrReg
-        val csr_from_wb = new WrCsrReg
 
         val exWrReg = Flipped(new WriteBackReg)
         val memWrReg = Flipped(new WriteBackReg)
 
-        //val excep = Output(new Exception)
+        val if_excep = Input(Flipped(new Exception))
+        val ex_excep = Output(new Exception)
     })
 
     val itype = Module(new InsType)
@@ -45,7 +44,7 @@ class Decoder extends Module {
     itype.io.ins_type <> alug.io.ins_type
     immg.io.imm       <> io.imm
     alug.io.ALUOp     <> io.ALUOp
-    io.exe_type       := itype.io.exe_type
+    io.exe_type       <> itype.io.exe_type
     io.op32           <> itype.io.op32
 
     val rs1_index = io.ins(19,15)
@@ -65,8 +64,7 @@ class Decoder extends Module {
     val rs1_valid = rs2_valid || itype.io.ins_type === INST.I_TYPE
     val rd_valid  = 
       (itype.io.ins_type === INST.R_TYPE || itype.io.ins_type === INST.I_TYPE || itype.io.ins_type === INST.U_TYPE || itype.io.ins_type === INST.J_TYPE) && 
-      (rd_index =/= 0.U) &&
-      !itype.io.is_ecall && !itype.io.is_ebreak
+      (rd_index =/= 0.U) && itype.io.exe_type =/= EXT.SYSC
     val ls_mode   = Mux(
         itype.io.exe_type === EXT.LOS,
         Cat(!io.ins(5), io.ins(14,12)),
@@ -74,8 +72,10 @@ class Decoder extends Module {
     )
     val bubble    = io.lastload.valid && ((rs1_valid && io.lastload.index === rs1_index) || (rs2_valid && io.lastload.index === rs2_index))
 
-    val csr_valid = MuxLookup(itype.io.exe_type, false.B, Seq(  // TODO 这个判断不够详细
-            (EXT.CSR,  true.B),(EXT.CSRI, true.B)
+    val csr_valid = PriorityMux(Seq(
+        (itype.io.exe_type === EXT.CSR && rs1_index.orR,  true.B),
+        (itype.io.exe_type === EXT.CSRI && rs1_index.orR, true.B),
+        (true.B,                                         false.B)
     ))
 
 
@@ -89,7 +89,6 @@ class Decoder extends Module {
     io.dreg.rs2_value := rs2_value
 
     io.ls_mode        := ls_mode
-    io.br_type        := io.ins(14,12)
     io.loadinfo.valid     := ls_mode =/= MEMT.NOP && ls_mode(3)
     io.loadinfo.index     := rd_index
     io.bubble         := bubble
@@ -103,4 +102,39 @@ class Decoder extends Module {
         (io.csr.addr === io.csr_from_mem.csr_idx && io.csr_from_mem.valid, io.csr_from_mem.csr_data),
         (true.B,io.csr.rdata)
     ))
+
+    io.ex_excep := io.if_excep // 默认情况
+    when(itype.io.exe_type === EXT.SYSC) {
+        val inst_p1 = io.ins(31,25)
+        val inst_p2 = io.ins(24,20)
+        when(inst_p1 === SYS_INST_P1.SFENCE_VMA){
+          when(!io.if_excep.valid){
+            io.ex_excep.valid := true.B
+            io.ex_excep.value := rs1_value
+            io.ex_excep.code := Mux(io.csr.priv >= Priv.S,
+              Mux(rs1_index === 0.U, Cause.SFenceAll, Cause.SFenceOne),
+              Cause.IllegalInstruction)
+          }
+        }.otherwise{
+          when(!io.if_excep.valid){
+            switch(inst_p2){
+              is(SYS_INST_P2.ECALL) {
+                io.ex_excep.valid := true.B
+                io.ex_excep.code := Cause.ecallX(io.csr.priv)
+              }
+              is(SYS_INST_P2.EBREAK) {
+                io.ex_excep.valid := true.B
+                io.ex_excep.code := Cause.BreakPoint
+              }
+              is(SYS_INST_P2.xRET) {
+                val prv = io.ins(29,28)
+                io.ex_excep.valid := true.B
+                io.ex_excep.code := Mux(io.csr.priv >= prv,
+                  Cause.xRet(prv),
+                  Cause.IllegalInstruction)
+              }
+            }
+          }
+        }
+    }
 }

@@ -1,15 +1,15 @@
 package cpu;
 
+import java.io.File
+
 import chisel3._
 import chisel3.iotesters._
 import chisel3.util._
 
-class ALUCPUTest(c: CPUTest) extends PeekPokeTester(c) {
+class ALUCPUTest(c: CPUTest, fname: String) extends PeekPokeTester(c) {
+    System.out.println("Test Name " + fname);
     poke(c.io.en, false)
-    RAMTest.loadFile(this, c, "tests/rv_tests/isa/rv64ui-p-andi")
-    //RAMTest.loadFile(this, c, "tests/test_csrrw.bin")
-    //RAMTest.loadFile(this, c, "monitor/monitor.bin")
-    //RAMTest.loadFile(this, c, "tests/test1.bin")
+    RAMTest.loadFile(this, c, fname)
     RAMTest.loadSerial(this, c, "tests/test-serial.txt")
     poke(c.io.en, true)
     for (i <- 1 until 2000) {
@@ -18,16 +18,21 @@ class ALUCPUTest(c: CPUTest) extends PeekPokeTester(c) {
     }
 }
 
-object ALUCPUTest extends App {
-    chisel3.iotesters.Driver.execute(args, () => new CPUTest()) (
-        (c) => new ALUCPUTest(c)
-    )
+class RiscvTester extends ChiselFlatSpec {
+    val args = Array[String]("-fiwv", "-tbn", "verilator")
+    val names = new File("tests/riscv").listFiles().map(f => f.getName)
+    for(name <- names) {
+      name should "pass test" in {
+        iotesters.Driver.execute(args, () => new CPUTest) {
+          c => new ALUCPUTest(c, s"tests/riscv/$name")
+        } should be (true)
+      }
+    }
 }
 
-class GCDTester extends ChiselFlatSpec {
-    //val args = Array[String]("verilator")
-    val args = Array[String]()
+class SingleTester extends ChiselFlatSpec {
+    val args = Array[String]("-fiwv", "-tbn", "verilator")
     iotesters.Driver.execute(args, () => new CPUTest) {
-      c => new ALUCPUTest(c)
+      c => new ALUCPUTest(c, s"tests/test_csrrw.bin")
     } should be (true)
 }
