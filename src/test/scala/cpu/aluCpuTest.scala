@@ -25,7 +25,7 @@ class RiscvTester extends ChiselFlatSpec {
     for(name <- names) {
       name should "pass test" in {
         iotesters.Driver.execute(args, () => new CPUTest) {
-          c => new ALUCPUTest(c, s"tests/riscv/$name")
+          c => new ALUCPUTest(c, s"tests/rv_offical/$name")
         } should be (true)
       }
     }
@@ -35,6 +35,6 @@ class SingleTester extends ChiselFlatSpec {
     val args = Array[String]("-fiwv", "-tbn", "verilator")
     //val args = Array[String]()
     iotesters.Driver.execute(args, () => new CPUTest) {
-      c => new ALUCPUTest(c, s"tests/test_ret.bin")
+      c => new ALUCPUTest(c, s"tests/rv_offical/rv64ui-p-xor")
     } should be (true)
 }

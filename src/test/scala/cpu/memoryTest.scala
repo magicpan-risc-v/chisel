@@ -36,6 +36,7 @@ class MemoryTest extends Module {
     )
 
     val serial_addr = "b00000000011111111111111111111000".U(64.W)
+    val tohost = "h00001000".U(64.W)
 
     when (inited) {
         //printf("rdata= %x\n", io.mem.rdata)
@@ -63,6 +64,9 @@ class MemoryTest extends Module {
     }
 
     when (inited && io.mem.mode === MEMT.SW) {
+        when(ws === tohost) {
+          printf("[RESULT]: write to host !!! %x \n ", io.mem.wdata)
+        }
         for (i <- 0 until 4) {
             program(ws+i.U) := io.mem.wdata(i*8+7, i*8)
         }

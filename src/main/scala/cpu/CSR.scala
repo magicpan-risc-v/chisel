@@ -124,7 +124,7 @@ class CSR extends Module {
       when(i === io.mem.wrCSROp.csr_idx) {
         csr(i) := io.mem.wrCSROp.csr_data
         printf("set csr[%x] = 0x%x\n", i, io.mem.wrCSROp.csr_data)
-        printf("mtime %x \n", mtime)
+        //printf("mtime %x \n", mtime)
       }
     }
     when(io.mem.wrCSROp.csr_idx === ADDR.mstatus) {
