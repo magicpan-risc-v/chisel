@@ -9,7 +9,6 @@ class Execute extends Module {
         val ALUOp    = Input(UInt(4.W))
         val pc       = Input(UInt(64.W))
         val exe_type = Input(UInt(4.W))
-        val br_type  = Input(UInt(3.W))
         val op32     = Input(Bool())
 
         val dreg  = Flipped(new DecoderReg) // 解码得到的寄存器信息
@@ -23,6 +22,9 @@ class Execute extends Module {
 
         val wcsr = Flipped(new WrCsrReg)  // 写回CSR
         val csr_op = new WrCsrReg         // 来自ID阶段的CSR操作数的信息
+
+        val id_excep = Flipped(new Exception)
+        val mem_excep = new Exception
     })
 
     val alu = Module(new ALU)
@@ -73,8 +75,5 @@ class Execute extends Module {
     io.wcsr.csr_idx := io.csr_op.csr_idx // CSR编号
     io.wcsr.csr_data := alu.io.output
 
-    when (true.B) {
-        //printf("EX-jump: %d\n", io.jump)
-        //printf("EX-jdest:%x\n", io.jdest)
-    }
+    io.mem_excep := io.id_excep
 }
