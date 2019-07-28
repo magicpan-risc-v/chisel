@@ -33,6 +33,6 @@ class RiscvTester extends ChiselFlatSpec {
 class SingleTester extends ChiselFlatSpec {
     val args = Array[String]()
     iotesters.Driver.execute(args, () => new CPUTest) {
-      c => new ALUCPUTest(c, s"tests/test_csrrw.bin")
+      c => new ALUCPUTest(c, s"tests/test_ecall.bin")
     } should be (true)
 }

@@ -41,7 +41,7 @@ class CPU extends Module {
     insd.io.memWrReg <> memc.io.wreg
 
     // IF
-    insr.io.jump   := csr.io.flush | exec.io.jump
+    insr.io.jump   := csr.io.flush || exec.io.jump
     insr.io.jdest  := Mux(csr.io.flush, csr.io.csrNewPc,  exec.io.jdest)
     insr.io.jdest  <> exec.io.jdest
     insr.io.nls    <> ex_mem.io.nlso
