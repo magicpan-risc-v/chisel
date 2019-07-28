@@ -47,10 +47,10 @@ class ALUGen extends Module {
                         ALUT.ALU_SRA,
                         ALUT.ALU_SRL
                     ),
-                    "b11010".U -> ALUT.ALU_AND, // CSRRS
-                    "b11110".U -> ALUT.ALU_AND, // CSRRSI
-                    "b11011".U -> ALUT.ALU_XOR, // CSRRC
-                    "b11111".U -> ALUT.ALU_XOR,  // CSRRCI
+                    "b11010".U -> ALUT.ALU_OR, // CSRRS
+                    "b11110".U -> ALUT.ALU_OR, // CSRRSI
+                    "b11011".U -> ALUT.ALU_NOR, // CSRRC
+                    "b11111".U -> ALUT.ALU_NOR,  // CSRRCI
                     "b11001".U -> ALUT.ALU_OUTA,  // CSRRW
                     "b11101".U -> ALUT.ALU_OUTA  // CSRRWI
                 )

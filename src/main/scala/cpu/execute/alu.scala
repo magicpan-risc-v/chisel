@@ -17,6 +17,7 @@ object ALUT {
     val ALU_SRA  = 10.U(4.W)
     val ALU_SUB  = 11.U(4.W)
     val ALU_SLTU = 12.U(4.W)
+    val ALU_NOR  = 13.U(4.W)
 }
 
 class ALU extends Module {
@@ -61,20 +62,21 @@ class ALU extends Module {
                 ALUT.ALU_SLL -> (io.inputA << shamt),
                 ALUT.ALU_SRL-> (io.inputA >> shamt),
                 ALUT.ALU_SRA -> ((io.inputA.asSInt >> shamt).asUInt),
-                ALUT.ALU_SUB -> (io.inputA - io.inputB)
+                ALUT.ALU_SUB -> (io.inputA - io.inputB),
+                ALUT.ALU_NOR -> (~io.inputA & io.inputB)
             )
         )
     )
-    /*when (true.B) {
-        printf("ALU:  inputA  = %x\n", io.inputA)
-        printf("ALU:  inputB  = %x\n", io.inputB)
-        printf("ALU  :op32    = %x\n", io.op32)
-        printf("ALU  :ALUOp   = %x\n", io.ALUOp)
-        printf("ALU  :res     = %x\n", io.output)
-        printf("ALU  :inputA32  = %x\n", inputA32)
-        printf("ALU  :inputB32  = %x\n", inputB32)
-        printf("ALU  :op32res  = %x\n", op32res)
-    }*/
+    when (true.B) {
+        // printf("ALU:  inputA  = %x\n", io.inputA)
+        // printf("ALU:  inputB  = %x\n", io.inputB)
+        // printf("ALU  :op32    = %x\n", io.op32)
+        // printf("ALU  :ALUOp   = %x\n", io.ALUOp)
+        // printf("ALU  :res     = %x\n", io.output)
+        // printf("ALU  :inputA32  = %x\n", inputA32)
+        // printf("ALU  :inputB32  = %x\n", inputB32)
+        // printf("ALU  :op32res  = %x\n", op32res)
+    }
 }
 
 object ALU extends App {
