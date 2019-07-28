@@ -19,7 +19,7 @@ class ALUCPUTest(c: CPUTest, fname: String) extends PeekPokeTester(c) {
 }
 
 class RiscvTester extends ChiselFlatSpec {
-    val args = Array[String]("-fiwv", "-tbn", "verilator", "--quiet")
+    val args = Array[String]("-fiwv", "-tbn", "verilator")
     val names = new File("tests/riscv").listFiles().map(f => f.getName)
     for(name <- names) {
       name should "pass test" in {
