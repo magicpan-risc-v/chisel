@@ -293,6 +293,7 @@ class CSR extends Module {
           pcA4 + 4.U * cause
         )
         printf("newpc : %x \n", io.csrNewPc)
+        printf("mcause :%x \n", mcause)
       }
     }
 }
