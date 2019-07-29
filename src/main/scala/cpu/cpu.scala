@@ -138,7 +138,7 @@ class CPU extends Module {
     csr.io.external_inter.bits  := 0.U
 
     // flush
-    if_id.io.pass   := !csr.io.flush
+    if_id.io.flush   := csr.io.flush
     id_ex.io.flush  <> csr.io.flush
 }
 

@@ -7,6 +7,7 @@ class IF_ID extends Module {
     val io =  IO(new Bundle {
         val en    = Input(Bool())
         val pass  = Input(Bool())
+        val flush = Input(Bool())
 
         val insi  = Input(UInt(32.W))
         val pci   = Input(UInt(64.W))
@@ -25,7 +26,8 @@ class IF_ID extends Module {
 
     val ins  = RegInit(0.U(32.W))
     //val pc   = RegInit((-4L.S(64.W)).asUInt)
-    val pc   = RegInit((124L.S(64.W)).asUInt)
+    //val pc   = RegInit((124L.S(64.W)).asUInt)
+    val pc   = RegInit((4092L.S(64.W)).asUInt)
     val insc = RegInit(0.U(64.W))
     val icd  = RegInit(-1L.S(64.W).asUInt)
     val lastload_valid   = RegInit(false.B)
@@ -40,7 +42,7 @@ class IF_ID extends Module {
     io.lastloadout.index   := lastload_index
     io.excep_o := excep
 
-    when (io.en && io.pass) {
+    when (io.en && io.pass && !io.flush) {
         ins  := io.insi
         pc   := io.pci
         insc := io.insci
@@ -49,10 +51,10 @@ class IF_ID extends Module {
         lastload_index   := io.lastloadin.index
         excep := io.excep_i
         
-        printf("IF_ID  : ins  = %x\n", ins)
-        printf("IF_ID  : pc   = %x\n", pc)
+        //  printf("IF_ID  : ins  = %x\n", ins)
+        //   printf("IF_ID  : pc   = %x\n", pc)
         //printf("IF_ID  : insc = %x;%x\n", insc(63,32),insc(31,0))
-    }otherwise{
+    }.elsewhen(io.flush){
         ins  := 0.U(32.W)
         insc := 0.U(64.W)
         icd  := 0.U(64.W)

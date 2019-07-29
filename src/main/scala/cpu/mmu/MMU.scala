@@ -3,7 +3,7 @@ package cpu;
 import chisel3._
 import chisel3.util._
 
-class MMU extends Module {
+class MMUCore extends Module {
     val io =  IO(new Bundle {
         val en    = Input(Bool())
 
@@ -33,7 +33,8 @@ class MMU extends Module {
     
     // 从SATP中获取页表基地址
     val root   = csr.satp(26, 0).asTypeOf(new PN)
-    val ready  = wait_status === waitNone
+    val ok     = io.if_iom.ready && io.mem_iom.ready
+    val ready  = ok && wait_status =/= waitPTW
 
     io.insr.ready   := ready
     io.mem.ready    := ready
@@ -110,6 +111,8 @@ class MMU extends Module {
     val e_mem   = pf || e_user || e_read || e_write || e_sum
 
     when (true.B) {
+        printf("if_ready    = %d\n", io.if_iom.ready)
+        printf("mem_ready   = %d\n", io.mem_iom.ready)
         printf("wait_status = %d\n", wait_status)
     }
 

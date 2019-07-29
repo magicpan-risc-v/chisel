@@ -25,6 +25,7 @@ class InsReader extends Module {
 
     val npc   = io.lpc + 4.U
     val cnrc  = io.jump || io.inspd(63,3) =/= npc(63,3) // can not read from cache
+    val cache_valid = !cnrc && !io.nls
     /*val pco   = Mux(
         io.bubble, io.lpc,
         Mux(
@@ -65,9 +66,9 @@ class InsReader extends Module {
     io.excep.code  := 0.U
     io.excep.value := 0.U
 
-    io.pc   := Mux(!cnrc || io.mmu.ready, jnpc, jnpc - 4.U)
-    io.ins  := Mux(!cnrc || io.mmu.ready, ins,  0.U(64.W))
-    io.insn := Mux(!cnrc || io.mmu.ready, insn, io.insp)
+    io.pc   := Mux(cache_valid || io.mmu.ready, jnpc, jnpc - 4.U)
+    io.ins  := Mux(cache_valid || io.mmu.ready, ins,  0.U(64.W))
+    io.insn := Mux(cache_valid || io.mmu.ready, insn, io.insp)
     io.insnd := Mux(io.mmu.ready && nread, addr, io.inspd)
 
     when (true.B) {
