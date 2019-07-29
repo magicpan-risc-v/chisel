@@ -57,7 +57,7 @@ class MemoryCtrl extends Module {
     io.wreg.wbrd := Mux(io.nls, io.mem.rdata, io.ereg.wbrd)
 
     when (true.B) {
-        printf("MEMC-ready = %d\n", io.mem.ready)
+        //printf("MEMC-ready = %d\n", io.mem.ready)
     }
 
     io.csr.wrCSROp := io.csr_wb

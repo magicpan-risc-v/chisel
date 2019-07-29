@@ -99,11 +99,11 @@ class SerialTest extends Module {
 
     when (working) { 
         rdata := rdata_temp
-        when (status) {
-            status := !status
-        }
+        // when (status) {
+        //     status := !status
+        // }
     }
 
-    io.mem.ready := status
+    io.mem.ready := true.B//status
     io.mem.rdata  := rdata
 }
