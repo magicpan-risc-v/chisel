@@ -19,7 +19,7 @@ class InsReader extends Module {
         val insn  = Output(UInt(64.W)) // 预读取的指令
         val insnd = Output(UInt(64.W)) // 预读取的指令所在地址
 
-        val mmu   = Flipped(new IF_MMU) // Self -> MMU
+        val mmu   = Flipped(new MMUOp) // Self -> MMU
         val excep = new Exception
     })
 
@@ -57,7 +57,8 @@ class InsReader extends Module {
 
     io.mmu.addr := Mux(nread, addr, 0.U(64.W))
     io.mmu.mode  := Mux(nread, MEMT.LD, MEMT.NOP)
-    
+    io.mmu.wdata := 0.U(64.W)
+
     // TODO just default case, we need to do more here
     io.excep.pc := io.pc
     io.excep.valid := false.B

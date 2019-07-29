@@ -37,6 +37,8 @@ class CPU extends Module {
     mmu.io.mem_iom <> iomn.io.mem_mem
     io.mem         <> iomn.io.mem_out
     io.serial      <> iomn.io.serial_out
+    mmu.io.csr     <> csr.io.mmu
+    mmu.io.en      <> io.en
 
     // Reg
     insd.io.regr  <> regc.io.r

@@ -46,12 +46,16 @@ class RAMOp extends RAMRead {
     val wdata = Input(UInt(64.W))
 }
 
+class MMUOp extends RAMOp {
+    val pageFault = Output(Bool())
+}
+
 class IF_MMU extends RAMRead {
-  //val pageFault = Output(Bool())
+   //val pageFault = Output(Bool())
 }
 
 class MEM_MMU extends RAMOp {
-  //val pageFault = Output(Bool())
+   //val pageFault = Output(Bool())
 }
 
 // Instruction Decoder <> RegFile
@@ -97,6 +101,13 @@ class MEM_CSR extends Bundle {
   val wrCSROp = Output(new WrCsrReg)
   val excep   = Output(new Exception)
   // TODO inter exception code
+}
+
+class CSR_MMU extends Bundle {
+  val satp = Output(UInt(64.W))
+  val priv = Output(UInt(2.W))
+  val mxr  = Output(Bool())
+  val sum  = Output(Bool())
 }
 
 class Exception extends Bundle {
