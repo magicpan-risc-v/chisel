@@ -38,7 +38,7 @@ class MemoryCtrl extends Module {
         val ereg = Flipped(new WriteBackReg)
         val wreg = new WriteBackReg
 
-        val mem  = Flipped(new MEM_MMU)
+        val mem  = Flipped(new MMUOp)
 
         val excep = Flipped(new Exception)
         val csr_wb = new WrCsrReg

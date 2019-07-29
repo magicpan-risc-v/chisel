@@ -5,9 +5,12 @@ import chisel3.util._
 
 object MemoryRegionExt {
   val RAM_BEGIN    = 0x00000000L.U(64.W)
-  val RAM_END      = 0x00800000L.U(64.W)
-  val SERIAL_BEGIN = 0x10000000L.U(64.W)
-  val SERIAL_END   = 0x10000008L.U(64.W)
+  // val RAM_END      = 0x00800000L.U(64.W)
+  // val SERIAL_BEGIN = 0x10000000L.U(64.W)
+  // val SERIAL_END   = 0x10000008L.U(64.W)
+  val RAM_END      = 0x007ffff8L.U(64.W)
+  val SERIAL_BEGIN = 0x007ffff8L.U(64.W)
+  val SERIAL_END   = 0x00800000L.U(64.W)
 
   implicit def region(addr: UInt) = new {
     def atRAM = addr >= RAM_BEGIN && addr < RAM_END
@@ -72,6 +75,14 @@ class IOManager extends Module {
 
     ifWait := Mux(ifWait =/= waitNone && !if_.ready, ifWait, waitNone)
     memWait := Mux(memWait =/= waitNone && !mem.ready, memWait, waitNone)
+
+    when (true.B) {
+      // printf("mode  = %d\n", io.mem_if.mode)
+      // printf("addr  = %x\n", io.mem_if.addr)
+      // printf("ready = %d\n", io.mem_if.ready)
+      // printf("rdata = %x\n", io.mem_if.rdata)
+      // printf("status = %d\n", ifWait)
+    }
 
     // 整合时序逻辑，优先访存，然后取指令
     

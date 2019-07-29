@@ -19,12 +19,13 @@ class InsReader extends Module {
         val insn  = Output(UInt(64.W)) // 预读取的指令
         val insnd = Output(UInt(64.W)) // 预读取的指令所在地址
 
-        val mmu   = Flipped(new IF_MMU) // Self -> MMU
+        val mmu   = Flipped(new MMUOp) // Self -> MMU
         val excep = new Exception
     })
 
     val npc   = io.lpc + 4.U
     val cnrc  = io.jump || io.inspd(63,3) =/= npc(63,3) // can not read from cache
+    val cache_valid = !cnrc && !io.nls
     /*val pco   = Mux(
         io.bubble, io.lpc,
         Mux(
@@ -57,16 +58,17 @@ class InsReader extends Module {
 
     io.mmu.addr := Mux(nread, addr, 0.U(64.W))
     io.mmu.mode  := Mux(nread, MEMT.LD, MEMT.NOP)
-    
+    io.mmu.wdata := 0.U(64.W)
+
     // TODO just default case, we need to do more here
     io.excep.pc := io.pc
     io.excep.valid := false.B
     io.excep.code  := 0.U
     io.excep.value := 0.U
 
-    io.pc   := Mux(!cnrc || io.mmu.ready, jnpc, jnpc - 4.U)
-    io.ins  := Mux(!cnrc || io.mmu.ready, ins,  0.U(64.W))
-    io.insn := Mux(!cnrc || io.mmu.ready, insn, io.insp)
+    io.pc   := Mux(cache_valid || io.mmu.ready, jnpc, jnpc - 4.U)
+    io.ins  := Mux(cache_valid || io.mmu.ready, ins,  0.U(64.W))
+    io.insn := Mux(cache_valid || io.mmu.ready, insn, io.insp)
     io.insnd := Mux(io.mmu.ready && nread, addr, io.inspd)
 
     when (true.B) {

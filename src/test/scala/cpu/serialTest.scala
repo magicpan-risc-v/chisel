@@ -72,7 +72,7 @@ class SerialTest extends Module {
     // }
 
     when (io.mem.mode === MEMT.SB) {
-        printf("%c", io.mem.wdata(7,0))
+        printf("%c(%d)", io.mem.wdata(7,0), io.mem.wdata(7,0))
     }
 
     // when (!inited && !io.init) {
