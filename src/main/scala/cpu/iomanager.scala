@@ -86,7 +86,7 @@ class IOManager extends Module {
 
     // 整合时序逻辑，优先访存，然后取指令
     
-    when(memWait === waitNone && mem.mode =/= MEMT.NOP) {
+    when(memWait === waitNone && ifWait === waitNone && mem.mode =/= MEMT.NOP) {
       when(mem.addr.atRAM) {
         bindInput(mem, io.mem_out)
         when(MEMT.isWrite(mem.mode)) {
