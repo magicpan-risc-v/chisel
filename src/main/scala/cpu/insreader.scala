@@ -20,6 +20,7 @@ class InsReader extends Module {
         val insnd = Output(UInt(64.W)) // 预读取的指令所在地址
 
         val mmu   = Flipped(new MMUOp) // Self -> MMU
+        val mmu_if_rst = Output(Bool())
         val excep = new Exception
     })
 
@@ -68,9 +69,11 @@ class InsReader extends Module {
     io.excep.value := 0.U
 
     io.pc   := Mux(cache_valid || io.mmu.ready, jnpc, jnpc - 4.U)
-    io.ins  := Mux(cache_valid || io.mmu.ready, ins,  0.U(64.W))
+    io.ins  := Mux(cache_valid || io.mmu.ready, ins,  0.U(32.W))
     io.insn := Mux(cache_valid || io.mmu.ready, insn, io.insp)
     io.insnd := Mux(io.mmu.ready && nread, addr, io.inspd)
+
+    io.mmu_if_rst := io.jump
 
     when (true.B) {
         //printf("if_ready = %d \n", io.mmu.ready)

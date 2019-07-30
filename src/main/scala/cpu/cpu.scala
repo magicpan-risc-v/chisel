@@ -32,6 +32,7 @@ class CPU extends Module {
     
     // IO
     insr.io.mmu    <> mmu.io.insr
+    insr.io.mmu_if_rst  <> mmu.io.insr_rst
     mmu.io.if_iom  <> iomn.io.mem_if
     memc.io.mem    <> mmu.io.mem
     mmu.io.mem_iom <> iomn.io.mem_mem

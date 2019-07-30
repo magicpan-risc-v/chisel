@@ -43,10 +43,10 @@ class IF_ID extends Module {
     when (io.en && io.pass) {
         ins  := Mux(io.flush, 0.U(32.W), io.insi)
         pc   := io.pci
-        insc := io.insci
-        icd  := io.icdi
-        lastload_valid   := io.lastloadin.valid
-        lastload_index   := io.lastloadin.index
+        insc := Mux(io.flush, 0.U(64.W), io.insci)
+        icd  := Mux(io.flush, 0.U(64.W), io.icdi)
+        lastload_valid   := Mux(io.flush, false.B , io.lastloadin.valid)
+        lastload_index   := Mux(io.flush, 0.U(5.W), io.lastloadin.index)
         when (io.flush) {
             excep.valid := false.B
             excep.code  := 0.U(32.W)

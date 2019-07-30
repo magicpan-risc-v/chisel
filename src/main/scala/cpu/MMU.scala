@@ -9,6 +9,7 @@ class MMU extends Module {
     val en    = Input(Bool())
 
     val insr = new MMUOp // InstReader -> MMU
+    val insr_rst = Input(Bool())
     val mem = new MMUOp  // MEM  -> MMU
 
     val csr = Flipped(new CSR_MMU) // CSR -> MMU
@@ -44,7 +45,7 @@ class MMU extends Module {
     is (waitIO) { 
       when (io.if_iom.ready) {
         if_status := waitNone
-        when (if_addr === io.insr.addr) {
+        when (if_addr === io.insr.addr && !io.insr_rst) {
           io.insr.ready := true.B
         } .otherwise {
           // when (io.insr.mode === MEMT.NOP) {
