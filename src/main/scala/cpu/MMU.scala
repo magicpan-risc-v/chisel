@@ -23,7 +23,7 @@ class MMU extends Module {
 
   // FIXME 
   io.if_iom.mode    := io.insr.mode
-  io.if_iom.addr   := real_addr -  0xC0020000L.U(64.W)
+  io.if_iom.addr   := io.insr.addr -  0xC0020000L.U(64.W)
   io.if_iom.wdata    := 0.U(64.W)
   io.insr.rdata     := io.if_iom.rdata
   io.mem_iom.mode   := io.mem.mode

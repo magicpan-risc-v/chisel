@@ -49,19 +49,10 @@ class IF_ID extends Module {
         lastload_index   := io.lastloadin.index
         excep := io.excep_i
         
-<<<<<<< HEAD
-        //printf("IF_ID  : ins  = %x\n", ins)
-        printf("IF_ID  : pc   = %x, pcInExcep = %x\n", pc, excep.pc)
-        //printf("IF_ID  : insc = %x;%x\n", insc(63,32),insc(31,0))
-    }.elsewhen(io.flush){
-        printf("IF_ID  : pc   = %x, pcInExcep = %x\n", pc, excep.pc)
-        pc   := io.pci
-=======
         //  printf("IF_ID  : ins  = %x\n", ins)
-        //   printf("IF_ID  : pc   = %x\n", pc)
+           printf("IF_ID  : pc   = %x\n", pc)
         //printf("IF_ID  : insc = %x;%x\n", insc(63,32),insc(31,0))
     }.elsewhen(io.flush){
->>>>>>> 650034a8387104407f79871f9d749514099b0c82
         ins  := 0.U(32.W)
         insc := 0.U(64.W)
         icd  := -1L.S(64.W).asUInt
