@@ -87,6 +87,6 @@ class ID_EX extends Module {
     }
 
     when (io.en) {
-        //printf("ID_EX  : imm   = %x (pass= %d)\n", imm, io.pass)
+        printf("ID_EX  : imm   = %x (pass= %d)\n", imm, io.pass)
     }
 }
