@@ -40,30 +40,37 @@ class IF_ID extends Module {
     io.lastloadout.index   := lastload_index
     io.excep_o := excep
 
-    when (io.en && io.pass && !io.flush) {
-        ins  := io.insi
+    when (io.en && io.pass) {
+        ins  := Mux(io.flush, 0.U(32.W), io.insi)
         pc   := io.pci
         insc := io.insci
         icd  := io.icdi
         lastload_valid   := io.lastloadin.valid
         lastload_index   := io.lastloadin.index
-        excep := io.excep_i
-        
+        when (io.flush) {
+            excep.valid := false.B
+            excep.code  := 0.U(32.W)
+            excep.value  := 0.U(32.W)
+            excep.inst_valid  := false.B
+        } .otherwise {
+            excep := io.excep_i
+        }
+    }    
         //  printf("IF_ID  : ins  = %x\n", ins)
         //printf("IF_ID  : insc = %x;%x\n", insc(63,32),insc(31,0))
-    }.elsewhen(io.flush){
-        ins  := 0.U(32.W)
-        insc := 0.U(64.W)
-        icd  := -1L.S(64.W).asUInt
-        lastload_valid   := false.B
-        lastload_index   := 0.U(5.W)
-        excep.valid := false.B
-        excep.code  := 0.U(32.W)
-        excep.value  := 0.U(32.W)
-    }
+    // }.elsewhen(io.flush){
+    //     ins  := 0.U(32.W)
+    //     insc := 0.U(64.W)
+    //     icd  := -1L.S(64.W).asUInt
+    //     lastload_valid   := false.B
+    //     lastload_index   := 0.U(5.W)
+    //     excep.valid := false.B
+    //     excep.code  := 0.U(32.W)
+    //     excep.value  := 0.U(32.W)
+    // }
 
     when ( io.en ) {
-        printf("IF_ID  : pc   = %x\n", pc)
+       //printf("IF_ID  : pc   = %x\n", pc)
     }
 
 }

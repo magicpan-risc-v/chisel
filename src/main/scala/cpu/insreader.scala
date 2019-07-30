@@ -63,7 +63,7 @@ class InsReader extends Module {
     // TODO just default case, we need to do more here
     io.excep.pc := io.pc
     io.excep.valid := false.B
-    io.excep.inst_valid := true.B
+    io.excep.inst_valid := cache_valid || io.mmu.ready
     io.excep.code  := 0.U
     io.excep.value := 0.U
 

@@ -61,7 +61,7 @@ class ID_EX extends Module {
         imm   := io.immi   & bm
         ALUOp := io.ALUOpi & bm(3,0)
         exet  := io.exeti  & bm(3,0)
-        pc    := io.pci    & bm
+        pc    := io.pci
         regInfo := Mux(bm(0), io.dregi, 0.U.asTypeOf(new DecoderReg))
         lsm   := Mux(bubble, MEMT.NOP, io.lsmi)
         op32  := io.op32i && bm(0)
@@ -87,6 +87,6 @@ class ID_EX extends Module {
     }
 
     when (io.en) {
-        printf("ID_EX  : imm   = %x (pass= %d)\n", imm, io.pass)
+       // printf("ID_EX  : imm   = %x (pass= %d)\n", imm, io.pass)
     }
 }
