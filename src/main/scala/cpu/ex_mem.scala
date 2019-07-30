@@ -7,6 +7,7 @@ class EX_MEM extends Module {
     val io =  IO(new Bundle {
         val en    = Input(Bool())
         val pass  = Input(Bool())
+        val flush = Input(Bool())
 
         val nlsi  = Input(Bool())
         val lsmi  = Input(UInt(4.W))
@@ -50,30 +51,23 @@ class EX_MEM extends Module {
     io.inter_o   := inter
 
     when (io.en && io.pass) {
+        val have_excep = io.excep_i.valid || io.inter_i.valid
         nls   := io.nlsi
         wbri  := io.wregi.wbri
-        wbrv  := io.wregi.wbrv
+        wbrv  := Mux(have_excep, false.B, io.wregi.wbrv)
         wbrd  := io.wregi.wbrd
-        lsm   := io.lsmi
+        lsm   := Mux(have_excep, MEMT.NOP, io.lsmi)
         addr  := io.addri
         data  := io.datai
-        csr_wb  := io.csr_wb_i
+        csr_wb.valid    := Mux(have_excep, true.B, io.csr_wb_i.valid)
+        csr_wb.csr_idx  := io.csr_wb_i.csr_idx
+        csr_wb.csr_data := io.csr_wb_i.csr_data
         excep   := io.excep_i
         inter   := io.inter_i
 
-      when(io.inter_i.valid) {
-        printf("get a interrupt %d\n", io.inter_i.bits)
-      }        
-        //printf("EX_MEM : nls   = %d\n", nls)
-        //printf("EX_MEM : wbri  = %d\n", wbri)
-        //printf("EX_MEM : wbrv  = %d\n", wbrv)
-        //printf("EX_MEM : wbrd  = %d\n", wbrd)
-        //printf("EX_MEM : lsm   = %d\n", lsm)
-        //printf("EX_MEM : addr  = %d\n", addr)
-        //printf("EX_MEM : data  = %d\n", data)
-        
-      // printf("EX_MEM : csr_wb_idx  = %d\n", csr_wb.csr_idx)
-      // printf("EX_MEM : csr_wb_data = %x\n", csr_wb.csr_data)
-      // printf("EX_MEM : csr_wb_v    = %d\n", csr_wb.valid)
+        when(io.flush) {
+          excep.valid := false.B
+          inter.valid := false.B
+        }
     }
 }

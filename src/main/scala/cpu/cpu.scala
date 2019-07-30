@@ -131,6 +131,7 @@ class CPU extends Module {
     // flush
     if_id.io.flush  <> csr.io.flush
     id_ex.io.flush  <> csr.io.flush
+    ex_mem.io.flush <> csr.io.flush
 }
 
 object CPU extends App {

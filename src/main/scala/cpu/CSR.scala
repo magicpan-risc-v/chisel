@@ -125,7 +125,7 @@ class CSR extends Module {
     for(i <- csr_ids) {
       when(i === io.mem.wrCSROp.csr_idx) {
         csr(i) := io.mem.wrCSROp.csr_data
-        printf("set csr[%x] = 0x%x\n", i, io.mem.wrCSROp.csr_data)
+        //printf("set csr[%x] = 0x%x\n", i, io.mem.wrCSROp.csr_data)
         //printf("mtime %x \n", mtime)
       }
     }
@@ -218,6 +218,14 @@ class CSR extends Module {
     io.inter.valid := inter_enable && ipie.orR
     io.inter.bits  := (Cause.Interrupt << 31) | ic
 
+    when(true.B) {
+      //printf("now time : %x timecmp : %x \n", mtime, mtimecmp)
+      //printf("ipie : %x , inter_enable : %x \n", ipie, inter_enable)
+      //printf("mie : %x , inter_mip : %x \n", mie, mip)
+      //printf("prv : %x mstatus.mie : %x mstatus.mpie : %x\n", prv, mstatus.MIE, mstatus.MPIE)
+      //printf("inter_code : %x \n", ic)
+    }
+
     val epc = io.mem.excep.pc
     val have_excep = io.mem.excep.valid
     val cause = io.mem.excep.code
@@ -243,7 +251,7 @@ class CSR extends Module {
             io.csrNewPc := sepc
           }
           is(Priv.U) {
-            mstatus.UIE := mstatus.MPIE
+            mstatus.UIE := mstatus.UPIE
             mstatus.UPIE := 1.U
             nextPrv := Priv.U
             io.csrNewPc := uepc
@@ -252,6 +260,7 @@ class CSR extends Module {
       }.elsewhen(cause.asUInt === Cause.SFenceOne || cause.asUInt === Cause.SFenceAll) {  // SFence 语句
       }.otherwise{  // Interrupt or Exception
         val epc = io.mem.excep.pc
+        //printf("toset epc : %x \n", epc)
         val tval = io.mem.excep.value
         nextPrv := PriorityMux(Seq(
           (!cause(31) && !medeleg(cause(4,0)), Priv.M),
@@ -260,10 +269,12 @@ class CSR extends Module {
           ( cause(31) && !sideleg(cause(4,0)), Priv.S),
           (true.B,                             Priv.U)
         ))
+        //printf("nextPrv : %x \n", nextPrv)
         switch(nextPrv) {
           is(Priv.M) {
             mstatus.MPIE := mstatus.MIE
             mstatus.MIE  := 0.U
+            mstatus.MPP  := prv
             mepc := epc
             mcause := cause
             mtval := tval
@@ -271,6 +282,7 @@ class CSR extends Module {
           is(Priv.S) {
             mstatus.SPIE := mstatus.SIE
             mstatus.SIE  := 0.U
+            mstatus.SPP  := prv
             sepc := epc
             scause := cause
             stval := tval
@@ -294,8 +306,12 @@ class CSR extends Module {
           pcA4,
           pcA4 + 4.U * cause
         )
-        printf("newpc : %x \n", io.csrNewPc)
-        printf("mcause :%x \n", mcause)
+        //printf("cause is %x", cause)
+        //printf("prv : %x mstatus.mie : %x mstatus.mpie : %x\n", prv, mstatus.MIE, mstatus.MPIE)
+        //printf("newpc : %x \n", io.csrNewPc)
+        //printf("mcause :%x \n", mcause)
       }
+    }.otherwise {
+        //printf("prv : %x mstatus.mie : %x mstatus.mpie : %x\n", prv, mstatus.MIE, mstatus.MPIE)
     }
 }

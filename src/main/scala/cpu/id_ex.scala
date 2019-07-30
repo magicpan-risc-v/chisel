@@ -65,8 +65,15 @@ class ID_EX extends Module {
         regInfo := Mux(bm(0), io.dregi, 0.U.asTypeOf(new DecoderReg))
         lsm   := Mux(bubble, MEMT.NOP, io.lsmi)
         op32  := io.op32i && bm(0)
-        csr_wb  := io.csr_wb_i
-        excep := Mux(bm(0), io.excep_i, 0.U.asTypeOf(new Exception))
+        when(bubble) {
+          csr_wb := 0.U.asTypeOf(new WrCsrReg)
+        }.otherwise {
+          csr_wb  := io.csr_wb_i
+        }
+        excep.code := Mux(bm(0), io.excep_i.code, 0.U(32.W))
+        excep.value := Mux(bm(0), io.excep_i.value, 0.U(32.W))
+        excep.valid := Mux(bm(0), io.excep_i.valid, false.B)
+        excep.pc := io.excep_i.pc
 
         //printf("ID_EX  : ALUOp = %d\n", ALUOp)
         //printf("ID_EX  : imm   = %x\n", imm)
@@ -75,5 +82,6 @@ class ID_EX extends Module {
         //printf("ID_EX  : rs2d  = %x\n", regInfo.rs2_value)
         //printf("ID_EX  : lsm   = %d\n", lsm)
         //printf("ID_EX  : exet  = %d\n", io.exeti)
+        //printf("ID_EX : pcInExcep = %x \n", excep.pc)
     }
 }
