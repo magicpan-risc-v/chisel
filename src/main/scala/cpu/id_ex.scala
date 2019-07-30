@@ -77,12 +77,16 @@ class ID_EX extends Module {
         excep.inst_valid := Mux(bm(0), io.excep_i.inst_valid, false.B)
 
         //printf("ID_EX  : ALUOp = %d\n", ALUOp)
-        //printf("ID_EX  : imm   = %x\n", imm)
+        
         //printf("ID_EX  : op32  = %d\n", op32)
         //printf("ID_EX  : rs1d  = %x\n", regInfo.rs1_value)
         //printf("ID_EX  : rs2d  = %x\n", regInfo.rs2_value)
         //printf("ID_EX  : lsm   = %d\n", lsm)
         //printf("ID_EX  : exet  = %d\n", io.exeti)
         //printf("ID_EX : pcInExcep = %x \n", excep.pc)
+    }
+
+    when (io.en) {
+        //printf("ID_EX  : imm   = %x (pass= %d)\n", imm, io.pass)
     }
 }

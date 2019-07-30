@@ -6,6 +6,8 @@ import chisel3.util._
 class CPU extends Module {
     val io =  IO(new Bundle {
         val en  = Input(Bool())
+        val debug_pc  = Output(UInt(64.W))
+        val debug_ins = Output(UInt(32.W))
         val mem = Flipped(new RAMOp)
         val serial = Flipped(new RAMOp)
     })
@@ -23,6 +25,10 @@ class CPU extends Module {
     val ex_mem = Module(new EX_MEM)
     val mem_wb = Module(new MEM_WB)
     val csr    = Module(new CSR)
+
+    // debug
+    io.debug_pc    <> if_id.io.pco
+    io.debug_ins   <> if_id.io.inso
     
     // IO
     insr.io.mmu    <> mmu.io.insr
@@ -31,6 +37,8 @@ class CPU extends Module {
     mmu.io.mem_iom <> iomn.io.mem_mem
     io.mem         <> iomn.io.mem_out
     io.serial      <> iomn.io.serial_out
+    mmu.io.csr     <> csr.io.mmu
+    mmu.io.en      <> io.en
 
     // Reg
     insd.io.regr  <> regc.io.r

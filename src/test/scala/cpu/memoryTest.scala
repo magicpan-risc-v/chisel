@@ -8,16 +8,16 @@ class MemoryTest extends Module {
     val io = IO(new Bundle {
         val mem  = new RAMOp
         val init = Input(Bool())
-        val init_serial  = Input(Bool())
+     //   val init_serial  = Input(Bool())
         val dd   = Input(UInt(32.W)) // default data
     })
 
     val program = Mem(0x800000, UInt(8.W))
-    val serial  = Mem(0x10000, UInt(8.W))
+   // val serial  = Mem(0x10000, UInt(8.W))
 
     val inited = RegInit(false.B)
     val dindex = RegInit(0.U(32.W))
-    val sindex = RegInit(0.U(32.W))
+   // val sindex = RegInit(0.U(32.W))
     val scnt   = RegInit(0.U(32.W))
 
     val program_length = dindex
@@ -40,10 +40,6 @@ class MemoryTest extends Module {
 
     when (inited) {
         printf("IN %x  %x %x , mode %x\n", ws, io.mem.wdata, io.mem.rdata, io.mem.mode)
-        //printf("rdata= %x\n", io.mem.rdata)
-        //printf("addr = %x\n", io.mem.addr)
-        //printf("mode = %d\n", io.mem.mode)
-        //printf("dindex = %x\n", dindex)
     }
 
     when (!inited && io.init) {
@@ -54,11 +50,6 @@ class MemoryTest extends Module {
         dindex := dindex + 4.U
     }
 
-    when (io.init_serial) {
-        serial(sindex) := io.dd(7,0)
-        sindex := sindex + 1.U
-    }
-    
     when (inited && io.mem.mode === MEMT.SD) {
         for (i <- 0 until 8) {
             program(ws+i.U) := io.mem.wdata(i*8+7, i*8)
@@ -81,13 +72,7 @@ class MemoryTest extends Module {
     }
 
     when (inited && io.mem.mode === MEMT.SB) {
-        when (ws === serial_addr) {
-            //printf("%c(%d)", io.mem.wdata(7,0), io.mem.wdata(7,0))
-            printf("%c", io.mem.wdata(7,0))
-        } .otherwise {
-            //printf("%x \n", ws)
-            program(ws) := io.mem.wdata(7,0)
-        }
+        program(ws) := io.mem.wdata(7,0)
     }
 
     when (!inited && !io.init) {
@@ -106,7 +91,8 @@ class MemoryTest extends Module {
                 MEMT.LD  -> data,
                 MEMT.LWU -> Cat(0.U(32.W), data(31,0)),
                 MEMT.LHU -> Cat(0.U(48.W), data(15,0)),
-                MEMT.LBU -> Mux(rs === serial_addr, serial(scnt), Cat(0.U(56.W), data(7,0))),
+                MEMT.LBU -> //Mux(rs === serial_addr, serial(scnt), Cat(0.U(56.W), data(7,0))),
+                Cat(0.U(56.W), data(7,0)),
                 MEMT.LW  -> Cat(Mux(data(31), 0xffffffffL.U(32.W), 0.U(32.W)), data(31,0)),
                 MEMT.LH  -> Cat(Mux(data(15), 0xffffffffffffL.U(48.W), 0.U(48.W)), data(15,0)),
                 MEMT.LB  -> Cat(Mux(data(7), 0xffffffffffffffL.U(56.W), 0.U(56.W)), data(7,0))
@@ -115,10 +101,10 @@ class MemoryTest extends Module {
         0.U(64.W)
     )
 
-    when (inited && io.mem.mode === MEMT.LBU && rs === serial_addr) {
-        printf("%c", serial(scnt))
-        scnt := scnt + 1.U
-    }
+    // when (inited && io.mem.mode === MEMT.LBU && rs === serial_addr) {
+    //     printf("%c", serial(scnt))
+    //     scnt := scnt + 1.U
+    // }
     val working = io.mem.mode =/= MEMT.NOP
     val rdata = RegInit(0.U(64.W))
 

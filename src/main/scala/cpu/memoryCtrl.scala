@@ -38,7 +38,7 @@ class MemoryCtrl extends Module {
         val ereg = Flipped(new WriteBackReg)
         val wreg = new WriteBackReg
 
-        val mem  = Flipped(new MEM_MMU)
+        val mem  = Flipped(new MMUOp)
 
         val excep = Flipped(new Exception)
         val csr_wb = new WrCsrReg
@@ -55,6 +55,10 @@ class MemoryCtrl extends Module {
     io.wreg.wbrv := io.ereg.wbrv || (io.lsm =/= MEMT.NOP && io.lsm(3))
     io.wreg.wbri := io.ereg.wbri
     io.wreg.wbrd := Mux(io.nls, io.mem.rdata, io.ereg.wbrd)
+
+    when (true.B) {
+        //printf("MEMC-ready = %d\n", io.mem.ready)
+    }
 
     io.csr.wrCSROp := io.csr_wb
     io.csr.excep   := io.excep
