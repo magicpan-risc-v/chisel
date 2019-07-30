@@ -39,9 +39,10 @@ class MemoryTest extends Module {
     val tohost = "h00001000".U(64.W)
 
     when (inited) {
+        printf("IN %x  %x %x , mode %x\n", ws, io.mem.wdata, io.mem.rdata, io.mem.mode)
         //printf("rdata= %x\n", io.mem.rdata)
-        printf("addr = %x\n", io.mem.addr)
-        printf("mode = %d\n", io.mem.mode)
+        //printf("addr = %x\n", io.mem.addr)
+        //printf("mode = %d\n", io.mem.mode)
         //printf("dindex = %x\n", dindex)
     }
 

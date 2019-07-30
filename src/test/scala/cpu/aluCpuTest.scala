@@ -12,20 +12,20 @@ class ALUCPUTest(c: CPUTest, fname: String) extends PeekPokeTester(c) {
     RAMTest.loadFile(this, c, fname)
     RAMTest.loadSerial(this, c, "tests/test-serial.txt")
     poke(c.io.en, true)
-    for (i <- 1 until 200000) {
+    for (i <- 1 until 30000) {
         //print("cycle "+i + " / ")
         step(1)
     }
 }
 
 class RiscvTester extends ChiselFlatSpec {
-    //val args = Array[String]("-fiwv", "-tbn", "verilator")
-    val args = Array[String]()
+    val args = Array[String]("-fiwv", "-tbn", "verilator")
+    //val args = Array[String]()
     val names = new File("tests/riscv").listFiles().map(f => f.getName)
     for(name <- names) {
       name should "pass test" in {
         iotesters.Driver.execute(args, () => new CPUTest) {
-          c => new ALUCPUTest(c, s"tests/rv_offical/$name")
+          c => new ALUCPUTest(c, s"tests/riscv/$name")
         } should be (true)
       }
     }
