@@ -39,3 +39,11 @@ class SingleTester extends ChiselFlatSpec {
       c => new ALUCPUTest(c, s"monitor/new_monitor.bin")
     } should be (true)
 }
+
+class MonitorTester extends ChiselFlatSpec {
+    val args = Array[String]("-fiwv", "-tbn", "verilator")
+    //val args = Array[String]()
+    iotesters.Driver.execute(args, () => new CPUTest) {
+      c => new ALUCPUTest(c, s"/home/pan/Code/monitor/monitor.bin")
+    } should be (true)
+}

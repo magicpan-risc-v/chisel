@@ -227,7 +227,7 @@ class CSR extends Module {
     }
 
     val epc = io.mem.excep.pc
-    val have_excep = io.mem.excep.valid
+    val have_excep = io.mem.excep.valid && io.mem.excep.inst_valid
     val cause = io.mem.excep.code
 
     io.flush := have_excep

@@ -104,7 +104,7 @@ class Decoder extends Module {
     ))
 
     io.ex_excep := io.if_excep // 默认情况
-    when(itype.io.exe_type === EXT.SYSC) {
+    when(itype.io.exe_type === EXT.SYSC && io.if_excep.inst_valid) {
         val inst_p1 = io.ins(31,25)
         val inst_p2 = io.ins(24,20)
         when(inst_p1 === SYS_INST_P1.SFENCE_VMA){

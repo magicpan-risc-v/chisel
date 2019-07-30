@@ -74,6 +74,7 @@ class ID_EX extends Module {
         excep.value := Mux(bm(0), io.excep_i.value, 0.U(32.W))
         excep.valid := Mux(bm(0), io.excep_i.valid, false.B)
         excep.pc := io.excep_i.pc
+        excep.inst_valid := Mux(bm(0), io.excep_i.inst_valid, false.B)
 
         //printf("ID_EX  : ALUOp = %d\n", ALUOp)
         //printf("ID_EX  : imm   = %x\n", imm)
