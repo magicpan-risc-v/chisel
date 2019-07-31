@@ -132,7 +132,6 @@ class Decoder extends Module {
                 io.ex_excep.code := Mux(io.csr.priv >= prv,
                   Cause.xRet(prv),
                   Cause.IllegalInstruction)
-                printf("really a xRET, code %x \n", io.ex_excep.code)
               }
             }
           }
