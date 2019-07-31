@@ -20,6 +20,7 @@ class MMU extends Module {
 
   val ptw_if  = Module(new PTW)
   val ptw_mem = Module(new PTW)
+  val tlb     = Module(new TLB)
 
   val ptw_if_pte  = ptw_if.io.rsp
   val ptw_mem_pte = ptw_mem.io.rsp
@@ -57,6 +58,8 @@ class MMU extends Module {
   val real_mem_addr = Mux(mmu_en, io.mem.addr,  io.mem.addr  - offset)
   val ptw_if_addr   = Cat(0.U(25.W), ptw_if_pte.ppn.cat,  if_addr(11,0))
   val ptw_mem_addr  = Cat(0.U(25.W), ptw_mem_pte.ppn.cat, mem_addr(11,0))
+  val tlb_if_addr   = Cat(0.U(25.W), tlb.io.query.rsp.ppn.cat, real_if_addr(11,0))
+  val tlb_mem_addr  = Cat(0.U(25.W), tlb.io.query.rsp.ppn.cat, real_mem_addr(11,0))
 
   val root          = io.csr.satp(26,0).asTypeOf(new PN)
 
@@ -92,17 +95,40 @@ class MMU extends Module {
   ptw_mem.io.req.p0 := io.mem.addr(20,12)
   ptw_mem.io.req.valid := false.B
 
+  tlb.io.modify.vpn  := 0.U(27.W).asTypeOf(new PN)
+  tlb.io.modify.pte  := 0.U(64.W).asTypeOf(new PTE)
+  tlb.io.modify.mode := TLBT.NOP
+
+  tlb.io.query.req.p2 := 0.U(9.W)
+  tlb.io.query.req.p1 := 0.U(9.W)
+  tlb.io.query.req.p0 := 0.U(9.W)
+  tlb.io.query.req.valid := false.B
+
+  when (!mmu_en) {
+    tlb.io.modify.mode := TLBT.CLR
+  }
+
   switch (if_status) {
     is(waitNone) { 
       when (is_if && mem_free) {
         if_addr   := real_if_addr
         when (mmu_en) {
-          // start PTW
-          // connect io.if_iom with ptw_if.io.mem
-          if_status := waitPTW
-          ptw_if.io.req.valid := true.B
-          io.if_iom.mode      := ptw_if.io.mem.mode
-          io.if_iom.addr      := ptw_if.io.mem.addr
+          tlb.io.query.req.p2 := io.insr.addr(38,30)
+          tlb.io.query.req.p1 := io.insr.addr(29,21)
+          tlb.io.query.req.p0 := io.insr.addr(20,12)
+          tlb.io.query.req.valid := true.B
+
+          when (tlb.io.query.miss) {
+            if_status := waitPTW
+            ptw_if.io.req.valid := true.B
+            io.if_iom.mode      := ptw_if.io.mem.mode
+            io.if_iom.addr      := ptw_if.io.mem.addr
+          } .otherwise {
+            // TLB hit
+            if_status := waitIO
+            io.if_iom.addr      := tlb_if_addr
+            if_pha    := tlb_if_addr
+          }
         } .otherwise {
           if_status := waitIO
           if_pha    := real_if_addr
@@ -120,6 +146,11 @@ class MMU extends Module {
         } .otherwise {
           if_status          := waitIO
           if_pha             := ptw_if_addr
+
+          // update TLB
+          tlb.io.modify.mode := TLBT.INS
+          tlb.io.modify.vpn  := if_addr(38,12).asTypeOf(new PN)
+          tlb.io.modify.pte  := ptw_if_pte
         }
       }
     }
@@ -144,10 +175,23 @@ class MMU extends Module {
       when (is_mem && if_free) {
         mem_addr   := real_mem_addr
         when (mmu_en) {
-          mem_status := waitPTW
-          ptw_mem.io.req.valid := true.B
-          io.mem_iom.mode      := ptw_mem.io.mem.mode
-          io.mem_iom.addr      := ptw_mem.io.mem.addr
+
+          tlb.io.query.req.p2 := io.mem.addr(38,30)
+          tlb.io.query.req.p1 := io.mem.addr(29,21)
+          tlb.io.query.req.p0 := io.mem.addr(20,12)
+          tlb.io.query.req.valid := true.B
+
+          when (tlb.io.query.miss) {
+            mem_status := waitPTW
+            ptw_mem.io.req.valid := true.B
+            io.mem_iom.mode      := ptw_mem.io.mem.mode
+            io.mem_iom.addr      := ptw_mem.io.mem.addr
+          } .otherwise {
+            mem_status := waitIO
+            io.mem_iom.addr      := tlb_mem_addr
+            mem_pha    := tlb_mem_addr
+          }
+          
         } .otherwise {
           mem_status := waitIO
           mem_pha    := real_mem_addr
@@ -169,6 +213,11 @@ class MMU extends Module {
         } .otherwise {
           mem_status        := waitIO
           mem_pha           := ptw_mem_addr
+
+          // update TLB
+          tlb.io.modify.mode := TLBT.INS
+          tlb.io.modify.vpn  := mem_addr(38,12).asTypeOf(new PN)
+          tlb.io.modify.pte  := ptw_mem_pte
         }
       }
     }

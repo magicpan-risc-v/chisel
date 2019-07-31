@@ -58,14 +58,14 @@ class TLB extends Module {
             entries_valid := 0.U(32.W)
         }
         is (TLBT.INS) {
-            entries_valid(modify_index) := true.B
+            entries_valid := entries_valid | (1L.U << modify_index)
 
             entries(modify_index).vpn := io.modify.vpn
             entries(modify_index).pte := io.modify.pte
         }
         is (TLBT.RM) {
             when (entries(modify_index).vpn.cat === io.modify.vpn.cat) {
-                entries_valid(modify_index) := false.B
+                entries_valid := entries_valid & ~(1L.U << modify_index)
             }
         }
     }
