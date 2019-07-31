@@ -43,6 +43,8 @@ class PTW extends Module {
 
     val waitNone::wait2::wait1::wait0::Nil = Enum(4)
     val wait_status = RegInit(waitNone)
+
+    // 缓存的请求
     val req  = RegInit(0.U(27.W).asTypeOf(new PN))
     val read = RegInit(false.B)
     val addr = RegInit(0.U(32.W))
@@ -60,22 +62,20 @@ class PTW extends Module {
     io.mem.wdata := 0.U(64.W)
     io.rsp       := 0.U(64.W).asTypeOf(new PTE)
     io.pf        := false.B
-
-    io.ready     := wait_status === waitNone
+    io.ready     := false.B
 
     switch (wait_status) {
         is (waitNone) { 
             // 初始状态
             when (io.req.valid) {
                 wait_status := wait2
-                // io.mem.mode := MEMT.LD
-                // io.mem.addr := addr2
+                io.mem.mode := MEMT.LD
+                io.mem.addr := addr2
 
                 // 缓存请求
                 req.p2      := io.req.p2
                 req.p1      := io.req.p1
                 req.p0      := io.req.p0
-
                 addr        := addr2
                 read        := true.B
             }
@@ -87,19 +87,18 @@ class PTW extends Module {
                     // invalid, raise a page-fault
                     wait_status := waitNone
                     io.pf       := true.B
+                    io.ready    := true.B
                     read        := false.B
                 } .elsewhen (pte_leaf) {
                     wait_status := waitNone
                     io.rsp      := pte
                     // misaligned superpage
                     io.pf       := !(pte.ppn.p1.orR || pte.ppn.p0.orR)
+                    io.ready    := true.B
                     read        := false.B
                 } .otherwise {
                     // 进入下一级页表
                     wait_status := wait1
-                    
-                    // io.mem.mode := MEMT.LD
-                    // io.mem.addr := addr1
                     addr        := addr1
                 }
             }
@@ -111,19 +110,18 @@ class PTW extends Module {
                     // invalid, raise a page-fault
                     wait_status := waitNone
                     io.pf       := true.B
+                    io.ready    := true.B
                     read        := false.B
                 } .elsewhen (pte_leaf) {
                     wait_status := waitNone
                     io.rsp      := pte
                     // misaligned superpage
                     io.pf       := !pte.ppn.p0.orR
+                    io.ready    := true.B
                     read        := false.B
                 } .otherwise {
                     // 进入下一级页表
                     wait_status := wait0
-                    
-                    // io.mem.mode := MEMT.LD
-                    // io.mem.addr := addr0
                     addr        := addr0
                 }
             }
@@ -133,14 +131,11 @@ class PTW extends Module {
             when (io.mem.ready) {
                 wait_status := waitNone
                 read        := false.B
-                when (pte_invalid) {
-                    // invalid, raise a page-fault
+                io.ready    := true.B
+                when (pte_invalid || !pte_leaf) {
                     io.pf       := true.B
-                } .elsewhen (pte_leaf) {
-                    io.rsp      := pte
-                    // misaligned superpage
                 } .otherwise {
-                    io.pf       := true.B
+                    io.rsp      := pte
                 }
             }
         }

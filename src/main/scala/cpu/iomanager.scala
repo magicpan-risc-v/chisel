@@ -24,8 +24,12 @@ class IOManager extends Module {
         val mem_mem = new RAMOp // MEM段的需求
         val mem_out = Flipped(new RAMOp) // 传递给RAM的需求
         val serial_out = Flipped(new RAMOp) // 传递给Serial的需求
+
+        val debug_if_wait  = Output(UInt(2.W))
+        val debug_mem_wait = Output(UInt(2.W))
+        val debug_if_ready = Output(Bool())
+        val debug_mem_ready = Output(Bool())
     })
-    
     // 定义空设备，初始化是所有接口接入到空设备
     val null_dev = Module(new Module{
       val io = IO(new RAMOp)
@@ -120,6 +124,14 @@ class IOManager extends Module {
             printf("[IO] IF access invalid address: %x\n", if_.addr)
         }
     }
+
+    // debug
+    io.debug_if_wait := ifWait
+    io.debug_if_ready := if_.ready
+    io.debug_mem_wait := memWait
+    io.debug_mem_ready := mem.ready
+
+
 /*
     val nmn = io.mem_mem.mode === MEMT.NOP // no MEM need
 

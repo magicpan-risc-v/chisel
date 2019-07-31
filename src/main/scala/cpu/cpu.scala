@@ -8,6 +8,12 @@ class CPU extends Module {
         val en  = Input(Bool())
         val debug_pc  = Output(UInt(64.W))
         val debug_ins = Output(UInt(32.W))
+
+        val debug_if_wait  = Output(UInt(2.W))
+        val debug_mem_wait = Output(UInt(2.W))
+        val debug_if_ready = Output(Bool())
+        val debug_mem_ready = Output(Bool())
+
         val mem = Flipped(new RAMOp)
         val serial = Flipped(new RAMOp)
     })
@@ -29,6 +35,10 @@ class CPU extends Module {
     // debug
     io.debug_pc    <> if_id.io.pco
     io.debug_ins   <> if_id.io.inso
+    io.debug_if_wait <> iomn.io.debug_if_wait
+    io.debug_if_ready           <> iomn.io.debug_if_ready
+    io.debug_mem_wait           <> iomn.io.debug_mem_wait
+    io.debug_mem_ready           <> iomn.io.debug_mem_ready
     
     // IO
     insr.io.mmu    <> mmu.io.insr
