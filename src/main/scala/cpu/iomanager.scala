@@ -93,22 +93,23 @@ class IOManager extends Module {
     when(memWait === waitNone && ifWait === waitNone && mem.mode =/= MEMT.NOP) {
       when(mem.addr.atRAM) {
         bindInput(mem, io.mem_out)
-        when(MEMT.isWrite(mem.mode)) {
-            memWait := waitNone
-            mem.ready := true.B
-        }.otherwise {
+
+        // when(MEMT.isWrite(mem.mode)) {
+        //     memWait := waitNone
+        //     mem.ready := true.B
+        // }.otherwise {
             memWait := waitRAM
             mem.ready := false.B
-        }
+        //}
       }.elsewhen(mem.addr.atSerial) {
         bindInput(mem, io.serial_out)
-        when(MEMT.isWrite(mem.mode)) {
-            memWait := waitNone
-            mem.ready := true.B
-        }.otherwise {
+        // when(MEMT.isWrite(mem.mode)) {
+        //     memWait := waitNone
+        //     mem.ready := true.B
+        // }.otherwise {
             memWait := waitSerial
             mem.ready := false.B
-        }
+        //}
       }.otherwise {
         printf("[IO] MEM access invalid address: %x\n", mem.addr)
       }

@@ -35,7 +35,7 @@ class MMU extends Module {
   val e_mem_sum   = io.csr.priv === Priv.S && !io.csr.sum && ptw_mem_pte.U
   val e_mem       = ptw_mem.io.pf || e_mem_user || e_mem_read || e_mem_write || e_mem_sum
   
-  val mmu_en  = false.B
+  val mmu_en  = io.csr.satp(63,60) === 8.U(4.W) //&& csr.priv =/= Priv.M//false.B
   val is_mem  = io.mem.mode =/= MEMT.NOP
   val is_if   = io.insr.mode =/= MEMT.NOP && !is_mem
 
@@ -51,6 +51,7 @@ class MMU extends Module {
   val mem_free   = mem_status === waitNone
 
   val offset     = 0xC0020000L.U(64.W)
+  //val offset     = 0xffffffffC0200000L.S(64.W).asUInt
 
   // enable  MMU : virtual address
   // disable MMU : virtual address ?! - offset

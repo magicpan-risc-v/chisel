@@ -50,3 +50,11 @@ class MonitorTester extends ChiselFlatSpec {
       c => new ALUCPUTest(c, s"../monitor/monitor.bin")
     } should be (true)
 }
+
+class RcoreTester extends ChiselFlatSpec {
+    val args = Array[String]("-fiwv", "-tbn", "verilator")
+    //val args = Array[String]()
+    iotesters.Driver.execute(args, () => new CPUTest) {
+      c => new ALUCPUTest(c, s"../rcore")
+    } should be (true)
+}
