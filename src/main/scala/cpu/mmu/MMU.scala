@@ -20,8 +20,7 @@ class MMUCore extends Module {
     val ptw_mem = Module(new PTW) 
     val csr = RegInit(0.U.asTypeOf(new CSR_MMU))
 
-    //val en  = csr.satp(63,60) === 8.U(4.W) && csr.priv =/= Priv.M
-    val en     = false.B
+    val en  = csr.satp(63,60) === 8.U(4.W) && csr.priv =/= Priv.M
     val is_mem = io.mem.mode =/= MEMT.NOP
     val is_if  = io.insr.mode =/= MEMT.NOP && !is_mem
 

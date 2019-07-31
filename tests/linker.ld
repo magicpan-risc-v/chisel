@@ -5,8 +5,6 @@ SECTIONS {
     . = 0x0;
 
     .text : {
-		BYTE(0)
-		. = 128;
         *(.text._start)
         *(.text .stub .text.* .gnu.linkonce.t.*)
     }

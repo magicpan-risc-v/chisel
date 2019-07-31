@@ -131,8 +131,6 @@ class CSR extends Module {
     for(i <- csr_ids) {
       when(i === io.mem.wrCSROp.csr_idx) {
         csr(i) := io.mem.wrCSROp.csr_data
-        //printf("set csr[%x] = 0x%x\n", i, io.mem.wrCSROp.csr_data)
-        //printf("mtime %x \n", mtime)
       }
     }
     when(io.mem.wrCSROp.csr_idx === ADDR.mstatus) {
@@ -266,7 +264,6 @@ class CSR extends Module {
       }.elsewhen(cause.asUInt === Cause.SFenceOne || cause.asUInt === Cause.SFenceAll) {  // SFence 语句
       }.otherwise{  // Interrupt or Exception
         val epc = io.mem.excep.pc
-        //printf("toset epc : %x \n", epc)
         val tval = io.mem.excep.value
         nextPrv := PriorityMux(Seq(
           (!cause(31) && !medeleg(cause(4,0)), Priv.M),
@@ -275,7 +272,6 @@ class CSR extends Module {
           ( cause(31) && !sideleg(cause(4,0)), Priv.S),
           (true.B,                             Priv.U)
         ))
-        //printf("nextPrv : %x \n", nextPrv)
         switch(nextPrv) {
           is(Priv.M) {
             mstatus.MPIE := mstatus.MIE
@@ -312,12 +308,6 @@ class CSR extends Module {
           pcA4,
           pcA4 + 4.U * cause
         )
-        //printf("cause is %x", cause)
-        //printf("prv : %x mstatus.mie : %x mstatus.mpie : %x\n", prv, mstatus.MIE, mstatus.MPIE)
-        //printf("newpc : %x \n", io.csrNewPc)
-        //printf("mcause :%x \n", mcause)
       }
-    }.otherwise {
-        //printf("prv : %x mstatus.mie : %x mstatus.mpie : %x\n", prv, mstatus.MIE, mstatus.MPIE)
     }
 }
