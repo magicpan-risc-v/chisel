@@ -21,8 +21,9 @@ class MemoryTest extends Module {
     val scnt   = RegInit(0.U(32.W))
 
     val program_length = dindex
-    val rs = io.mem.addr
-    val ws = io.mem.addr
+    val offset = 0x80000000L.U(64.W)
+    val rs = io.mem.addr - offset
+    val ws = io.mem.addr - offset
 
     val data = Cat(
         program(rs+7.U),

@@ -92,8 +92,10 @@ class PTW extends Module {
                 } .elsewhen (pte_leaf) {
                     wait_status := waitNone
                     io.rsp      := pte
+                    io.rsp.ppn.p1   := req.p1
+                    io.rsp.ppn.p0   := req.p0
                     // misaligned superpage
-                    io.pf       := !(pte.ppn.p1.orR || pte.ppn.p0.orR)
+                    io.pf       := pte.ppn.p1.orR || pte.ppn.p0.orR
                     io.ready    := true.B
                     read        := false.B
                 } .otherwise {
@@ -115,8 +117,9 @@ class PTW extends Module {
                 } .elsewhen (pte_leaf) {
                     wait_status := waitNone
                     io.rsp      := pte
+                    io.rsp.ppn.p0   := req.p0
                     // misaligned superpage
-                    io.pf       := !pte.ppn.p0.orR
+                    io.pf       := pte.ppn.p0.orR
                     io.ready    := true.B
                     read        := false.B
                 } .otherwise {

@@ -7,7 +7,7 @@ class CSR extends Module {
   val io = IO(new Bundle {
     val id = Flipped(new ID_CSR)
     val mem = Flipped(new MEM_CSR)
-    val mmu = new CSR_MMU
+    val mmu = Output(new CSR_MMU)
 
     val flush = Output(Bool())  // 清空流水线
     val csrNewPc = Output(UInt(64.W)) // 新的PC
@@ -303,7 +303,7 @@ class CSR extends Module {
           Priv.U -> utvec
         ))
 
-        val pcA4 = Cat(xtvec(31,2), 0.U(2.W))
+        val pcA4 = Cat(xtvec(63,2), 0.U(2.W))
         io.csrNewPc := Mux(xtvec(1,0) === 0.U,
           pcA4,
           pcA4 + 4.U * cause

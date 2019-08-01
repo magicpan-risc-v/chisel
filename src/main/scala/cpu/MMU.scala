@@ -12,7 +12,7 @@ class MMU extends Module {
     val insr = new MMUOp // InstReader -> MMU
     val insr_rst = Input(Bool())
 
-    val csr = Flipped(new CSR_MMU) // CSR -> MMU
+    val csr = Input(new CSR_MMU) // CSR -> MMU
 
     val if_iom = Flipped(new RAMOp)  // MMU -> IOManager
     val mem_iom = Flipped(new RAMOp)  // MMU -> IOManager
@@ -22,36 +22,41 @@ class MMU extends Module {
   val ptw_mem = Module(new PTW)
   val tlb     = Module(new TLB)
 
-  val ptw_if_pte  = ptw_if.io.rsp
-  val ptw_mem_pte = ptw_mem.io.rsp
-
-  val e_if_user   = io.csr.priv === Priv.U && !ptw_if_pte.U
-  val e_if_exec   = !ptw_if_pte.X
-  val e_if        = ptw_if.io.pf || e_if_user || e_if_exec
-
-  val e_mem_user  = io.csr.priv === Priv.U && !ptw_mem_pte.U
-  val e_mem_read  = MEMT.isRead(io.mem.mode) && !(ptw_mem_pte.R || (ptw_mem_pte.X && io.csr.mxr))
-  val e_mem_write = MEMT.isWrite(io.mem.mode) && !ptw_mem_pte.W
-  val e_mem_sum   = io.csr.priv === Priv.S && !io.csr.sum && ptw_mem_pte.U
-  val e_mem       = ptw_mem.io.pf || e_mem_user || e_mem_read || e_mem_write || e_mem_sum
-  
-  val mmu_en  = io.csr.satp(63,60) === 8.U(4.W) //&& csr.priv =/= Priv.M//false.B
-  val is_mem  = io.mem.mode =/= MEMT.NOP
-  val is_if   = io.insr.mode =/= MEMT.NOP && !is_mem
+  val csr     = RegInit(0.U.asTypeOf(new CSR_MMU))
 
   val waitNone::waitPTW::waitIO:: Nil = Enum(3)
   val if_status  = RegInit(waitNone)
+  val if_mode    = RegInit(15.U(4.W))
   val if_addr    = RegInit(0.U(64.W))
   val if_pha     = RegInit(0.U(64.W))
   val mem_status = RegInit(waitNone)
+  val mem_mode   = RegInit(15.U(4.W))
   val mem_addr   = RegInit(0.U(64.W))
   val mem_pha    = RegInit(0.U(64.W))
 
   val if_free    = if_status === waitNone
   val mem_free   = mem_status === waitNone
+  val real_csr   = Mux(if_free && mem_free, io.csr, csr)
 
-  val offset     = 0xC0020000L.U(64.W)
-  //val offset     = 0xffffffffC0200000L.S(64.W).asUInt
+  val ptw_if_pte  = ptw_if.io.rsp
+  val ptw_mem_pte = ptw_mem.io.rsp
+
+  val e_if_user   = real_csr.priv === Priv.U && !ptw_if_pte.U
+  val e_if_exec   = !ptw_if_pte.X
+  val e_if        = ptw_if.io.pf || e_if_user || e_if_exec
+
+  val e_mem_user  = real_csr.priv === Priv.U && !ptw_mem_pte.U
+  val e_mem_read  = MEMT.isRead(io.mem.mode) && !(ptw_mem_pte.R || (ptw_mem_pte.X && real_csr.mxr))
+  val e_mem_write = MEMT.isWrite(io.mem.mode) && !ptw_mem_pte.W
+  val e_mem_sum   = real_csr.priv === Priv.S && !real_csr.sum && ptw_mem_pte.U
+  val e_mem       = ptw_mem.io.pf || e_mem_user || e_mem_read || e_mem_write || e_mem_sum
+  
+  val mmu_en  = real_csr.satp(63,60) === 8.U(4.W) //&& csr.priv =/= Priv.M//false.B
+  val is_mem  = io.mem.mode =/= MEMT.NOP
+  val is_if   = io.insr.mode =/= MEMT.NOP && !is_mem
+
+  //val offset     = 0xC0020000L.U(64.W)
+  val offset     = 0xffffffff40000000L.S(64.W).asUInt
 
   // enable  MMU : virtual address
   // disable MMU : virtual address ?! - offset
@@ -62,13 +67,14 @@ class MMU extends Module {
   val tlb_if_addr   = Cat(0.U(25.W), tlb.io.query.rsp.ppn.cat, real_if_addr(11,0))
   val tlb_mem_addr  = Cat(0.U(25.W), tlb.io.query.rsp.ppn.cat, real_mem_addr(11,0))
 
-  val root          = io.csr.satp(26,0).asTypeOf(new PN)
+  val root          = real_csr.satp(26,0).asTypeOf(new PN)
+  
 
-  io.if_iom.mode    := io.insr.mode
+  io.if_iom.mode    := MEMT.NOP//io.insr.mode
   io.if_iom.addr    := real_if_addr
   io.if_iom.wdata   := 0.U(64.W)
   io.insr.rdata     := io.if_iom.rdata
-  io.mem_iom.mode   := io.mem.mode
+  io.mem_iom.mode   := MEMT.NOP//io.mem.mode
   io.mem_iom.addr   := real_mem_addr
   io.mem.rdata      := io.mem_iom.rdata
   io.mem_iom.wdata  := io.mem.wdata
@@ -109,9 +115,15 @@ class MMU extends Module {
     tlb.io.modify.mode := TLBT.CLR
   }
 
+  when (if_free && mem_free) {
+    csr := io.csr
+  }
+
   switch (if_status) {
     is(waitNone) { 
       when (is_if && mem_free) {
+        io.if_iom.mode    := io.insr.mode
+        if_mode   := io.insr.mode
         if_addr   := real_if_addr
         when (mmu_en) {
           tlb.io.query.req.p2 := io.insr.addr(38,30)
@@ -157,6 +169,7 @@ class MMU extends Module {
     }
 
     is (waitIO) { 
+      io.if_iom.mode    := if_mode
       io.if_iom.addr := if_pha
       when (io.if_iom.ready) {
         if_status := waitNone
@@ -174,6 +187,8 @@ class MMU extends Module {
   switch (mem_status) {
     is (waitNone) { 
       when (is_mem && if_free) {
+        io.mem_iom.mode   := io.mem.mode
+        mem_mode   := io.mem.mode
         mem_addr   := real_mem_addr
         when (mmu_en) {
 
@@ -223,6 +238,7 @@ class MMU extends Module {
       }
     }
     is(waitIO) {
+      io.mem_iom.mode   := mem_mode
       io.mem_iom.addr := mem_pha
       when (io.mem_iom.ready) {
         mem_status := waitNone

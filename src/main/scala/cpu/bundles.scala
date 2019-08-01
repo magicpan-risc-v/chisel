@@ -104,10 +104,10 @@ class MEM_CSR extends Bundle {
 }
 
 class CSR_MMU extends Bundle {
-  val satp = Output(UInt(64.W))
-  val priv = Output(UInt(2.W))
-  val mxr  = Output(Bool())
-  val sum  = Output(Bool())
+  val satp = UInt(64.W)
+  val priv = UInt(2.W)
+  val mxr  = Bool()
+  val sum  = Bool()
 }
 
 class Exception extends Bundle {
