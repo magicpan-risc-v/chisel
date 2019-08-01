@@ -52,7 +52,7 @@ class EX_MEM extends Module {
 
     when (io.en && io.pass) {
         val have_excep = ( io.excep_i.valid || io.inter_i.valid ) && io.excep_i.inst_valid
-        nls   := Mux(have_excep, false.B, io.nlsi)
+        nls   := Mux(io.flush || have_excep, false.B, io.nlsi)
         wbri  := Mux(io.flush, 0.U(5.W), io.wregi.wbri)
         wbrv  := Mux(io.flush, false.B, Mux(have_excep, false.B, io.wregi.wbrv))
         wbrd  := Mux(io.flush, 0.U(64.W), io.wregi.wbrd)

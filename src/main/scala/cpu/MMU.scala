@@ -29,6 +29,7 @@ class MMU extends Module {
   val if_mode    = RegInit(15.U(4.W))
   val if_addr    = RegInit(0.U(64.W))
   val if_pha     = RegInit(0.U(64.W))
+  val if_rst     = RegInit(false.B)
   val mem_status = RegInit(waitNone)
   val mem_mode   = RegInit(15.U(4.W))
   val mem_addr   = RegInit(0.U(64.W))
@@ -55,8 +56,8 @@ class MMU extends Module {
   val is_mem  = io.mem.mode =/= MEMT.NOP
   val is_if   = io.insr.mode =/= MEMT.NOP && !is_mem
 
-  //val offset     = 0xC0020000L.U(64.W)
-  val offset     = 0xffffffff40000000L.S(64.W).asUInt
+  val offset     = 0xC0020000L.U(64.W)
+  //val offset     = 0xffffffff40000000L.S(64.W).asUInt
 
   val serial_va  = 0x123456789abcdef0L.S(64.W).asUInt
   val serial_pa  = 0x807ffff8L.U(64.W)
@@ -122,12 +123,17 @@ class MMU extends Module {
     csr := io.csr
   }
 
+  when (io.insr_rst) {
+    if_rst := true.B
+  }
+
   switch (if_status) {
     is(waitNone) { 
       when (is_if && mem_free) {
         io.if_iom.mode    := io.insr.mode
         if_mode   := io.insr.mode
         if_addr   := real_if_addr
+        if_rst    := false.B
         when (mmu_en) {
           tlb.io.query.req.p2 := io.insr.addr(38,30)
           tlb.io.query.req.p1 := io.insr.addr(29,21)
@@ -176,7 +182,7 @@ class MMU extends Module {
       io.if_iom.addr := if_pha
       when (io.if_iom.ready) {
         if_status := waitNone
-        when (if_addr === real_if_addr && !io.insr_rst) {
+        when (/*if_addr === real_if_addr && */!if_rst && !io.insr_rst) {
           // if jump, give here a rst and repeat IF
           io.insr.ready := true.B
         } .otherwise {
