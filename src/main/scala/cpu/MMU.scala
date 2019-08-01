@@ -58,6 +58,9 @@ class MMU extends Module {
   //val offset     = 0xC0020000L.U(64.W)
   val offset     = 0xffffffff40000000L.S(64.W).asUInt
 
+  val serial_va  = 0x123456789abcdef0L.S(64.W).asUInt
+  val serial_pa  = 0x807ffff8L.U(64.W)
+
   // enable  MMU : virtual address
   // disable MMU : virtual address ?! - offset
   val real_if_addr  = Mux(mmu_en, io.insr.addr, io.insr.addr - offset)
@@ -190,22 +193,29 @@ class MMU extends Module {
         io.mem_iom.mode   := io.mem.mode
         mem_mode   := io.mem.mode
         mem_addr   := real_mem_addr
+
         when (mmu_en) {
-
-          tlb.io.query.req.p2 := io.mem.addr(38,30)
-          tlb.io.query.req.p1 := io.mem.addr(29,21)
-          tlb.io.query.req.p0 := io.mem.addr(20,12)
-          tlb.io.query.req.valid := true.B
-
-          when (tlb.io.query.miss) {
-            mem_status := waitPTW
-            ptw_mem.io.req.valid := true.B
-            io.mem_iom.mode      := ptw_mem.io.mem.mode
-            io.mem_iom.addr      := ptw_mem.io.mem.addr
-          } .otherwise {
+          
+          when (io.mem.addr === serial_va) {
             mem_status := waitIO
-            io.mem_iom.addr      := tlb_mem_addr
-            mem_pha    := tlb_mem_addr
+            io.mem_iom.addr      := serial_pa
+            mem_pha              := serial_pa
+          } .otherwise {
+            tlb.io.query.req.p2 := io.mem.addr(38,30)
+            tlb.io.query.req.p1 := io.mem.addr(29,21)
+            tlb.io.query.req.p0 := io.mem.addr(20,12)
+            tlb.io.query.req.valid := true.B
+
+            when (tlb.io.query.miss) {
+              mem_status := waitPTW
+              ptw_mem.io.req.valid := true.B
+              io.mem_iom.mode      := ptw_mem.io.mem.mode
+              io.mem_iom.addr      := ptw_mem.io.mem.addr
+            } .otherwise {
+              mem_status := waitIO
+              io.mem_iom.addr      := tlb_mem_addr
+              mem_pha    := tlb_mem_addr
+            }
           }
           
         } .otherwise {
