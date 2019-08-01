@@ -12,7 +12,7 @@ class MemoryTest extends Module {
         val dd   = Input(UInt(32.W)) // default data
     })
 
-    val program = Mem(0x800000, UInt(8.W))
+    val program = Mem(0x1000000, UInt(8.W))
    // val serial  = Mem(0x10000, UInt(8.W))
 
     val inited = RegInit(false.B)
@@ -21,7 +21,8 @@ class MemoryTest extends Module {
     val scnt   = RegInit(0.U(32.W))
 
     val program_length = dindex
-    val offset = 0x80000000L.U(64.W)
+    // val offset = 0x80000000L.U(64.W)
+    val offset = 0.U(64.W)
     val rs = io.mem.addr - offset
     val ws = io.mem.addr - offset
 

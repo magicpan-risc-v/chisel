@@ -1,19 +1,19 @@
 .global _start
 _start:
-    li	t1, 12
-    li	t1, 12
-    li	t1, 12
-    li	t1, 12
-    li	t1, 12
-    li	t1, 12
-    li	t1, 12
-    li	t1, 12
-    li	t1, 12
-    li	t1, 12
-    li	t1, 12
-    li	t1, 12
-    jalr	t0,t1
-    j	fail
-    li a5,20
-fail:
-    li a5,10
+    nop
+    lui a5, 0xc082;
+    slli a5,a5,4;
+#    li a4, 10;
+    addi a5, a5, -8;
+    lbu a0, 0(a5);
+cyc:
+    #beq a0,a4,end;
+    sb a0, 0(a5);
+    nop
+    nop
+    nop
+    nop
+    nop
+    j cyc;
+#end:
+#   ret;
