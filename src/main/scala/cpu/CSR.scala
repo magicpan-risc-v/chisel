@@ -262,6 +262,7 @@ class CSR extends Module {
           }
         }
       }.elsewhen(cause.asUInt === Cause.SFenceOne || cause.asUInt === Cause.SFenceAll) {  // SFence 语句
+          io.csrNewPc := io.mem.excep.pc + 4.U
       }.otherwise{  // Interrupt or Exception
         val epc = io.mem.excep.pc
         val tval = io.mem.excep.value
