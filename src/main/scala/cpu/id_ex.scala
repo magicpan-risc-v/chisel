@@ -21,6 +21,7 @@ class ID_EX extends Module {
         val csr_wb_i = new WrCsrReg
         val dregi  = Flipped(new DecoderReg)
         val excep_i = Flipped(new Exception)
+        val mul_div_i = Input(Bool())
 
         val immo   = Output(UInt(64.W))
         val ALUOpo = Output(UInt(5.W))
@@ -31,6 +32,7 @@ class ID_EX extends Module {
         val csr_wb_o  = Flipped(new WrCsrReg)
         val drego  = new DecoderReg
         val excep_o = new Exception
+        val ready  = Output(Bool())
     })
 
     val imm   = RegInit(0.U(64.W))
@@ -46,6 +48,8 @@ class ID_EX extends Module {
 
     val csr_wb  = RegInit(0.U.asTypeOf(new WrCsrReg))
     val excep  = RegInit(0.U.asTypeOf(new Exception))
+
+    val mul_counter = RegInit(0.U(3.W))   // 乘除运算计时器
 
     io.immo   := imm
     io.ALUOpo := ALUOp
@@ -76,6 +80,8 @@ class ID_EX extends Module {
         excep.pc := io.excep_i.pc
         excep.inst_valid := Mux(bm(0), io.excep_i.inst_valid, false.B)
 
+        mul_counter := Mux(io.mul_div_i, 7.U(3.W), 0.U(3.W))
+
         //printf("ID_EX  : ALUOp = %d\n", ALUOp)
         
         //printf("ID_EX  : op32  = %d\n", op32)
@@ -89,4 +95,12 @@ class ID_EX extends Module {
     when (io.en) {
        // printf("ID_EX  : imm   = %x (pass= %d)\n", imm, io.pass)
     }
+
+    when (mul_counter =/= 0.U) {
+      io.ready := false.B
+      mul_counter := mul_counter - 1.U
+    }.otherwise {
+      io.ready := true.B
+    }
+    
 }

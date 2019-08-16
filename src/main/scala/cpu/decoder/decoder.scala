@@ -31,6 +31,8 @@ class Decoder extends Module {
 
         val if_excep = Input(Flipped(new Exception))
         val ex_excep = Output(new Exception)
+
+        val mul_div_ins = Output(Bool())  // this ins is mul or div.
     })
 
     val itype = Module(new InsType)
@@ -92,6 +94,8 @@ class Decoder extends Module {
     io.loadinfo.valid     := ls_mode =/= MEMT.NOP && ls_mode(3)
     io.loadinfo.index     := rd_index
     io.bubble         := bubble
+
+    io.mul_div_ins    := io.ins(25) && (itype.io.exe_type === EXT.ALU)
 
     io.csr.addr       := io.ins(31,20)
     io.csr_content.valid    := csr_valid

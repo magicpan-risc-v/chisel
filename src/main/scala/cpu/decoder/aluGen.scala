@@ -15,20 +15,36 @@ class ALUGen extends Module {
         0.U(4.W),
         Seq(
             INST.S_TYPE -> ALUT.ALU_ADD,
-            INST.R_TYPE -> MuxLookup(
-                Cat(io.ins(30), io.ins(14,12)),
-                0.U(4.W),
-                Seq(
-                    "b0000".U -> ALUT.ALU_ADD, // or ADDW
-                    "b1000".U -> ALUT.ALU_SUB, // or SUBW
-                    "b0001".U -> ALUT.ALU_SLL, // or SLLW
-                    "b0010".U -> ALUT.ALU_SLT,
-                    "b0011".U -> ALUT.ALU_SLTU,
-                    "b0100".U -> ALUT.ALU_XOR,
-                    "b0101".U -> ALUT.ALU_SRL, // or SRLW
-                    "b1101".U -> ALUT.ALU_SRA, // or SRAW
-                    "b0110".U -> ALUT.ALU_OR,
-                    "b0111".U -> ALUT.ALU_AND
+            INST.R_TYPE -> Mux(io.ins(25), 
+                MuxLookup(
+                    Cat(io.ins(14,12)),
+                    0.U(4.W),
+                    Seq(
+                        "b000".U -> ALUT.ALU_MUL, // or MULW
+                        "b001".U -> ALUT.ALU_MULH, 
+                        "b010".U -> ALUT.ALU_MULHSU,
+                        "b011".U -> ALUT.ALU_MULHU,
+                        "b100".U -> ALUT.ALU_DIV, // or DIVW
+                        "b101".U -> ALUT.ALU_DIVU, // or DIVUW
+                        "b110".U -> ALUT.ALU_REM, // or REMW
+                        "b111".U -> ALUT.ALU_REMU // or REMUW
+                    )
+                ),
+                MuxLookup(
+                    Cat(io.ins(30), io.ins(14,12)),
+                    0.U(4.W),
+                    Seq(
+                        "b0000".U -> ALUT.ALU_ADD, // or ADDW
+                        "b1000".U -> ALUT.ALU_SUB, // or SUBW
+                        "b0001".U -> ALUT.ALU_SLL, // or SLLW
+                        "b0010".U -> ALUT.ALU_SLT,
+                        "b0011".U -> ALUT.ALU_SLTU,
+                        "b0100".U -> ALUT.ALU_XOR,
+                        "b0101".U -> ALUT.ALU_SRL, // or SRLW
+                        "b1101".U -> ALUT.ALU_SRA, // or SRAW
+                        "b0110".U -> ALUT.ALU_OR,
+                        "b0111".U -> ALUT.ALU_AND
+                    )
                 )
             ),
             INST.I_TYPE -> MuxLookup(

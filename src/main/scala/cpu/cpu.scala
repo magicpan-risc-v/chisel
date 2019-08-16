@@ -66,8 +66,8 @@ class CPU extends Module {
     insr.io.bubble <> insd.io.bubble
 
     // pass
-    if_id.io.pass  <> memc.io.ready
-    id_ex.io.pass  <> memc.io.ready
+    if_id.io.pass  := memc.io.ready && id_ex.io.ready
+    id_ex.io.pass  := memc.io.ready && id_ex.io.ready
     ex_mem.io.pass <> memc.io.ready
     mem_wb.io.pass <> memc.io.ready
     regc.io.pass   <> memc.io.ready
@@ -102,6 +102,7 @@ class CPU extends Module {
     id_ex.io.op32i  <> insd.io.op32
     id_ex.io.csr_wb_i  <> insd.io.csr_content
     id_ex.io.excep_i   <> insd.io.ex_excep
+    id_ex.io.mul_div_i <> insd.io.mul_div_ins
     
     id_ex.io.immo   <> exec.io.imm
     id_ex.io.ALUOpo <> exec.io.ALUOp

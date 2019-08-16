@@ -60,8 +60,8 @@ class InsType extends Module {
         opcode,
         EXT.ALU,
         Seq(
-            "b01100".U -> EXT.ALU, // ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND
-            "b01110".U -> EXT.ALU, // ADDW, SUBW, SLLW, SRLW, SRAW
+            "b01100".U -> EXT.ALU, // ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND, MUL, MULH, MULHU, MULHSU, DIV, DIVU, REM, REMU 
+            "b01110".U -> EXT.ALU, // ADDW, SUBW, SLLW, SRLW, SRAW, MULW, DIVW, DIVUW, REMW, REMUW
 
             "b00000".U -> EXT.LOS, // LB, LH, LW, LBU, LHU, *LWU, *LD
             "b00100".U -> EXT.ALU, // ADDI, SLTI, SLTIU, XORI, ORI, ANDI, SLLI, SRLI, SRAI, *SLLI, *SRLI, *SRAI
