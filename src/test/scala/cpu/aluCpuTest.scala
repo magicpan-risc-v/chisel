@@ -12,7 +12,7 @@ class ALUCPUTest(c: CPUTest, fname: String) extends PeekPokeTester(c) {
     RAMTest.loadFile(this, c, fname)
     RAMTest.loadSerial(this, c, "tests/test-serial.txt")
     poke(c.io.en, true)
-    for (i <- 1 until 600000) {
+    for (i <- 1 until 400000) {
       //print("========== CYCLE "+i + " ============ \n")
       step(1)
       //print("========== CYCLE "+i + " ============ \n")
@@ -55,6 +55,6 @@ class RcoreTester extends ChiselFlatSpec {
     val args = Array[String]("-fiwv", "-tbn", "verilator")
     //val args = Array[String]()
     iotesters.Driver.execute(args, () => new CPUTest) {
-      c => new ALUCPUTest(c, s"../kernel.img")
+      c => new ALUCPUTest(c, s"../RustOS/kernel/target/riscv64/release/kernel.img")
     } should be (true)
 }

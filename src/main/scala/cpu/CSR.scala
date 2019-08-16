@@ -139,6 +139,12 @@ class CSR extends Module {
     when(io.mem.wrCSROp.csr_idx === ADDR.sstatus) {
       mstatus := io.mem.wrCSROp.csr_data.asTypeOf(new MStatus)
     }
+    when(io.mem.wrCSROp.csr_idx=== ADDR.sie) {  // 更新sie的同时写入mie
+      csr(ADDR.mie) := io.mem.wrCSROp.csr_data
+    }
+    when(io.mem.wrCSROp.csr_idx === ADDR.sip) {  // 更新sip的同时写入mip
+      csr(ADDR.mip) := io.mem.wrCSROp.csr_data
+    }
   }
 
   // Alias
