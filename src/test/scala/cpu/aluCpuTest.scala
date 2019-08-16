@@ -55,6 +55,6 @@ class RcoreTester extends ChiselFlatSpec {
     val args = Array[String]("-fiwv", "-tbn", "verilator")
     //val args = Array[String]()
     iotesters.Driver.execute(args, () => new CPUTest) {
-      c => new ALUCPUTest(c, s"/home/pan/Code/RustOS/kernel/target/riscv64/release/kernel.img")
+      c => new ALUCPUTest(c, s"../kernel.img")
     } should be (true)
 }

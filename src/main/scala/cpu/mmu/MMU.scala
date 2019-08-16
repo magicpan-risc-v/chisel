@@ -3,6 +3,8 @@ package cpu;
 import chisel3._
 import chisel3.util._
 
+// 这个MMU是假的你可以删掉
+
 class MMUCore extends Module {
     val io =  IO(new Bundle {
         val en    = Input(Bool())

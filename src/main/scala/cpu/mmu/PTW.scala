@@ -3,6 +3,7 @@ package cpu;
 import chisel3._
 import chisel3.util._
 
+// 我的设计：三段的页码都是9位，PPN前面的位数被我吃了都当做0
 class PN extends Bundle{
     val p2 = UInt(9.W)
     val p1 = UInt(9.W)
@@ -11,6 +12,7 @@ class PN extends Bundle{
     def cat: UInt = Cat(p2,p1,p0)
 }
 
+// 参照指令手册相关说明
 class PTE extends Bundle {
     val reserve = UInt(10.W)
     val zero    = UInt(17.W)
@@ -28,17 +30,18 @@ class PTE extends Bundle {
 }
 
 class PNReq extends PN {
+    // MMU发起对PTW的请求时会把这个valid置1
     val valid = Bool() // 表示请求是否有效
 }
 
 class PTW extends Module {
     val io =  IO(new Bundle {
-        val root  = Input(new PN) // 最上层页表的页码
+        val root  = Input(new PN) // 最上层页表的页码，来自CSR
         val req   = Input(new PNReq) // 接收到的VPN请求
-        val rsp   = Output(new PTE) 
+        val rsp   = Output(new PTE) // 返回给MMU的PTE
         val ready = Output(Bool()) // 是否完成
-        val pf    = Output(Bool()) // page fault
-        val mem   = Flipped(new RAMOp) // MMU -> IOManager
+        val pf    = Output(Bool()) // page fault，这里只能报出一部分，还有一部分在MMU里面判断
+        val mem   = Flipped(new RAMOp) // 接 IOManager 
     })
 
     val waitNone::wait2::wait1::wait0::Nil = Enum(4)
@@ -50,8 +53,9 @@ class PTW extends Module {
     val addr = RegInit(0.U(32.W))
     
     val pte = io.mem.rdata.asTypeOf(new PTE)
-    val pte_invalid = !pte.V || (!pte.R && pte.W)
-    val pte_leaf    = pte.R  || pte.X
+    val pte_invalid = !pte.V || (!pte.R && pte.W) // 判断页表项是否无效
+    val pte_leaf    = pte.R  || pte.X             // 判断页表项是否是叶子
+    // 下面三个地址是三次访问页表需要访问的地址
     val addr2    = Cat(io.root.cat, io.req.p2, 0.U(3.W))
     val addr1    = Cat(pte.ppn.cat, req.p1, 0.U(3.W))
     val addr0    = Cat(pte.ppn.cat, req.p0, 0.U(3.W))
