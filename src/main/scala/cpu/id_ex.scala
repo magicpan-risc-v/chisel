@@ -13,7 +13,7 @@ class ID_EX extends Module {
         val pass  = Input(Bool())
 
         val immi   = Input(UInt(64.W))
-        val ALUOpi = Input(UInt(4.W))
+        val ALUOpi = Input(UInt(5.W))
         val exeti  = Input(UInt(4.W))
         val pci    = Input(UInt(64.W))
         val lsmi   = Input(UInt(4.W))
@@ -23,7 +23,7 @@ class ID_EX extends Module {
         val excep_i = Flipped(new Exception)
 
         val immo   = Output(UInt(64.W))
-        val ALUOpo = Output(UInt(4.W))
+        val ALUOpo = Output(UInt(5.W))
         val exeto  = Output(UInt(4.W))
         val pco    = Output(UInt(64.W))
         val lsmo   = Output(UInt(4.W))

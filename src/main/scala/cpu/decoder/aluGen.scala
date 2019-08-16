@@ -7,7 +7,7 @@ class ALUGen extends Module {
     val io =  IO(new Bundle {
         val ins = Input(UInt(32.W))
         val ins_type = Input(UInt(3.W))
-        val ALUOp = Output(UInt(4.W))
+        val ALUOp = Output(UInt(5.W))
     })
 
     io.ALUOp := MuxLookup(

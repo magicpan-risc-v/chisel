@@ -4,25 +4,33 @@ import chisel3._
 import chisel3.util._
 
 object ALUT {
-    val ALU_ZERO = 0.U(4.W)
-    val ALU_OUTA = 1.U(4.W)
-    val ALU_OUTB = 2.U(4.W)
-    val ALU_ADD  = 3.U(4.W)
-    val ALU_AND  = 4.U(4.W)
-    val ALU_OR   = 5.U(4.W)
-    val ALU_XOR  = 6.U(4.W)
-    val ALU_SLT  = 7.U(4.W)
-    val ALU_SLL  = 8.U(4.W)
-    val ALU_SRL  = 9.U(4.W)
-    val ALU_SRA  = 10.U(4.W)
-    val ALU_SUB  = 11.U(4.W)
-    val ALU_SLTU = 12.U(4.W)
-    val ALU_NOR  = 13.U(4.W)
+    val ALU_ZERO = 0.U(5.W)
+    val ALU_OUTA = 1.U(5.W)
+    val ALU_OUTB = 2.U(5.W)
+    val ALU_ADD  = 3.U(5.W)
+    val ALU_AND  = 4.U(5.W)
+    val ALU_OR   = 5.U(5.W)
+    val ALU_XOR  = 6.U(5.W)
+    val ALU_SLT  = 7.U(5.W)
+    val ALU_SLL  = 8.U(5.W)
+    val ALU_SRL  = 9.U(5.W)
+    val ALU_SRA  = 10.U(5.W)
+    val ALU_SUB  = 11.U(5.W)
+    val ALU_SLTU = 12.U(5.W)
+    val ALU_NOR  = 13.U(5.W)
+    val ALU_MUL  = 14.U(5.W)    // M extension
+    val ALU_MULH = 15.U(5.W)
+    val ALU_MULHU = 16.U(5.W)
+    val ALU_MULHSU = 17.U(5.W)
+    val ALU_DIV  = 19.U(5.W)
+    val ALU_DIVU = 21.U(5.W)
+    val ALU_REM  = 23.U(5.W)
+    val ALU_REMU = 24.U(5.W)
 }
 
 class ALU extends Module {
     val io = IO(new Bundle {
-        val ALUOp  = Input(UInt(4.W))
+        val ALUOp  = Input(UInt(5.W))
         val op32   = Input(Bool())
         val inputA = Input(UInt(64.W))
         val inputB = Input(UInt(64.W))
@@ -41,7 +49,12 @@ class ALU extends Module {
             ALUT.ALU_SLL -> (inputA32 << shamt32),
             ALUT.ALU_SRL-> (inputA32 >> shamt32),
             ALUT.ALU_SRA -> ((inputA32.asSInt >> shamt32).asUInt),
-            ALUT.ALU_SUB -> (inputA32 - inputB32)
+            ALUT.ALU_SUB -> (inputA32 - inputB32),
+            ALUT.ALU_MUL -> ( inputA32 * inputB32)(31,0),
+            ALUT.ALU_DIV -> ( inputA32.asSInt / inputB32.asSInt)(31,0).asUInt,
+            ALUT.ALU_DIVU -> ( inputA32 / inputB32 )(31,0),
+            ALUT.ALU_REM  -> ( inputA32.asSInt % inputB32.asSInt )(31,0).asUInt,
+            ALUT.ALU_REMU -> ( inputA32 % inputB32 )(31,0)
         )
     )
     io.output := Mux(io.op32, 
@@ -63,7 +76,15 @@ class ALU extends Module {
                 ALUT.ALU_SRL-> (io.inputA >> shamt),
                 ALUT.ALU_SRA -> ((io.inputA.asSInt >> shamt).asUInt),
                 ALUT.ALU_SUB -> (io.inputA - io.inputB),
-                ALUT.ALU_NOR -> (~io.inputA & io.inputB)
+                ALUT.ALU_NOR -> (~io.inputA & io.inputB),
+                ALUT.ALU_MUL -> ( io.inputA.asSInt * io.inputB.asSInt)(63,0).asUInt,
+                ALUT.ALU_MULH -> ( io.inputA.asSInt * io.inputB.asSInt)(127, 64).asUInt,
+                ALUT.ALU_MULHU -> ( io.inputA * io.inputB)(127, 64).asUInt,
+                ALUT.ALU_MULHSU -> ( io.inputA.asSInt * io.inputB)(127, 64).asUInt,
+                ALUT.ALU_DIV -> ( io.inputA.asSInt / io.inputB.asSInt).asUInt,
+                ALUT.ALU_DIVU -> ( io.inputA / io.inputB ),
+                ALUT.ALU_REM  -> ( io.inputA.asSInt % io.inputB.asSInt ).asUInt,
+                ALUT.ALU_REMU -> ( io.inputA % io.inputB )
             )
         )
     )

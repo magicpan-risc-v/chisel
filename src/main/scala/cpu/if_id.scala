@@ -26,9 +26,6 @@ class IF_ID extends Module {
 
     val ins  = RegInit(0.U(32.W))
     val pc   = RegInit(0xffffffffc0000000L.S(64.W).asUInt)
-    //val pc   = RegInit(0xffffffffc0001000L.S(64.W).asUInt)
-    //val pc   = RegInit((0xC0020000L.S(64.W)).asUInt)
-    //val pc   = RegInit((-4L.S(64.W)).asUInt)
     val insc = RegInit(0.U(64.W))
     val icd  = RegInit(-1L.S(64.W).asUInt)
     val lastload_valid   = RegInit(false.B)
@@ -58,19 +55,7 @@ class IF_ID extends Module {
         } .otherwise {
             excep := io.excep_i
         }
-    }    
-        //  printf("IF_ID  : ins  = %x\n", ins)
-        //printf("IF_ID  : insc = %x;%x\n", insc(63,32),insc(31,0))
-    // }.elsewhen(io.flush){
-    //     ins  := 0.U(32.W)
-    //     insc := 0.U(64.W)
-    //     icd  := -1L.S(64.W).asUInt
-    //     lastload_valid   := false.B
-    //     lastload_index   := 0.U(5.W)
-    //     excep.valid := false.B
-    //     excep.code  := 0.U(32.W)
-    //     excep.value  := 0.U(32.W)
-    // }
+    }
 
     when ( io.en ) {
        //printf("IF_ID  : pc   = %x\n", pc)

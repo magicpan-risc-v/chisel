@@ -11,7 +11,7 @@ class Decoder extends Module {
         val loadinfo = new LastLoadInfo
 
         val imm  = Output(UInt(64.W))
-        val ALUOp    = Output(UInt(4.W))
+        val ALUOp    = Output(UInt(5.W))
         val exe_type = Output(UInt(4.W))
         val ls_mode  = Output(UInt(4.W))
         val op32     = Output(Bool())
