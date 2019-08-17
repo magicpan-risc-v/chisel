@@ -16,7 +16,7 @@ class EX_MEM extends Module {
         val wregi = Flipped(new WriteBackReg)
         val csr_wb_i = new WrCsrReg
         val excep_i  = Flipped(new Exception)
-        val inter_i = Input(Valid(UInt(32.W)))
+        val inter_i = Input(Valid(UInt(64.W)))
         
         val nlso  = Output(Bool())
         val lsmo  = Output(UInt(4.W))
@@ -25,7 +25,7 @@ class EX_MEM extends Module {
         val wrego = new WriteBackReg
         val csr_wb_o = Flipped(new WrCsrReg)
         val excep_o  = new Exception
-        val inter_o = Output(Valid(UInt(32.W)))
+        val inter_o = Output(Valid(UInt(64.W)))
     })
 
     val nls  = RegInit(false.B)
@@ -37,7 +37,7 @@ class EX_MEM extends Module {
     val data = RegInit(0.U(64.W))
     val csr_wb  = RegInit(0.U.asTypeOf(new WrCsrReg))
     val excep   = RegInit(0.U.asTypeOf(new Exception))
-    val inter   = RegInit(0.U.asTypeOf(Valid(UInt(32.W))))
+    val inter   = RegInit(0.U.asTypeOf(Valid(UInt(64.W))))
 
     io.nlso := nls
     io.wrego.wbrd := wbrd
@@ -60,7 +60,7 @@ class EX_MEM extends Module {
         addr  := Mux(io.flush, -1.S(64.W).asUInt, io.addri)
         data  := Mux(io.flush, 0.U(64.W), io.datai)
 
-        csr_wb.valid    := Mux(io.flush, false.B, Mux(have_excep, true.B, io.csr_wb_i.valid))
+        csr_wb.valid    := Mux(io.flush, false.B, Mux(have_excep, false.B, io.csr_wb_i.valid))
         csr_wb.csr_idx  := io.csr_wb_i.csr_idx
         csr_wb.csr_data := io.csr_wb_i.csr_data
         excep   := io.excep_i

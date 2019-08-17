@@ -13,7 +13,7 @@ class CSR extends Module {
     val csrNewPc = Output(UInt(64.W)) // 新的PC
 
     val external_inter = Input(Valid(UInt(32.W)))  // 外部中断信号
-    val inter = Output(Valid(UInt(32.W)))
+    val inter = Output(Valid(UInt(64.W)))
 
     //val mmu = new CSR_MMU
   })
@@ -226,7 +226,7 @@ class CSR extends Module {
     val inter_enable   = (inter_new_mode > prv) || ((inter_new_mode === prv) && ie)
 
     io.inter.valid := inter_enable && ipie.orR
-    io.inter.bits  := (Cause.Interrupt << 31) | ic
+    io.inter.bits  := (Cause.Interrupt << 63) | ic
 
     when(true.B) {
       //printf("now time : %x timecmp : %x \n", mtime, mtimecmp)
@@ -273,10 +273,10 @@ class CSR extends Module {
         val epc = io.mem.excep.pc
         val tval = io.mem.excep.value
         nextPrv := PriorityMux(Seq(
-          (!cause(31) && !medeleg(cause(4,0)), Priv.M),
-          ( cause(31) && !mideleg(cause(4,0)), Priv.M),
-          (!cause(31) && !sedeleg(cause(4,0)), Priv.S),
-          ( cause(31) && !sideleg(cause(4,0)), Priv.S),
+          (!cause(63) && !medeleg(cause(4,0)), Priv.M),
+          ( cause(63) && !mideleg(cause(4,0)), Priv.M),
+          (!cause(63) && !sedeleg(cause(4,0)), Priv.S),
+          ( cause(63) && !sideleg(cause(4,0)), Priv.S),
           (true.B,                             Priv.U)
         ))
         switch(nextPrv) {

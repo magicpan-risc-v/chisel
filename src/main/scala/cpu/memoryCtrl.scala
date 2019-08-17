@@ -43,7 +43,7 @@ class MemoryCtrl extends Module {
         val excep = Flipped(new Exception)
         val csr_wb = new WrCsrReg
         val csr  = new MEM_CSR
-        val inter = Input(Valid(UInt(32.W)))
+        val inter = Input(Valid(UInt(64.W)))
     })
 
     io.mem.mode  := Mux(io.nls, io.lsm, MEMT.NOP)
