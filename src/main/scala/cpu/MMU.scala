@@ -80,7 +80,6 @@ class MMU extends Module {
   val is_mem  = io.mem.mode =/= MEMT.NOP
   val is_if   = io.insr.mode =/= MEMT.NOP && !is_mem
 
-  //val offset     = 0xC0020000L.U(64.W)
   val offset     = 0xffffffff40000000L.S(64.W).asUInt
 
   val serial_va  = 0x123456789abcdef0L.S(64.W).asUInt
